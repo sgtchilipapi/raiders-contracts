@@ -1,13 +1,21 @@
-# Sample Hardhat Project
+# Random Clash
 
-This project demonstrates a basic Hardhat use case. It comes with a sample contract, a test for that contract, and a script that deploys that contract.
+A trustless Defi Role-Playing-Game on the blockchain.
 
-Try running some of the following tasks:
+This project is a complete system of a modern RPG except that it can be deployed on the blockchain for better security and transparency.
+It has:
+    -Character Creation;
+    -Character Stats;
+    -Items & Equipment;
+    -Crafting System;
+    -Logic-based Battle System; and
+    -A working in-game economy leveraging secure Defi Practices.
 
-```shell
-npx hardhat help
-npx hardhat test
-REPORT_GAS=true npx hardhat test
-npx hardhat node
-npx hardhat run scripts/deploy.js
-```
+An RPG system of such magnitude running on the blockchain can only be playable or fun if there is a secure way of generating verifiable randomness. One of the most important elements of RPG's or videogames in general are contingencies and random events or outcomes. Without them, everything will be deterministic (most specifically for blockchain) and prone to exploits. Moreover, its not fun.
+
+Thanks to Chainlink Oracle Services for providing us a secure, easy and relatively cost-efficient way of generating randomness. Now games are viable to be played on the blockchain!
+
+Playing Random Clash is free! To start clashing and clanking, you can mint a free NFT character <here>.
+
+
+
