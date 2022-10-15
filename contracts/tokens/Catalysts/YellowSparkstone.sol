@@ -623,8 +623,8 @@ abstract contract ERC20Burnable is Context, ERC20 {
 
 pragma solidity ^0.8.4;
 
-contract BlackSparkstone is ERC20, ERC20Burnable, Ownable {
-    constructor() ERC20("Catalyst Black Sparkstone", " bSPARK") {
+contract YellowSparkstone is ERC20, ERC20Burnable, Ownable {
+    constructor() ERC20("Catalyst Yellow Sparkstone", " ySPARK") {
         mint(msg.sender, 100 * 10 ** decimals());
     }
 

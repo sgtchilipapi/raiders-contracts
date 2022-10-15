@@ -14,7 +14,7 @@ async function main() {
   const thump = await deployERC20("ThumpIron")
   const clink = await deployERC20("ClinkGlass")
   const snap = await deployERC20("SnapLink")
-  const black = await deployERC20("BlackSparkstone")
+  const black = await deployERC20("YellowSparkstone")
   const white = await deployERC20("WhiteSparkstone")
   const red = await deployERC20("RedSparkstone")
   const blue = await deployERC20("BlueSparkstone")

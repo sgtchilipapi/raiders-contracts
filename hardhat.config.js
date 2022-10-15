@@ -15,6 +15,10 @@ module.exports = {
     polygon: {
       url: "https://polygon-rpc.com/",
       accounts: [`0x${process.env.DEPLOYER_KEY}`]
+    },
+    mumbai: {
+      url: "https://rpc.ankr.com/polygon_mumbai",
+      accounts: [`0x${process.env.DEPLOYER_KEY}`]
     }
   },
   solidity: {

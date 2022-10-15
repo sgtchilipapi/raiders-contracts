@@ -32,7 +32,7 @@ You can choose a character from 6 different classes:
 
     Trolls:
 
-    Steam Engineer:
+    Mechanic:
 
     Amphibian:
 
@@ -48,6 +48,27 @@ Each character has a set of 3 attributes:
     DEX:
 
 # Items & Equipment Crafting Guide
+Crafting materials:
+
+BoomSteel ($BOOM!)
+
+ThumpIron ($THUMP!)
+
+ClinkGlass ($CLINK!)
+
+SnapLink ($SNAP!)
+
+
+Crafting catalysts:
+
+Yellow Sparkstone ($ySPARK)
+
+White Sparkstone ($wSPARK)
+
+Red Sparkstone ($rSPARK)
+
+Blue Sparkstone ($bSPARK)
+
 
 # Battle Guide
 
@@ -58,7 +79,7 @@ In-game items are crafting materials (ERC20 tokens) that can be earned either th
 
 Materials such as $BOOM!, $THUMP!, $CLINK! and $SNAP! can only be earned in dungeons when defeating enemy monsters.
 
-Catalysts such as $bSPARK, $wSPARK, $rSPARK, $wSPARK can only be obtained by providing liquidity in the BOOM!-CLANK!, THUMP!-CLANK!, CLINK!-CLANK!, and SNAP!-CLANK! pairs respectively and exchanging the LP tokens with the catalysts in our own custom contract for that.
+Catalysts such as $ySPARK, $wSPARK, $rSPARK, $bSPARK can only be obtained by providing liquidity in the BOOM!-CLANK!, THUMP!-CLANK!, CLINK!-CLANK!, and SNAP!-CLANK! pairs respectively and exchanging the LP tokens with the catalysts in our own custom contract for that.
 
 
 
