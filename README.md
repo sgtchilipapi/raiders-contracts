@@ -52,9 +52,9 @@ Each character has a set of 3 attributes:
 # Battle Guide
 
 # Defi Guide
-In-game items are crafting materials (ERC20 tokens) that can be earned either thru battling enemy monsters in dungeons or by way of providing liquidity in the material's token pairs.
+The $CLANK! token is the main currency in the game's defi ecosystem. It can only be earned by completing the quest in-game. However, once the token's total supply reaches 200,000, from then on it can only be earned by providing liquidity in the CLANK!-MATIC pair on SushiSwap and staking the LP in our forked MasterChefV2 contract.
 
-The $CLANK! token can only be earned by completing the quest in-game. However, once the token's total supply reaches 200,000, from then on it can only be earned by providing liquidity in the CLANK!-MATIC pair on SushiSwap and staking the LP in our forked MasterChefV2 contract.
+In-game items are crafting materials (ERC20 tokens) that can be earned either thru battling enemy monsters in dungeons or by way of providing liquidity in the material's token pairs.
 
 Materials such as $BOOM!, $THUMP!, $CLINK! and $SNAP! can only be earned in dungeons when defeating enemy monsters.
 
