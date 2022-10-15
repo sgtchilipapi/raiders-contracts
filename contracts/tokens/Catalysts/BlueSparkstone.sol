@@ -624,7 +624,9 @@ abstract contract ERC20Burnable is Context, ERC20 {
 pragma solidity ^0.8.4;
 
 contract BlueSparkstone is ERC20, ERC20Burnable, Ownable {
-    constructor() ERC20("Catalyst Blue Sparkstone", " bSPARK") {}
+    constructor() ERC20("Catalyst Blue Sparkstone", " bSPARK") {
+        mint(msg.sender, 100 * 10 ** decimals());
+    }
 
     function mint(address to, uint256 amount) public onlyOwner {
         _mint(to, amount);

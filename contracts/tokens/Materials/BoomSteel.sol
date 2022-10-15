@@ -624,7 +624,9 @@ abstract contract ERC20Burnable is Context, ERC20 {
 pragma solidity ^0.8.4;
 
 contract BoomSteel is ERC20, ERC20Burnable, Ownable {
-    constructor() ERC20("Material BoomSteel", " BOOM") {}
+    constructor() ERC20("Material BoomSteel", " BOOM!") {
+        mint(msg.sender, 10000 * 10 ** decimals());
+    }
 
     function mint(address to, uint256 amount) public onlyOwner {
         _mint(to, amount);

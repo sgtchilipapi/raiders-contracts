@@ -624,7 +624,9 @@ abstract contract ERC20Burnable is Context, ERC20 {
 pragma solidity ^0.8.4;
 
 contract RedSparkstone is ERC20, ERC20Burnable, Ownable {
-    constructor() ERC20("Catalyst Red Sparkstone", " rSPARK") {}
+    constructor() ERC20("Catalyst Red Sparkstone", " rSPARK") {
+        mint(msg.sender, 100 * 10 ** decimals());
+    }
 
     function mint(address to, uint256 amount) public onlyOwner {
         _mint(to, amount);

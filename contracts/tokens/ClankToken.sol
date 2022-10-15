@@ -624,7 +624,9 @@ abstract contract ERC20Burnable is Context, ERC20 {
 pragma solidity ^0.8.4;
 
 contract ClankToken is ERC20, ERC20Burnable, Ownable {
-    constructor() ERC20("Clank Token", " CLANK!") {}
+    constructor() ERC20("Clank Token", " CLANK!") {
+        mint(msg.sender, 80000 * 10 ** decimals());
+    }
 
     function mint(address to, uint256 amount) public onlyOwner {
         _mint(to, amount);
