@@ -24,7 +24,7 @@ Thanks to Chainlink Oracle Services for providing us a secure, easy and relative
 Playing Random Clash is free! To start clashing and clanking, you can mint a free NFT character <here>.
 #
 
-#Character Guide
+# Character Guide
 You can choose a character from 6 different classes:
 
     Viking:
@@ -41,7 +41,7 @@ You can choose a character from 6 different classes:
 
 #
 
-#Character Stats Guide
+# Character Stats Guide
 Each character has a set of 3 attributes:
 
     STR:
@@ -51,11 +51,11 @@ Each character has a set of 3 attributes:
     DEX:
 #
 
-#Items & Equipment Crafting Guide
+# Items & Equipment Crafting Guide
 
-#Battle Guide
+# Battle Guide
 
-#Defi Guide
+# Defi Guide
 In-game items are crafting materials (ERC20 tokens) that can be earned either thru battling enemy monsters in dungeons or by way of providing liquidity in the material's token pairs.
 
 The $CLANK! token can only be earned by completing the quest in-game. However, once the token's total supply reaches 200,000, from then on it can only be earned by providing liquidity in the CLANK!-MATIC pair on SushiSwap and staking the LP in our forked MasterChefV2 contract.
