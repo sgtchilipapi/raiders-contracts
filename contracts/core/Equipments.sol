@@ -13,6 +13,7 @@ import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Burnable.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "../utils/Counters.sol";
 import "../libraries/StructLibrary.sol";
+import "../libraries/materials/EquipmentLibrary.sol";
 
 contract Equipments is ERC721, ERC721Enumerable, ERC721URIStorage, ERC721Burnable, Ownable {
     using Counters for Counters.Counter;
@@ -57,6 +58,22 @@ contract Equipments is ERC721, ERC721Enumerable, ERC721URIStorage, ERC721Burnabl
         _;
     }
 
+    ///@notice Instead of storing the tokenURI using setTokenURI, we are constructing it as it is being queried.
+    function tokenURI(uint256 tokenId)
+        public
+        view
+        virtual
+        override(ERC721, ERC721URIStorage)
+        returns (string memory tokenURIString)
+    {
+        require(
+            super._exists(tokenId),
+            "ERC721URIStorage: URI query for nonexistent token"
+        );
+        equipment_properties memory _equipment = equipment[tokenId];
+        equipment_details memory _details = EquipmentLibrary.getEquipment(_equipment);
+    }
+
     // The following functions are overrides required by Solidity.
     function _beforeTokenTransfer(address from, address to, uint256 tokenId)
         internal
@@ -67,15 +84,6 @@ contract Equipments is ERC721, ERC721Enumerable, ERC721URIStorage, ERC721Burnabl
 
     function _burn(uint256 tokenId) internal override(ERC721, ERC721URIStorage) {
         super._burn(tokenId);
-    }
-
-    function tokenURI(uint256 tokenId)
-        public
-        view
-        override(ERC721, ERC721URIStorage)
-        returns (string memory)
-    {
-        return super.tokenURI(tokenId);
     }
 
     function supportsInterface(bytes4 interfaceId)
