@@ -1,4 +1,5 @@
 require("@nomicfoundation/hardhat-toolbox");
+require("@nomiclabs/hardhat-etherscan");
 require('dotenv').config()
 
 /** @type import('hardhat/config').HardhatUserConfig */
@@ -20,6 +21,10 @@ module.exports = {
       url: "https://rpc.ankr.com/polygon_mumbai",
       accounts: [`0x${process.env.DEPLOYER_KEY}`]
     }
+  },
+  etherscan: {
+    //For polygon mainnet and testnet
+    apiKey: "TSEATXAVPD9QZZNA77KJ95T2Y6YGSUK1W4"
   },
   solidity: {
     compilers: [

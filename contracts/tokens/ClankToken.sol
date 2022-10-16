@@ -624,11 +624,35 @@ abstract contract ERC20Burnable is Context, ERC20 {
 pragma solidity ^0.8.4;
 
 contract ClankToken is ERC20, ERC20Burnable, Ownable {
+
+    address questContract;
+    bool questOver;
     constructor() ERC20("Clank Token", " CLANK!") {
         mint(msg.sender, 80000 * 10 ** decimals());
     }
 
+    ///@notice Can only be called by the owner, which is set to be the MasterChefV2 contract.
     function mint(address to, uint256 amount) public onlyOwner {
         _mint(to, amount);
+    }
+
+    ///@notice Can only be called by the game walkthrough quest contract but only for the 1st 200,000 token supply (including the 80k allocated as initial liquidity).
+    ///After which, the tokens can only be emitted thru the MasterChefV2 contract.
+    function mintFromQuest(address to, uint256 amount) public onlyQuest {
+        if(questOver == false){
+            _mint(to, amount);
+            if(totalSupply() >= (200000 * 10 ** decimals())){
+                questOver = true; 
+            }
+        }
+    }
+
+    function setQuestContract(address _questContract) public onlyOwner {
+        questContract = _questContract;
+    }
+
+    modifier onlyQuest {
+        require(msg.sender == questContract);
+        _;
     }
 }

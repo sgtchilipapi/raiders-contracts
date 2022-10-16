@@ -1,91 +1,134 @@
-//SPDX-License-Identifier: MIT
-/**
-    @title Equipment
-    @author Eman "Sgt"
-    @notice: NFT Contract for items equippable to characters. Originally created for CHAINLINK HACKATHON FALL 2022
-*/
-pragma solidity =0.8.17;
+///SPDX-License-Identifier:MIT
 
-import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
-import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
-import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
-import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Burnable.sol";
+pragma solidity ^0.8.7;
+
+import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Burnable.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
-import "../utils/Counters.sol";
 import "../utils/BreakdownUint256.sol";
+import "../libraries/equipment/CraftingRecipes.sol";
+import "../libraries/materials/MaterialsAddresses.sol";
 import "../libraries/StructLibrary.sol";
+
 interface _RandomizationContract {
-    function requestRandomWords(uint32 numWords) external returns (uint256 s_requestId);
-    function randomNumber(uint256) external view returns(uint256[] memory);
+    function requestRandomWords(uint32 numWords, address user) external returns (uint256 requestId);
+    function getRequestStatus(uint256 _requestId) external view returns(bool fulfilled, uint256[] memory randomWords);
 }
 
 interface _EquipmentLibrary {
     function getEquipmentDetails(uint256 _type, uint256 _rarity, uint256 _dominant_stat, uint256 extremity) external returns (equipment_details memory);
 }
 
-contract Equipments is ERC721, ERC721Enumerable, ERC721URIStorage, ERC721Burnable, Ownable {
-    using Counters for Counters.Counter;
+interface _Equipments {
+    function _mintEquipment(equipment_properties memory equipment_props, equipment_stats memory _equipment_stats) external;
+}
+
+contract EquipmentMinter is Ownable{
+    ///The randomization contract for generating random numbers for mint
     _RandomizationContract randomizer;
+    _Equipments equipmentsNft;
 
     ///The beneficiary of the msg.value being sent to the contract for every mint request.
     address vrf_refunder;
 
-    ///The randomization contract for generating random numbers for mint
-    address randomizationContract;
-
-    Counters.Counter private equipment_ids;
-
     ///Map out a user's address to its equipment crafting request (if any) {request_id, equipment_type, number_of_items}. If none, the request_id == 0.
     mapping (address => equipment_request) public request;
-
-    ///Map out a specific equipment NFT id to its properties {equipment_type, dominant_stat, rarity, extremity}
-    mapping (uint256 => equipment_properties) public equipment;
-
-    ///Map out a specific equipment NFT id to its stats {atk, def, eva, ...}
-    mapping (uint256 => equipment_stats) public stats;
-
+    
     event EquipmentRequested(address indexed player_address, equipment_request request);
-    event EquipmentMinted(uint256 indexed equipment_id, equipment_properties equipment_props);
-
-    constructor(address _randomizationContract) ERC721("Characters", "CTRS") {
+    constructor(address equipmentsNftAddress){
+        equipmentsNft = _Equipments(equipmentsNftAddress);
         vrf_refunder = msg.sender;
-        randomizer = _RandomizationContract(_randomizationContract);
     }
 
-    ///This function requests n random number/s from the VRF contract to be consumed with the mint.
-    function requestEquipment(uint64 _equipment_type, uint32 items) public payable{
+    ///@notice This function requests n random number/s from the VRF contract to be consumed with the mint.
+    function requestEquipment(uint64 _equipment_type, uint32 item_count) public payable{
+        ///We can only allow one request per address at a time. A request shall be completed (minted the equipment) to be able request another one.
+        equipment_request memory _request = request[msg.sender];
+        require(_request.request_id == 0, "EQPTS: There is a request pending mint.");
+
         ///Equipment/Items can only be weapon, armor, helm, accessory, and consumable. 0-4
         require(_equipment_type < 5, "EQPTS: Incorrect number for an equipment type.");
         
         ///Restrict number of mints to below 6 to avoid insufficient gas errors and accidental requests for very large number of mints.
-        require(items > 0 && items < 6, "EQPTS: Can only request to mint 1 to 5 items at a time.");
+        require(item_count > 0 && item_count < 6, "EQPTS: Can only request to mint 1 to 5 items at a time.");
         
         ///The MATIC being received is not payment for the NFT but rather to simply replenish the VRF subscribtion's funds and also serves as an effective anti-spam measure as well.
-        require(msg.value == (items * 30000000 gwei), "EQPTS: Incorrect amount for equipment minting. Send exactly 0.03 MATIC per item requested.");
+        require(msg.value == (item_count * 30000000 gwei), "EQPTS: Incorrect amount for equipment minting. Send exactly 0.03 MATIC per item requested.");
         
         ///EXTCALL to VRF contract. Set the caller's current equipment_request to the returned request_id by the VRF contract.
         request[msg.sender] = equipment_request({
-            request_id: randomizer.requestRandomWords(items),
+            request_id: randomizer.requestRandomWords(item_count, msg.sender),
             equipment_type: _equipment_type,
-            number_of_items: items
+            number_of_items: item_count
         });
         
         emit EquipmentRequested(msg.sender, request[msg.sender]);
     }
 
+    ///@notice This function will get the recipe for the equipment to be crafted and will check the token balances of the user for 
+    ///each material required. If enough balance is determined, proceed to burn the amounts from the user's token balances.
+    function getEquipmentRequirements(uint256 equipment_type, uint256 item_count) internal returns (bool enough){
+        ///We will assume at first that the user has enough balances for the materials required. Then we will check each materials
+        ///one by one. If we determine that the user in fact DOES NOT have enough balance in any one of the materials, then we will
+        ///set this to false and the transaction will revert.
+        enough = true;
+
+        ///We determine the recipe by equipment type.
+        item_recipe memory recipe = CraftingRecipes.getRecipe(equipment_type);
+
+        ///Determine the total amounts required. The `getRecipe()` from the library CraftingRecipes returns the amount required for
+        ///only one piece of equipment to be crafted. So we multiply the respective amounts by the number of equipment the user has
+        ///chosen to mint.
+        recipe.main_material_amount = recipe.main_material_amount * item_count;
+        recipe.indirect_material_amount = recipe.indirect_material_amount * item_count;
+        recipe.catalyst_amount = recipe.catalyst_amount * item_count;
+
+        ///We fetch the balances of the user for the required materials and also the corresponding contract instance.
+        (uint256 main_material_balance, ERC20Burnable main_material_contract) = checkMaterialBalance(recipe.main_material);
+        (uint256 indirect_material_balance, ERC20Burnable indirect_material_contract) = checkMaterialBalance(recipe.indirect_material);
+        (uint256 catalyst_balance, ERC20Burnable catalyst_contract) = checkCatalystBalance(recipe.catalyst);
+
+        ///We compare the user's token balances with the required amounts.
+        if(main_material_balance < recipe.main_material_amount){enough = false;}
+        if(indirect_material_balance < recipe.indirect_material_amount){enough = false;}
+        if(catalyst_balance < recipe.catalyst_amount){enough = false;}
+
+        ///If the user's token balances are indeed enough for the required materials, we then burn it from the user's balance.
+        ///Make sure to prompt the user to set enough token allowances before initiating an equipment request transaction.
+        if(enough == true){
+            main_material_contract.burnFrom(msg.sender, recipe.main_material_amount);
+            indirect_material_contract.burnFrom(msg.sender, recipe.indirect_material_amount);
+            catalyst_contract.burnFrom(msg.sender, recipe.catalyst_amount);
+        }
+    }
+
+    ///@notice This function checks the user's balance and returns the corresponding token contract instance.
+    function checkMaterialBalance(uint256 material_index) internal view returns (uint256 balance, ERC20Burnable material_contract){
+            address material_address = MaterialsAddresses.getMaterialAddress(material_index);
+            material_contract = ERC20Burnable(material_address);
+            balance = material_contract.balanceOf(msg.sender);
+    }
+
+    ///@notice This function checks the user's balance and returns the corresponding token contract instance.
+    function checkCatalystBalance(uint256 catalyst_index) internal view returns (uint256 balance, ERC20Burnable catalyst_contract){
+        address catalyst_address = MaterialsAddresses.getCatalystAddress(catalyst_index);
+        catalyst_contract = ERC20Burnable(catalyst_address);
+        balance = catalyst_contract.balanceOf(msg.sender);
+    }
+
     ///Once the random numbers requested has been fulfilled in the VRF contract, this function can be called to complete the mint process.
     function mintEquipments() public {
-        ///Check if the caller has enough materials for the mints.
-
-
         equipment_request memory _request = request[msg.sender];
-        uint256[] memory randomNumberRequested = randomizer.randomNumber(_request.request_id);
+        (bool fulfilled, uint256[] memory randomNumberRequested) = randomizer.getRequestStatus(_request.request_id);
 
         ///Check if there is a pending/fulfilled request previously made by the caller using requestEquipment().
         require(_request.request_id > 0, "EQPTS: No request to mint.");
 
         ///Verify if the random number request has been indeed fulfilled, revert if not.
-        require(randomNumberRequested.length > 0, "EQPTS: Request is not yet fulfilled or invalid request id.");
+        require(fulfilled, "EQPTS: Request is not yet fulfilled or invalid request id.");
+
+        ///Burn the materials from the user's balance.
+        bool enough = getEquipmentRequirements(_request.equipment_type, _request.number_of_items);
+        require(enough, "EQPTS: Not enough materials for this crafting transaction.");
 
         ///Loop thru the number of items requested to be minted.
         for(uint256 i=0; i < _request.number_of_items; i++){
@@ -99,19 +142,15 @@ contract Equipments is ERC721, ERC721Enumerable, ERC721URIStorage, ERC721Burnabl
         });
     }
 
-    ///This internal function determines the equipment's properties using the random number requested
+
     function mintEquipment(uint256 randomNumberRequested, uint64 equipment_type) internal {
         (equipment_properties memory equipment_props, equipment_stats memory _equipment_stats) = getResult(randomNumberRequested, equipment_type);
-        equipment_ids.increment();
-        equipment[equipment_ids.current()] = equipment_props;
-        stats[equipment_ids.current()] = _equipment_stats;
-        _mint(msg.sender, equipment_ids.current());
-        emit EquipmentMinted(equipment_ids.current(), equipment[equipment_ids.current()]);
+        equipmentsNft._mintEquipment(equipment_props, _equipment_stats);
     }
 
     function getResult(uint256 randomNumber, uint64 _equipment_type) internal pure returns (equipment_properties memory equipment_props, equipment_stats memory _equipment_stats){
         ///To save on LINK tokens for our VRF contract, we are breaking a single random word into 16 uint16s.
-        ///The reason for this is we will need a lot of random numbers for a single equipment mint.
+        ///The reason for this is we will need a lot(9) of random numbers for a single equipment mint.
         ///It is given that the chainlink VRF generates verifiable, truly random numbers that it is safe to assume that breaking this
         ///truly random number poses no exploitable risk as far as the mint is concerned.
         ///However, there is a theoretical risk that the VRF generates a number with an extremely low number so that the first few uint16s would
@@ -122,11 +161,11 @@ contract Equipments is ERC721, ERC721Enumerable, ERC721URIStorage, ERC721Burnabl
 
         ///Get the rarity of the equipment using the last item in the uint16[]. The rarity also determines how much stat points the equipment has.
         ///The rarer the item, the higher the stat points it holds.
-        (uint64 _rarity, uint32 stat_sum) = getRarity(randomNumbers[16]);
+        (uint64 _rarity, uint32 stat_sum) = getRarity(randomNumbers[15]);
 
         ///Get the stat allocation of the equipment using the next 8 items from the last in the uint16[]. The stat points determined from
         ///rarity of the item from the last function is allocated this way.
-        uint16[8] memory random_stats = [randomNumbers[15], randomNumbers[14], randomNumbers[13], randomNumbers[12], randomNumbers[11], randomNumbers[10], randomNumbers[9], randomNumbers[8]];
+        uint16[8] memory random_stats = [randomNumbers[14], randomNumbers[13], randomNumbers[12], randomNumbers[11], randomNumbers[10], randomNumbers[9], randomNumbers[8], randomNumbers[7]];
         
         ///Here we check what stat {atk, def, eva, ... } the equipment has the highest allocation. This determines the item's dominant stat.
         ///In case of weapons, it determine's the weapon's type (hammer, dagger, bombard,...)
@@ -144,10 +183,10 @@ contract Equipments is ERC721, ERC721Enumerable, ERC721URIStorage, ERC721Burnabl
     function getRarity(uint16 number) internal pure returns (uint64 rarity, uint32 stat_sum){
         uint256 roll_value = number % 1000;
         if(roll_value > 994){rarity = 4; stat_sum = 100;} //.05%
-        if(roll_value > 989 && roll_value < 995){rarity = 3; stat_sum = 50;} //.1%
-        if(roll_value > 959 && roll_value < 990){rarity = 2; stat_sum = 30;} //4%
-        if(roll_value > 799 && roll_value < 960){rarity = 1; stat_sum = 20;} //20%
-        if(roll_value >= 0 && roll_value < 800){rarity = 0; stat_sum = 10;} //75%
+        if(roll_value > 989 && roll_value < 995){rarity = 3; stat_sum = 60;} //.1%
+        if(roll_value > 959 && roll_value < 990){rarity = 2; stat_sum = 40;} //4%
+        if(roll_value > 799 && roll_value < 960){rarity = 1; stat_sum = 25;} //20%
+        if(roll_value >= 0 && roll_value < 800){rarity = 0; stat_sum = 15;} //75%
     }
 
     function getStats(uint16[8] memory random_stats, uint32 stat_sum) internal pure returns (equipment_stats memory _equipment_stats, uint64 dominant_stat, uint64 extremity){
@@ -208,39 +247,9 @@ contract Equipments is ERC721, ERC721Enumerable, ERC721URIStorage, ERC721Burnabl
         if(percentage_allocation > 874 && percentage_allocation < 999){extremity = 8;}
     }
 
-    function isOwner(address _owner, uint256 _equipment) public view returns (bool){
-        return super._isApprovedOrOwner(_owner, _equipment);
-    }
-
-    // The following functions are overrides required by Solidity.
-
-    function _beforeTokenTransfer(address from, address to, uint256 tokenId)
-        internal
-        override(ERC721, ERC721Enumerable)
-    {
-        super._beforeTokenTransfer(from, to, tokenId);
-    }
-
-    function _burn(uint256 tokenId) internal override(ERC721, ERC721URIStorage) {
-        super._burn(tokenId);
-    }
-
-    function tokenURI(uint256 tokenId)
-        public
-        view
-        override(ERC721, ERC721URIStorage)
-        returns (string memory)
-    {
-        return super.tokenURI(tokenId);
-    }
-
-    function supportsInterface(bytes4 interfaceId)
-        public
-        view
-        override(ERC721, ERC721Enumerable)
-        returns (bool)
-    {
-        return super.supportsInterface(interfaceId);
+    ///@notice Admin Functions
+    function setRandomizationContract(address _vrfContract) public onlyOwner {
+        randomizer = _RandomizationContract(_vrfContract);
     }
 
     function withdraw() public onlyOwner{
@@ -248,4 +257,3 @@ contract Equipments is ERC721, ERC721Enumerable, ERC721URIStorage, ERC721Burnabl
         require(succeed, "Failed to withdraw matics.");
     }
 }
-
