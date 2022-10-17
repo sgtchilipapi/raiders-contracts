@@ -47,19 +47,18 @@ export const testnet_deployments = {
             abi:""
         },
     },
-    vrf:{
-        address: "0x50313F8fcAE792b3d089bd8e8E91fF9b3FB08130",
-        abi: ''
-    },
     equipment:{
         nftContract:{
-            address: "0x46CA8323A3a16B58a0A6E2ebB23D74DFB83De6b3",
+            address: "0xe85D97B6896d01b214aa136D87178AfFBB8ecEe0",
             abi:''
         },
         minter:{
-            address: "0x816059c8BeF043df74786432FD4622A90C427A2f",
+            address: "0xA6ba213A32716B3B2274390Fb0707650ab08A36a",
             abi:''
+        },
+        vrf:{
+            address: "0xae6FB2655dFE926417d78AbBD309F0B9B20520A5",
+            abi: ''
         }
-        
     }
 }

@@ -11,6 +11,7 @@ import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Burnable.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts/utils/Base64.sol";
 import "../utils/Counters.sol";
 import "../libraries/StructLibrary.sol";
 import "../libraries/materials/EquipmentLibrary.sol";
@@ -39,11 +40,11 @@ contract Equipments is ERC721, ERC721Enumerable, ERC721URIStorage, ERC721Burnabl
 
     ///@notice This function mints the equipment requested and maps out its properties and stats.
     ///Can only be called by the designated minter.
-    function _mintEquipment(equipment_properties memory equipment_props, equipment_stats memory _equipment_stats) external onlyMinter {
+    function _mintEquipment(address user, equipment_properties memory equipment_props, equipment_stats memory _equipment_stats) external onlyMinter {
         equipment_ids.increment();
         equipment[equipment_ids.current()] = equipment_props;
         stats[equipment_ids.current()] = _equipment_stats;
-        _mint(msg.sender, equipment_ids.current());
+        _mint(user, equipment_ids.current());
         emit EquipmentMinted(equipment_ids.current(), equipment[equipment_ids.current()]);
     }
 
@@ -59,6 +60,7 @@ contract Equipments is ERC721, ERC721Enumerable, ERC721URIStorage, ERC721Burnabl
     }
 
     ///@notice Instead of storing the tokenURI using setTokenURI, we are constructing it as it is being queried.
+    ///The reason for this is to save up on mints as it is done by our VRF's fulfillRandomWords()
     function tokenURI(uint256 tokenId)
         public
         view
@@ -72,6 +74,26 @@ contract Equipments is ERC721, ERC721Enumerable, ERC721URIStorage, ERC721Burnabl
         );
         equipment_properties memory _equipment = equipment[tokenId];
         equipment_details memory _details = EquipmentLibrary.getEquipment(_equipment);
+        tokenURIString = encodeStrings(_details);
+    }
+
+    ///@notice Encodes the strings into a JSON string
+    function encodeStrings(equipment_details memory _details) internal pure returns (string memory uriJSON){
+        uriJSON = string(
+            abi.encodePacked(
+            "data:application/json;base64,",
+                Base64.encode(
+                    bytes(
+                        abi.encodePacked(
+                            '{"description": "RandomClash Equipment", "image": "',
+                            _details.image,'", "name": "', _details.name, '", "attributes": [',
+                            '{"trait_type": "equipment_type", "value": "',_details.type_tag,'"}, {"trait_type": "rarity", "value": "',_details.rarity_tag,'"}, {"trait_type": "aptitude", "value": "',_details.dominant_stat_tag,'"}, {"trait_type": "extremity", "value": "',_details.extremity_tag,
+                            '"}]}'
+                        )
+                    )
+                )
+            )
+        );
     }
 
     // The following functions are overrides required by Solidity.

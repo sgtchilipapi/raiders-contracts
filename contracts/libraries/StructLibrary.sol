@@ -74,8 +74,12 @@ struct equipment_request { //SSTORED
 }
 
 struct equipment_details {
-    string name;
-    string image;
+    bytes name;
+    bytes image;
+    bytes type_tag;
+    bytes rarity_tag;
+    bytes dominant_stat_tag;
+    bytes extremity_tag;
 }
 
 struct equipment_properties { //SSTORED

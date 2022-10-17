@@ -15,8 +15,9 @@ async function main() {
     ///For mumbai testnet
     const eqpts = await deployEquipments("Equipments")
     const minter = await deployMinter("EquipmentMinter")
+    const vrf = await deploySubscriptionVRF("VRFv2EquipmentCrafting", 2229, "0x7a1BaC17Ccc5b313516C5E16fb24f7659aA5ebed", "0x4b09e658ed251bcafeebbc69400383d49f344ace09b9576fe248bb02c003fe9f", minter.address)
     const setMinterTx = await setMinter(eqpts, minter)
-    const setVrfTx = await setVrf(minter, "")
+    const setVrfTx = await setVrf(minter, vrf.address)
 
     async function deployEquipments(contractName) {
         const Equipments = await ethers.getContractFactory(contractName)
@@ -32,6 +33,14 @@ async function main() {
         await equipmentMinter.deployed()
         console.log(`EquipmentMinter deployed at: ${equipmentMinter.address}`)
         return equipmentMinter
+    }
+
+    async function deploySubscriptionVRF(contractName, subscription, coordinator, keyhash, ownerContract) {
+        const VRF = await ethers.getContractFactory(contractName)
+        const vrf = await VRF.deploy(subscription, coordinator, keyhash, ownerContract)
+        await vrf.deployed()
+        console.log(`VRF deployed at: ${vrf.address}`)
+        return vrf
     }
 
     async function setMinter(eqpts, minter){
