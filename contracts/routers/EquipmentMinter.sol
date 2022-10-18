@@ -45,14 +45,13 @@ contract EquipmentMinter is Ownable{
     mapping (address => equipment_request) public request;
     
     event EquipmentRequested(address indexed player_address, equipment_request request);
-    event testRollValues(uint256[8] roll_values_check);
     constructor(address equipmentsNftAddress){
         equipmentsNft = _Equipments(equipmentsNftAddress);
         vrf_refunder = msg.sender;
     }
 
     ///@notice This function requests n random number/s from the VRF contract to be consumed with the mint.
-    function requestEquipment(uint64 _equipment_type , uint32 item_count) public payable{
+    function requestEquipment(uint64 _equipment_type , uint256 item_count) public payable{
         ///We can only allow one request per address at a time. A request shall be completed (minted the equipment) to be able request another one.
         equipment_request memory _request = request[msg.sender];
         require(_request.request_id == 0, "EQPTS: There is a request pending mint.");
@@ -63,7 +62,7 @@ contract EquipmentMinter is Ownable{
         ///The MATIC being received is not payment for the NFT but rather to simply replenish the VRF subscribtion's funds and also serves as an effective anti-spam measure as well.
         ///Restrict number of mints to below 4 to avoid insufficient gas errors and accidental requests for very large number of mints.
         require(item_count > 0 && item_count < 4, "EQPTS: Can only request to mint 1 to 3 items at a time.");
-        require(msg.value >= (item_count * 10000000 gwei), "EQPTS: Incorrect amount for equipment minting. Send exactly 0.05 MATIC per item requested.");
+        require(msg.value >= (item_count * 50000000 gwei), "EQPTS: Incorrect amount for equipment minting. Send exactly 0.05 MATIC per item requested.");
         
         ///Burn the materials from the user's balance.
         bool enough = getEquipmentRequirements(_equipment_type, item_count);
@@ -72,9 +71,9 @@ contract EquipmentMinter is Ownable{
         ///@notice EXTCALL to VRF contract. Set the caller's current equipment_request to the returned request_id by the VRF contract.
         ///The bool argument here notifies the vrf contract that the request being sent is NOT experimental.
         request[msg.sender] = equipment_request({
-            request_id: randomizer.requestRandomWords(item_count, msg.sender, false),
+            request_id: randomizer.requestRandomWords(uint32(item_count), msg.sender, false),
             equipment_type: _equipment_type,
-            number_of_items: item_count,
+            number_of_items: uint32(item_count),
             time_requested: block.timestamp
         });
         
@@ -85,11 +84,9 @@ contract EquipmentMinter is Ownable{
     ///fulfilled, the VRF (automatically) mints the NFT within the same transaction as the fulfillment.
     ///@notice This function requests n random number/s from the VRF contract to be consumed with the mint.
     function requestEquipmentExperimental(uint64 _equipment_type /**, uint32 item_count */) public payable{
-        ///@notice We are removing the immediate following requirement since we have shifted the minting responsibility to the VRF.
-        ///When the fulfillRandomWords() is executed, there is no more need to check if the request has been fulfilled.
-            ///We can only allow one request per address at a time. A request shall be completed (minted the equipment) to be able request another one.
-            // equipment_request memory _request = request[msg.sender];
-            // require(_request.request_id == 0, "EQPTS: There is a request pending mint.");
+        ///We can only allow one request per address at a time. A request shall be completed (minted the equipment) to be able request another one.
+        equipment_request memory _request = request[msg.sender];
+        require(_request.request_id == 0, "EQPTS: There is a request pending mint.");
 
         ///Equipment/Items can only be weapon, armor, helm, accessory, and consumable. 0-4
         require(_equipment_type < 5, "EQPTS: Incorrect number for an equipment type.");
@@ -101,7 +98,7 @@ contract EquipmentMinter is Ownable{
         ///desired number of mints per transaction.
             ///Restrict number of mints to below 6 to avoid insufficient gas errors and accidental requests for very large number of mints.
             // require(item_count > 0 && item_count < 4, "EQPTS: Can only request to mint 1 to 3 items at a time.");
-        require(msg.value >= (/**item_count */ 0 * 50000000 gwei), "EQPTS: Incorrect amount for equipment minting. Send exactly 0.05 MATIC per item requested.");
+        require(msg.value >= (/**item_count */ 1 * 50000000 gwei), "EQPTS: Incorrect amount for equipment minting. Send exactly 0.05 MATIC per item requested.");
         
         ///Burn the materials from the user's balance.
         ///Using a constant 1. See above reason on line 57 (unwrapped).
@@ -189,8 +186,8 @@ contract EquipmentMinter is Ownable{
 
     ///Once the random numbers requested has been fulfilled in the VRF contract, this function shall be called by the user
     ///to complete the mint process.
-    function mintEquipments(address user) public onlyVRF{
-        equipment_request memory _request = request[user];
+    function mintEquipments() public{
+        equipment_request memory _request = request[msg.sender];
         (bool fulfilled, uint256[] memory randomNumberRequested) = randomizer.getRequestStatus(_request.request_id);
 
         ///Check if there is a pending/fulfilled request previously made by the caller using requestEquipment().
@@ -201,10 +198,10 @@ contract EquipmentMinter is Ownable{
 
         ///Loop thru the number of items requested to be minted.
         for(uint256 i=0; i < _request.number_of_items; i++){
-            mintEquipment(user, randomNumberRequested[i], _request.equipment_type);
+            mintEquipment(msg.sender, randomNumberRequested[i], _request.equipment_type);
         }
         ///Reset the sender's request property values to 0
-        request[user] = equipment_request({
+        request[msg.sender] = equipment_request({
             request_id: 0,
             equipment_type: 0,
             number_of_items: 0,
@@ -249,7 +246,7 @@ contract EquipmentMinter is Ownable{
         equipmentsNft._mintEquipment(user, equipment_props, _equipment_stats);
     }
 
-    function getResult(uint256 randomNumber, uint64 _equipment_type) internal /**pure*/ returns (equipment_properties memory equipment_props, equipment_stats memory _equipment_stats){
+    function getResult(uint256 randomNumber, uint64 _equipment_type) internal pure returns (equipment_properties memory equipment_props, equipment_stats memory _equipment_stats){
         ///To save on LINK tokens for our VRF contract, we are breaking a single random word into 16 uint16s.
         ///The reason for this is we will need a lot(9) of random numbers for a single equipment mint.
         ///It is given that the chainlink VRF generates verifiable, truly random numbers that it is safe to assume that breaking this
@@ -290,7 +287,7 @@ contract EquipmentMinter is Ownable{
         if(roll_value >= 0 && roll_value <= 748){rarity = 0; stat_sum = 15;} //75%
     }
 
-    function getStats(uint16[8] memory random_stats, uint256 stat_sum) internal /**pure*/ returns (equipment_stats memory _equipment_stats, uint64 dominant_stat, uint64 extremity){
+    function getStats(uint16[8] memory random_stats, uint256 stat_sum) internal pure returns (equipment_stats memory _equipment_stats, uint64 dominant_stat, uint64 extremity){
         uint256 total_roll_value;
         uint256 dominant_roll_value;
         uint256[8] memory roll_values;
@@ -317,7 +314,6 @@ contract EquipmentMinter is Ownable{
 
         (dominant_stat, dominant_roll_value)  = getDominantStat(roll_values);
         extremity = getExtremity(dominant_roll_value, total_roll_value);
-        emit testRollValues(roll_values);
     }
 
     function getDominantStat(uint256[8] memory roll_values) internal pure returns (uint64 dominant_stat, uint256 dominant_roll_value){

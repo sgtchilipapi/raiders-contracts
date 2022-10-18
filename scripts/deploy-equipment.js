@@ -15,9 +15,11 @@ async function main() {
     ///For mumbai testnet
     const eqpts = await deployEquipments("Equipments")
     const minter = await deployMinter("EquipmentMinter")
+    // const minter = {address: "0x00b3019DcE6bafA09A6a7E1f4103e7a143bfA81a"}
     const vrf = await deploySubscriptionVRF("VRFv2EquipmentCrafting", 2229, "0x7a1BaC17Ccc5b313516C5E16fb24f7659aA5ebed", "0x4b09e658ed251bcafeebbc69400383d49f344ace09b9576fe248bb02c003fe9f", minter.address)
     const setMinterTx = await setMinter(eqpts, minter)
     const setVrfTx = await setVrf(minter, vrf.address)
+    const addConsumer = await addVrfConsumer("VRFCoordinatorV2", 2229, "0x7a1BaC17Ccc5b313516C5E16fb24f7659aA5ebed", vrf.address)
 
     async function deployEquipments(contractName) {
         const Equipments = await ethers.getContractFactory(contractName)
@@ -55,6 +57,15 @@ async function main() {
         await set.wait()
         console.log(`VRF contract has been successfuly set!`)
         return set
+    }
+
+    async function addVrfConsumer(contractName, subscriptionId, coordinatorAddress, vrfAddress){
+        const VRFCoordinatorV2 = await ethers.getContractFactory(contractName)
+        const vrfCoordinator = VRFCoordinatorV2.attach(coordinatorAddress)
+        const addTx = await vrfCoordinator.addConsumer(subscriptionId, vrfAddress)
+        await addTx.wait()
+        console.log(`VRF Consumer has been successfuly added!`)
+        return addTx
     }
 }
 
