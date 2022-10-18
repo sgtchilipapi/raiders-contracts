@@ -31,24 +31,6 @@ library EquipmentLibrary {
         });
     }
 
-    /**
-    {
-        "description": "Friendly OpenSea Creature that enjoys long swims in the ocean.", 
-        "external_url": "https://openseacreatures.io/3", 
-        "image": "https://storage.googleapis.com/opensea-prod.appspot.com/puffs/3.png", 
-        "name": "Dave Starbelly",
-        "attributes": [ ... ], 
-    }
-
-    {
-        "attributes": [
-            {
-            "trait_type": "Base", 
-            "value": "Starfish"
-            },
-        ] 
-     */
-
     function getEquipmentType(uint256 equipment_type, uint256 dominant_stat) internal pure returns (bytes memory type_tag, bytes memory type_image){
         if(equipment_type == 0){type_tag = "Helm "; type_image = "HELMS/";}
         if(equipment_type == 1){type_tag = "Armor "; type_image = "ARMORS/";}
@@ -65,15 +47,14 @@ library EquipmentLibrary {
     }
 
     function getExtremityTag(uint256 extremity) internal pure returns (bytes memory extremity_tag){
-        if(extremity == 0){extremity_tag = "Weak ";}
-        if(extremity == 1){extremity_tag = "Minor ";}
-        if(extremity == 2){extremity_tag = "Good ";}
-        if(extremity == 3){extremity_tag = "Great ";}
-        if(extremity == 4){extremity_tag = "Intense ";}
-        if(extremity == 5){extremity_tag = "Extraordinary ";}
-        if(extremity == 6){extremity_tag = "Ethereal ";}
-        if(extremity == 7){extremity_tag = "Astronomical ";}
-        if(extremity == 8){extremity_tag = "Divine ";}
+        if(extremity == 0){extremity_tag = "Minor ";}
+        if(extremity == 1){extremity_tag = "Good ";}
+        if(extremity == 2){extremity_tag = "Great ";}
+        if(extremity == 3){extremity_tag = "Intense ";}
+        if(extremity == 4){extremity_tag = "Extraordinary ";}
+        if(extremity == 5){extremity_tag = "Ethereal ";}
+        if(extremity == 6){extremity_tag = "Astronomical ";}
+        if(extremity == 7){extremity_tag = "Divine ";}
     }
 
     function getDominantStatTag(uint256 dominant_stat) internal pure returns (bytes memory dominant_tag, bytes memory dominant_stat_image){

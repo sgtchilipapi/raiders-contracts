@@ -71,6 +71,7 @@ struct equipment_request { //SSTORED
     uint256 request_id;
     uint64 equipment_type;
     uint32 number_of_items;
+    uint256 time_requested;
 }
 
 struct equipment_details {

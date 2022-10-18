@@ -6,7 +6,7 @@ import '@chainlink/contracts/src/v0.8/VRFConsumerBaseV2.sol';
 import '@chainlink/contracts/src/v0.8/ConfirmedOwner.sol';
 
 interface Minter {
-    function mintEquipments(address user) external;
+    function mintEquipments(address user, uint256[] memory randomNumberRequested) external;
 }
 
 contract VRFv2EquipmentCrafting is VRFConsumerBaseV2, ConfirmedOwner {
@@ -54,7 +54,7 @@ contract VRFv2EquipmentCrafting is VRFConsumerBaseV2, ConfirmedOwner {
     // Assumes the subscription is funded sufficiently.
     function requestRandomWords(uint32 numWords, address user)external onlyOwner returns (uint256 requestId) {
         // Will revert if subscription is not set and funded.
-        uint32 callbackGasLimit = 100000 + (numWords * 300000);
+        uint32 callbackGasLimit = 100000 + (numWords * 500000);
         requestId = COORDINATOR.requestRandomWords(
             keyHash,
             s_subscriptionId,
@@ -75,7 +75,7 @@ contract VRFv2EquipmentCrafting is VRFConsumerBaseV2, ConfirmedOwner {
         s_requests[_requestId].fulfilled = true;
         s_requests[_requestId].randomWords = _randomWords;
         ///@notice !!! This is an external call to the minter contract to mint the NFTs for the user.
-        minter.mintEquipments(requestIdToUser[_requestId]);
+        minter.mintEquipments(requestIdToUser[_requestId], _randomWords);
         emit RequestFulfilled(_requestId, _randomWords, requestIdToUser[_requestId]);
     }
 
