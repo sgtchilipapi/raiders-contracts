@@ -10,13 +10,14 @@ interface Minter {
 }
 
 contract VRFv2EquipmentCrafting is VRFConsumerBaseV2, ConfirmedOwner {
-    event RequestSent(uint256 requestId, uint32 numWords, address user);
-    event RequestFulfilled(uint256 requestId, uint256[] randomWords, address user);
+    event RequestSent(uint256 requestId, uint32 numWords, address user, bool experimental);
+    event RequestFulfilled(uint256 requestId, uint256[] randomWords, address user, bool experimental);
 
     struct RequestStatus {
         bool fulfilled; // whether the request has been successfully fulfilled
         bool exists; // whether a requestId exists
         uint256[] randomWords;
+        bool experimental; //whether the contract is going to mint the NFT upon fulfillment
     }
     mapping(uint256 => RequestStatus) public s_requests; /* requestId --> requestStatus */
     
@@ -52,9 +53,17 @@ contract VRFv2EquipmentCrafting is VRFConsumerBaseV2, ConfirmedOwner {
     }
 
     // Assumes the subscription is funded sufficiently.
-    function requestRandomWords(uint32 numWords, address user)external onlyOwner returns (uint256 requestId) {
+    function requestRandomWords(uint32 numWords, address user, bool _experimental)external onlyOwner returns (uint256 requestId) {
         // Will revert if subscription is not set and funded.
-        uint32 callbackGasLimit = 100000 + (numWords * 500000);
+        uint32 callbackGasLimit = 100000;
+
+        ///@notice if the request being set is experimental, we set the callbackGasLimit higher to a safe level to ensure that
+        ///fulfillRandomWords() has enough gas to process the transaction since it will have the responsibility to complete
+        ///the mint transaction.
+        if(_experimental){
+            callbackGasLimit += numWords * 600000;
+        }
+
         requestId = COORDINATOR.requestRandomWords(
             keyHash,
             s_subscriptionId,
@@ -62,11 +71,11 @@ contract VRFv2EquipmentCrafting is VRFConsumerBaseV2, ConfirmedOwner {
             callbackGasLimit,
             numWords
         );
-        s_requests[requestId] = RequestStatus({randomWords: new uint256[](0), exists: true, fulfilled: false});
+        s_requests[requestId] = RequestStatus({randomWords: new uint256[](0), exists: true, fulfilled: false, experimental: _experimental});
         requestIds.push(requestId);
         lastRequestId = requestId;
         requestIdToUser[requestId] = user;
-        emit RequestSent(requestId, numWords, user);
+        emit RequestSent(requestId, numWords, user, _experimental);
         return requestId;
     }
 
@@ -74,9 +83,13 @@ contract VRFv2EquipmentCrafting is VRFConsumerBaseV2, ConfirmedOwner {
         require(s_requests[_requestId].exists, 'request not found');
         s_requests[_requestId].fulfilled = true;
         s_requests[_requestId].randomWords = _randomWords;
-        ///@notice !!! This is an external call to the minter contract to mint the NFTs for the user.
-        minter.mintEquipments(requestIdToUser[_requestId], _randomWords);
-        emit RequestFulfilled(_requestId, _randomWords, requestIdToUser[_requestId]);
+
+        if(s_requests[_requestId].experimental == true){
+            ///@notice !!! This is an external call to the minter contract to mint the NFTs for the user.
+            minter.mintEquipments(requestIdToUser[_requestId], _randomWords);
+        }
+        
+        emit RequestFulfilled(_requestId, _randomWords, requestIdToUser[_requestId], s_requests[_requestId].experimental);
     }
 
     function getRequestStatus(uint256 _requestId) external view returns (bool fulfilled, uint256[] memory randomWords) {

@@ -1,8 +1,9 @@
 //SPDX-License-Identifier: MIT
 /**
     @title Struct Library
-    @author Eman "Sgt"
-    @notice: Reference for structs across contracts. Originally created for CHAINLINK HACKATHON FALL 2022
+    @author Eman Garciano
+    @notice: Reference for structs across contracts. 
+    Originally created for CHAINLINK HACKATHON FALL 2022
 */
 
 pragma solidity =0.8.17;

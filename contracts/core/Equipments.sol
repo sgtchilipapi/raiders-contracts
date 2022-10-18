@@ -1,7 +1,7 @@
 //SPDX-License-Identifier: MIT
 /**
     @title Equipment
-    @author Eman "Sgt"
+    @author Eman Garciano
     @notice: NFT Contract for items equippable to characters. Originally created for CHAINLINK HACKATHON FALL 2022
 */
 pragma solidity =0.8.17;

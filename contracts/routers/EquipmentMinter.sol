@@ -1,5 +1,13 @@
 ///SPDX-License-Identifier:MIT
-
+/**
+    @title EquipmentMinter
+    @author Eman Garciano
+    @notice: This contract serves as the router/minter for the Equipment NFT. It communicates with the VRF contract,
+    performs the necessary calculations to determine the equipment's properties and stats and ultimately calls the mint 
+    function of the NFT contract with the calculated results as arguments. Only this contract can call the NFT's mint function
+    and only one router at a time can be set in the NFT contract as well.
+    Originally created for CHAINLINK HACKATHON FALL 2022
+*/
 pragma solidity ^0.8.7;
 
 import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Burnable.sol";
@@ -10,7 +18,7 @@ import "../libraries/materials/MaterialsAddresses.sol";
 import "../libraries/StructLibrary.sol";
 
 interface _RandomizationContract {
-    function requestRandomWords(uint32 numWords, address user) external returns (uint256 requestId);
+    function requestRandomWords(uint32 numWords, address user, bool experimental) external returns (uint256 requestId);
     function getRequestStatus(uint256 _requestId) external view returns(bool fulfilled, uint256[] memory randomWords);
 }
 
@@ -44,7 +52,39 @@ contract EquipmentMinter is Ownable{
     }
 
     ///@notice This function requests n random number/s from the VRF contract to be consumed with the mint.
-    function requestEquipment(uint64 _equipment_type /**, uint32 item_count */) public payable{
+    function requestEquipment(uint64 _equipment_type , uint32 item_count) public payable{
+        ///We can only allow one request per address at a time. A request shall be completed (minted the equipment) to be able request another one.
+        equipment_request memory _request = request[msg.sender];
+        require(_request.request_id == 0, "EQPTS: There is a request pending mint.");
+
+        ///Equipment/Items can only be weapon, armor, helm, accessory, and consumable. 0-4
+        require(_equipment_type < 5, "EQPTS: Incorrect number for an equipment type.");
+        
+        ///The MATIC being received is not payment for the NFT but rather to simply replenish the VRF subscribtion's funds and also serves as an effective anti-spam measure as well.
+        ///Restrict number of mints to below 4 to avoid insufficient gas errors and accidental requests for very large number of mints.
+        require(item_count > 0 && item_count < 4, "EQPTS: Can only request to mint 1 to 3 items at a time.");
+        require(msg.value >= (item_count * 10000000 gwei), "EQPTS: Incorrect amount for equipment minting. Send exactly 0.05 MATIC per item requested.");
+        
+        ///Burn the materials from the user's balance.
+        bool enough = getEquipmentRequirements(_equipment_type, item_count);
+        require(enough, "EQPTS: Not enough materials for this crafting transaction.");
+        
+        ///@notice EXTCALL to VRF contract. Set the caller's current equipment_request to the returned request_id by the VRF contract.
+        ///The bool argument here notifies the vrf contract that the request being sent is NOT experimental.
+        request[msg.sender] = equipment_request({
+            request_id: randomizer.requestRandomWords(item_count, msg.sender, false),
+            equipment_type: _equipment_type,
+            number_of_items: item_count,
+            time_requested: block.timestamp
+        });
+        
+        emit EquipmentRequested(msg.sender, request[msg.sender]);
+    }
+
+    ///@notice This function is flagged as EXPERIMENTAL. This invokes a request to the VRF of random numbers which are when
+    ///fulfilled, the VRF (automatically) mints the NFT within the same transaction as the fulfillment.
+    ///@notice This function requests n random number/s from the VRF contract to be consumed with the mint.
+    function requestEquipmentExperimental(uint64 _equipment_type /**, uint32 item_count */) public payable{
         ///@notice We are removing the immediate following requirement since we have shifted the minting responsibility to the VRF.
         ///When the fulfillRandomWords() is executed, there is no more need to check if the request has been fulfilled.
             ///We can only allow one request per address at a time. A request shall be completed (minted the equipment) to be able request another one.
@@ -68,10 +108,11 @@ contract EquipmentMinter is Ownable{
         bool enough = getEquipmentRequirements(_equipment_type, 1 /**item_count */);
         require(enough, "EQPTS: Not enough materials for this crafting transaction.");
         
-        ///EXTCALL to VRF contract. Set the caller's current equipment_request to the returned request_id by the VRF contract.
+        ///@notice EXTCALL to VRF contract. Set the caller's current equipment_request to the returned request_id by the VRF contract.
         ///Using a constant 1. See above reason on line 57 (unwrapped).
+        ///The bool argument here notifies the vrf contract that the request being sent is experimental.
         request[msg.sender] = equipment_request({
-            request_id: randomizer.requestRandomWords(/**item_count */ 1, msg.sender),
+            request_id: randomizer.requestRandomWords(/**item_count */ 1, msg.sender, true),
             equipment_type: _equipment_type,
             number_of_items: 1,
             time_requested: block.timestamp
@@ -81,7 +122,7 @@ contract EquipmentMinter is Ownable{
     }
 
     ///@notice This function will reset the senders request. In case requests dont get fulfilled by the VRF within an hour.
-    function cancelRequest() public {
+    function cancelRequestExperimental() public {
         equipment_request memory _request = request[msg.sender];
         (bool fulfilled,) = randomizer.getRequestStatus(_request.request_id);
         require(_request.request_id > 0, "eMNTR: Cannot cancel non-existing requests.");
@@ -146,9 +187,36 @@ contract EquipmentMinter is Ownable{
         balance = catalyst_contract.balanceOf(msg.sender);
     }
 
+    ///Once the random numbers requested has been fulfilled in the VRF contract, this function shall be called by the user
+    ///to complete the mint process.
+    function mintEquipments(address user) public onlyVRF{
+        equipment_request memory _request = request[user];
+        (bool fulfilled, uint256[] memory randomNumberRequested) = randomizer.getRequestStatus(_request.request_id);
+
+        ///Check if there is a pending/fulfilled request previously made by the caller using requestEquipment().
+        require(_request.request_id > 0, "EQPTS: No request to mint.");
+
+        ///Verify if the random number request has been indeed fulfilled, revert if not.
+        require(fulfilled, "EQPTS: Request is not yet fulfilled or invalid request id.");
+
+        ///Loop thru the number of items requested to be minted.
+        for(uint256 i=0; i < _request.number_of_items; i++){
+            mintEquipment(user, randomNumberRequested[i], _request.equipment_type);
+        }
+        ///Reset the sender's request property values to 0
+        request[user] = equipment_request({
+            request_id: 0,
+            equipment_type: 0,
+            number_of_items: 0,
+            time_requested: block.timestamp
+        });
+    }
+
+    ///@notice This function is flagged as EXPERIMENTAL. There is a risk for a loss of material tokens if the call to this
+    ///function by the VRF reverts.
     ///Once the random numbers requested has been fulfilled in the VRF contract, this function is called by the VRF contract
     ///to complete the mint process.
-    function mintEquipments(address user, uint256[] memory randomNumberRequested) public onlyVRF{
+    function mintEquipmentsExperimental(address user, uint256[] memory randomNumberRequested) public onlyVRF{
         equipment_request memory _request = request[user];
         ///@notice Removing the immediate following external SLOAD since the VRF already knows the randomNumberRequested, 
         ///we simply pass it from the VRF's external call to this function
