@@ -34,10 +34,6 @@ contract Equipments is ERC721, ERC721Enumerable, ERC721URIStorage, ERC721Burnabl
     constructor() ERC721("Equipments", "EQPTS") {
     }
 
-    function isOwner(address _owner, uint256 _equipment) public view returns (bool){
-        return super._isApprovedOrOwner(_owner, _equipment);
-    }
-
     ///@notice This function mints the equipment requested and maps out its properties and stats.
     ///Can only be called by the designated minter.
     function _mintEquipment(address user, equipment_properties memory equipment_props, equipment_stats memory _equipment_stats) external onlyMinter {
@@ -57,6 +53,11 @@ contract Equipments is ERC721, ERC721Enumerable, ERC721URIStorage, ERC721Burnabl
     modifier onlyMinter(){
         require(msg.sender == equipment_minter,"EQPTS: Can only be called by the Router Minter.");
         _;
+    }
+
+    ///@notice We expose a pubic `isOwner` for use in our other contracts.
+    function isOwner(address _owner, uint256 _equipment) public view returns (bool){
+        return super._isApprovedOrOwner(_owner, _equipment);
     }
 
     ///@notice Instead of storing the tokenURI using setTokenURI, we are constructing it as it is being queried.

@@ -47,7 +47,7 @@ export const testnet_deployments = {
             abi:""
         },
     },
-    equipment:{
+    equipments:{
         nftContract:{
             address: "0x044a41B42Ad7169093AC226dFbd72Ab594f0a3E6",
             abi:''
@@ -58,6 +58,20 @@ export const testnet_deployments = {
         },
         vrf:{
             address: "0xDB68557e64cA0732bE1B95dd87C8344fC74F36E4",
+            abi: ''
+        }
+    },
+    characters:{
+        nftContract:{
+            address: "0xE737b63164bE583633755e742bdf7e11a075327b",
+            abi:''
+        },
+        minter:{
+            address: "0xAa20D5d852b6A1371f63d215f7EAA78A618E4B1E",
+            abi:''
+        },
+        vrf:{
+            address: "0x43d7eAC9A7299d640cC5551dcF3E8D1166Bd0D7F",
             abi: ''
         }
     }

@@ -54,19 +54,19 @@ contract EquipmentMinter is Ownable{
     function requestEquipment(uint64 _equipment_type , uint256 item_count) public payable{
         ///We can only allow one request per address at a time. A request shall be completed (minted the equipment) to be able request another one.
         equipment_request memory _request = request[msg.sender];
-        require(_request.request_id == 0, "EQPTS: There is a request pending mint.");
+        require(_request.request_id == 0, "eMNTR: There is a request pending mint.");
 
         ///Equipment/Items can only be weapon, armor, helm, accessory, and consumable. 0-4
-        require(_equipment_type < 5, "EQPTS: Incorrect number for an equipment type.");
+        require(_equipment_type < 5, "eMNTR: Incorrect number for an equipment type.");
         
         ///The MATIC being received is not payment for the NFT but rather to simply replenish the VRF subscribtion's funds and also serves as an effective anti-spam measure as well.
         ///Restrict number of mints to below 4 to avoid insufficient gas errors and accidental requests for very large number of mints.
-        require(item_count > 0 && item_count < 4, "EQPTS: Can only request to mint 1 to 3 items at a time.");
-        require(msg.value >= (item_count * 50000000 gwei), "EQPTS: Incorrect amount for equipment minting. Send exactly 0.05 MATIC per item requested.");
+        require(item_count > 0 && item_count < 4, "eMNTR: Can only request to mint 1 to 3 items at a time.");
+        require(msg.value >= (item_count * 50000000 gwei), "eMNTR: Incorrect amount for equipment minting. Send exactly 0.05 MATIC per item requested.");
         
         ///Burn the materials from the user's balance.
         bool enough = getEquipmentRequirements(_equipment_type, item_count);
-        require(enough, "EQPTS: Not enough materials for this crafting transaction.");
+        require(enough, "eMNTR: Not enough materials for this crafting transaction.");
         
         ///@notice EXTCALL to VRF contract. Set the caller's current equipment_request to the returned request_id by the VRF contract.
         ///The bool argument here notifies the vrf contract that the request being sent is NOT experimental.
@@ -86,10 +86,10 @@ contract EquipmentMinter is Ownable{
     function requestEquipmentExperimental(uint64 _equipment_type /**, uint32 item_count */) public payable{
         ///We can only allow one request per address at a time. A request shall be completed (minted the equipment) to be able request another one.
         equipment_request memory _request = request[msg.sender];
-        require(_request.request_id == 0, "EQPTS: There is a request pending mint.");
+        require(_request.request_id == 0, "eMNTR: There is a request pending mint.");
 
         ///Equipment/Items can only be weapon, armor, helm, accessory, and consumable. 0-4
-        require(_equipment_type < 5, "EQPTS: Incorrect number for an equipment type.");
+        require(_equipment_type < 5, "eMNTR: Incorrect number for an equipment type.");
         
         ///The MATIC being received is not payment for the NFT but rather to simply replenish the VRF subscribtion's funds and also serves as an effective anti-spam measure as well.
         ///Using a constant 1 as n or number of equipments to be minted so as to stay well below the gas Limit of
@@ -97,13 +97,13 @@ contract EquipmentMinter is Ownable{
         ///In case we can have make it clear that minting multiple equipments is safe, we can allow multiple mints by specifying the 
         ///desired number of mints per transaction.
             ///Restrict number of mints to below 6 to avoid insufficient gas errors and accidental requests for very large number of mints.
-            // require(item_count > 0 && item_count < 4, "EQPTS: Can only request to mint 1 to 3 items at a time.");
-        require(msg.value >= (/**item_count */ 1 * 50000000 gwei), "EQPTS: Incorrect amount for equipment minting. Send exactly 0.05 MATIC per item requested.");
+            // require(item_count > 0 && item_count < 4, "eMNTR: Can only request to mint 1 to 3 items at a time.");
+        require(msg.value >= (/**item_count */ 1 * 100000000 gwei), "eMNTR: Incorrect amount for equipment minting. Send exactly 0.1 MATIC per item requested.");
         
         ///Burn the materials from the user's balance.
         ///Using a constant 1. See above reason on line 57 (unwrapped).
         bool enough = getEquipmentRequirements(_equipment_type, 1 /**item_count */);
-        require(enough, "EQPTS: Not enough materials for this crafting transaction.");
+        require(enough, "eMNTR: Not enough materials for this crafting transaction.");
         
         ///@notice EXTCALL to VRF contract. Set the caller's current equipment_request to the returned request_id by the VRF contract.
         ///Using a constant 1. See above reason on line 57 (unwrapped).
@@ -188,13 +188,15 @@ contract EquipmentMinter is Ownable{
     ///to complete the mint process.
     function mintEquipments() public{
         equipment_request memory _request = request[msg.sender];
-        (bool fulfilled, uint256[] memory randomNumberRequested) = randomizer.getRequestStatus(_request.request_id);
 
         ///Check if there is a pending/fulfilled request previously made by the caller using requestEquipment().
-        require(_request.request_id > 0, "EQPTS: No request to mint.");
+        require(_request.request_id > 0, "eMNTR: No request to mint.");
+
+        ///Fetch the request status from the VRF contract.
+        (bool fulfilled, uint256[] memory randomNumberRequested) = randomizer.getRequestStatus(_request.request_id);
 
         ///Verify if the random number request has been indeed fulfilled, revert if not.
-        require(fulfilled, "EQPTS: Request is not yet fulfilled or invalid request id.");
+        require(fulfilled, "eMNTR: Request is not yet fulfilled or invalid request id.");
 
         ///Loop thru the number of items requested to be minted.
         for(uint256 i=0; i < _request.number_of_items; i++){
@@ -222,10 +224,10 @@ contract EquipmentMinter is Ownable{
         ///@notice We are removing the immediate following requirements since we have shifted the minting responsibility to the VRF.
         ///When the fulfillRandomWords() is executed, there is no more need to check if the request has been fulfilled.
             ///Check if there is a pending/fulfilled request previously made by the caller using requestEquipment().
-            // require(_request.request_id > 0, "EQPTS: No request to mint.");
+            // require(_request.request_id > 0, "eMNTR: No request to mint.");
 
             ///Verify if the random number request has been indeed fulfilled, revert if not.
-            // require(fulfilled, "EQPTS: Request is not yet fulfilled or invalid request id.");
+            // require(fulfilled, "eMNTR: Request is not yet fulfilled or invalid request id.");
 
         ///Loop thru the number of items requested to be minted.
         for(uint256 i=0; i < _request.number_of_items; i++){
