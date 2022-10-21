@@ -17,14 +17,14 @@ import "../utils/Counters.sol";
 import "../utils/BreakdownUint256.sol";
 import "../libraries/characters/CharacterLibrary.sol";
 import "../libraries/StructLibrary.sol";
-interface _RandomizationContract {
-    function requestRandomWords(uint32 numWords) external returns (uint256 s_requestId);
-    function randomNumber(uint256) external view returns(uint256[] memory);
+interface _EquipmentManager {
+    function unEquipAllFromTransfer(uint256 _character_id) external;
 }
 
 contract Characters is ERC721, ERC721Enumerable, ERC721URIStorage, Ownable {
     using Counters for Counters.Counter;
     Counters.Counter private character_ids;
+    _EquipmentManager equipmentManager;
 
     ///Map out a specific character NFT id to its properties {character_class, element, str, vit, dex, mood, exp}
     mapping (uint256 => character_properties) public character;
@@ -60,6 +60,11 @@ contract Characters is ERC721, ERC721Enumerable, ERC721URIStorage, Ownable {
     ///@notice We expose a pubic `isOwner` for use in our other contracts.
     function isOwner(address _owner, uint256 _character) public view returns (bool){
         return super._isApprovedOrOwner(_owner, _character);
+    }
+
+    ///@notice This function sets the equipment manager contract.
+    function setEquipmentManager(address managerAddress) public onlyOwner{
+        equipmentManager = _EquipmentManager(managerAddress);
     }
 
     ///@notice Instead of storing the tokenURI using setTokenURI, we are constructing it as it is being queried.
@@ -110,7 +115,8 @@ contract Characters is ERC721, ERC721Enumerable, ERC721URIStorage, Ownable {
     function _beforeTokenTransfer(address from, address to, uint256 tokenId)
         internal
         override(ERC721, ERC721Enumerable)
-    {
+    {   
+        equipmentManager.unEquipAllFromTransfer(tokenId);
         super._beforeTokenTransfer(from, to, tokenId);
     }
 

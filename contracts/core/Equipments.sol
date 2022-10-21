@@ -16,9 +16,14 @@ import "../utils/Counters.sol";
 import "../libraries/StructLibrary.sol";
 import "../libraries/equipment/EquipmentLibrary.sol";
 
+interface _EquipmentManager {
+    function unEquipItemFromTransfer(uint256 _equipment_id) external;
+}
+
 contract Equipments is ERC721, ERC721Enumerable, ERC721URIStorage, ERC721Burnable, Ownable {
     using Counters for Counters.Counter;
     Counters.Counter private equipment_ids;
+    _EquipmentManager equipmentManager;
 
     ///Map out a specific equipment NFT id to its properties {equipment_type, dominant_stat, rarity, extremity}
     mapping (uint256 => equipment_properties) public equipment;
@@ -58,6 +63,11 @@ contract Equipments is ERC721, ERC721Enumerable, ERC721URIStorage, ERC721Burnabl
     ///@notice We expose a pubic `isOwner` for use in our other contracts.
     function isOwner(address _owner, uint256 _equipment) public view returns (bool){
         return super._isApprovedOrOwner(_owner, _equipment);
+    }
+
+    ///@notice This function sets the equipment manager contract.
+    function setEquipmentManager(address managerAddress) public onlyOwner{
+        equipmentManager = _EquipmentManager(managerAddress);
     }
 
     ///@notice Instead of storing the tokenURI using setTokenURI, we are constructing it as it is being queried.
@@ -102,6 +112,7 @@ contract Equipments is ERC721, ERC721Enumerable, ERC721URIStorage, ERC721Burnabl
         internal
         override(ERC721, ERC721Enumerable)
     {
+        equipmentManager.unEquipItemFromTransfer(tokenId);
         super._beforeTokenTransfer(from, to, tokenId);
     }
 
