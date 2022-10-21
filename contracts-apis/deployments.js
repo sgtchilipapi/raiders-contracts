@@ -63,15 +63,15 @@ export const testnet_deployments = {
     },
     characters:{
         nftContract:{
-            address: "0xE737b63164bE583633755e742bdf7e11a075327b",
+            address: "0xA3e1CB8B0e11C63e96Feeb954b5D73da48E1c06d",
             abi:''
         },
         minter:{
-            address: "0xAa20D5d852b6A1371f63d215f7EAA78A618E4B1E",
+            address: "0x5e929B56288b642910542e6A3AB35ab1A759E558",
             abi:''
         },
         vrf:{
-            address: "0x43d7eAC9A7299d640cC5551dcF3E8D1166Bd0D7F",
+            address: "0xD83573cb3ae207d77f49DE0da33D642bACa9FD43",
             abi: ''
         }
     }

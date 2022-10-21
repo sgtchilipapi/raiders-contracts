@@ -12,6 +12,7 @@ pragma solidity ^0.8.7;
 
 import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Burnable.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts/security/Pausable.sol";
 import "../utils/BreakdownUint256.sol";
 import "../libraries/equipment/CraftingRecipes.sol";
 import "../libraries/materials/MaterialsAddresses.sol";
@@ -30,7 +31,7 @@ interface _Equipments {
     function _mintEquipment(address user, equipment_properties memory equipment_props, equipment_stats memory _equipment_stats) external;
 }
 
-contract EquipmentMinter is Ownable{
+contract EquipmentMinter is Ownable, Pausable{
     ///The randomization contract for generating random numbers for mint
     _RandomizationContract randomizer;
     address private vrfContract;
@@ -43,6 +44,10 @@ contract EquipmentMinter is Ownable{
 
     ///Map out a user's address to its equipment crafting request (if any) {request_id, equipment_type, number_of_items}. If none, the request_id == 0.
     mapping (address => equipment_request) public request;
+
+    ///The msg.value required to mint to prevent spam and deplete VRF funds.
+    ///Currently unset (0) for judging purposes as stated in the hackathon rules.
+    uint256 mint_fee;
     
     event EquipmentRequested(address indexed player_address, equipment_request request);
     constructor(address equipmentsNftAddress){
@@ -51,7 +56,7 @@ contract EquipmentMinter is Ownable{
     }
 
     ///@notice This function requests n random number/s from the VRF contract to be consumed with the mint.
-    function requestEquipment(uint64 _equipment_type , uint256 item_count) public payable{
+    function requestEquipment(uint64 _equipment_type , uint256 item_count) public payable whenNotPaused{
         ///We can only allow one request per address at a time. A request shall be completed (minted the equipment) to be able request another one.
         equipment_request memory _request = request[msg.sender];
         require(_request.request_id == 0, "eMNTR: There is a request pending mint.");
@@ -62,7 +67,7 @@ contract EquipmentMinter is Ownable{
         ///The MATIC being received is not payment for the NFT but rather to simply replenish the VRF subscribtion's funds and also serves as an effective anti-spam measure as well.
         ///Restrict number of mints to below 4 to avoid insufficient gas errors and accidental requests for very large number of mints.
         require(item_count > 0 && item_count < 4, "eMNTR: Can only request to mint 1 to 3 items at a time.");
-        require(msg.value >= (item_count * 50000000 gwei), "eMNTR: Incorrect amount for equipment minting. Send exactly 0.05 MATIC per item requested.");
+        require(msg.value >= (item_count * mint_fee), "eMNTR: Incorrect amount for equipment minting. Send exactly 0.01 MATIC per item requested.");
         
         ///Burn the materials from the user's balance.
         bool enough = getEquipmentRequirements(_equipment_type, item_count);
@@ -82,8 +87,8 @@ contract EquipmentMinter is Ownable{
 
     ///@notice This function is flagged as EXPERIMENTAL. This invokes a request to the VRF of random numbers which are when
     ///fulfilled, the VRF (automatically) mints the NFT within the same transaction as the fulfillment.
-    ///@notice This function requests n random number/s from the VRF contract to be consumed with the mint.
-    function requestEquipmentExperimental(uint64 _equipment_type /**, uint32 item_count */) public payable{
+    ///This function requests n random number/s from the VRF contract to be consumed with the mint.
+    function requestEquipmentExperimental(uint64 _equipment_type /**, uint32 item_count */) public payable whenNotPaused{
         ///We can only allow one request per address at a time. A request shall be completed (minted the equipment) to be able request another one.
         equipment_request memory _request = request[msg.sender];
         require(_request.request_id == 0, "eMNTR: There is a request pending mint.");
@@ -96,9 +101,9 @@ contract EquipmentMinter is Ownable{
         ///the VRF's fulfillRandomWords() as it is also responsible for triggering the actual minting.
         ///In case we can have make it clear that minting multiple equipments is safe, we can allow multiple mints by specifying the 
         ///desired number of mints per transaction.
-            ///Restrict number of mints to below 6 to avoid insufficient gas errors and accidental requests for very large number of mints.
+            ///Restrict number of mints to below 4 to avoid insufficient gas errors and requests for very large number of mints.
             // require(item_count > 0 && item_count < 4, "eMNTR: Can only request to mint 1 to 3 items at a time.");
-        require(msg.value >= (/**item_count */ 1 * 100000000 gwei), "eMNTR: Incorrect amount for equipment minting. Send exactly 0.1 MATIC per item requested.");
+        require(msg.value >= (/**item_count */ 1 * mint_fee), "eMNTR: Incorrect amount for equipment minting. Send exactly 0.01 MATIC per item requested.");
         
         ///Burn the materials from the user's balance.
         ///Using a constant 1. See above reason on line 57 (unwrapped).
@@ -352,6 +357,10 @@ contract EquipmentMinter is Ownable{
     function setRandomizationContract(address _vrfContract) public onlyOwner {
         vrfContract = _vrfContract;
         randomizer = _RandomizationContract(_vrfContract);
+    }
+
+    function setMintFee(uint256 amount) public onlyOwner {
+        mint_fee = amount * 1 gwei;
     }
 
     modifier onlyVRF(){

@@ -21,6 +21,7 @@ pragma solidity =0.8.17;
 struct character_request { //SSTORED
     uint256 request_id;
     uint32 character_class;
+    string _name;
     uint256 time_requested;
 }
 
