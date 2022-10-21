@@ -14,7 +14,7 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/Base64.sol";
 import "../utils/Counters.sol";
 import "../libraries/StructLibrary.sol";
-import "../libraries/materials/EquipmentLibrary.sol";
+import "../libraries/equipment/EquipmentLibrary.sol";
 
 contract Equipments is ERC721, ERC721Enumerable, ERC721URIStorage, ERC721Burnable, Ownable {
     using Counters for Counters.Counter;

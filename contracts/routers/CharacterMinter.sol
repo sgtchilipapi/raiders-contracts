@@ -236,7 +236,7 @@ contract CharacterMinter is Ownable, Pausable{
 
     ///For fun purposes, we set the character's mood initially and then subsequently in some select actions.
     function getCharacterMood(uint32 number) internal pure returns (uint32 character_mood){
-        character_mood = number % 12;
+        character_mood = number % 10;
     }
 
     ///@notice Admin Functions

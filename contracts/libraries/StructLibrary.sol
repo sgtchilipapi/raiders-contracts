@@ -54,9 +54,10 @@ struct character_equipments {
     uint64 accessory;
 }
 
-struct character_image_and_name {
+struct character_uri_details {
     string name;
     string image;
+    string mood;
 }
 
 struct attack_event {

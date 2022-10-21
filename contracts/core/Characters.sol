@@ -12,6 +12,7 @@ import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/Base64.sol";
+import "@openzeppelin/contracts/utils/Strings.sol";
 import "../utils/Counters.sol";
 import "../utils/BreakdownUint256.sol";
 import "../libraries/characters/CharacterLibrary.sol";
@@ -75,22 +76,27 @@ contract Characters is ERC721, ERC721Enumerable, ERC721URIStorage, Ownable {
             "ERC721URIStorage: URI query for nonexistent token"
         );
         character_properties memory character_props = character[tokenId];
-        character_image_and_name memory image_and_name = CharacterLibrary.getCharacter(character_props.character_class, character_props.mood);
-        tokenURIString = encodeStrings(character_props, image_and_name, character_name[tokenId]);
+        character_uri_details memory uri_details = CharacterLibrary.getCharacter(character_props.character_class, character_props.mood);
+        tokenURIString = encodeStrings(character_props, uri_details, character_name[tokenId]);
     }
 
     ///@notice Encodes the strings into a JSON string
-    function encodeStrings(character_properties memory character_props, character_image_and_name memory image_and_name, string memory _character_name) internal pure returns (string memory uriJSON){
+    function encodeStrings(character_properties memory character_props, character_uri_details memory uri_details, string memory _character_name) internal pure returns (string memory uriJSON){
         uriJSON = string(
             abi.encodePacked(
             "data:application/json;base64,",
                 Base64.encode(
                     bytes(
                         abi.encodePacked(
-                            '{"description": "RandomClash Character", "image": "',image_and_name.image,'", "name": "', _character_name,
+                            '{"description": "RandomClash Character", "image": "',uri_details.image,'", "name": "', _character_name,
                             '", "attributes": [',
-                            '{"trait_type": "character_class", "value": "', image_and_name.name,'"}, {"trait_type": "strength", "value": "', character_props.str,'"}, {"trait_type": "vitality", "value": "',character_props.vit,'"}, {"trait_type": "dexterity", "value": "',character_props.dex,'"}, ',
-                            '{"trait_type": "experience", "value": "', character_props.exp,'"}, {"trait_type": "element", "value": "', character_props.element,'"}, {"trait_type": "talent", "value": "',character_props.talent,'"}, {"trait_type": "mood", "value": "',character_props.mood,'"}',
+                                '{"trait_type": "character_class", "value": "', uri_details.name,
+                                '"}, {"display_type": "number", "trait_type": "strength", "max_value": 1000, "value": ', Strings.toString(character_props.str),
+                                '}, {"display_type": "number", "trait_type": "vitality", "max_value": 1000, "value": ', Strings.toString(character_props.vit),
+                                '}, {"display_type": "number", "trait_type": "dexterity", "max_value": 1000, "value": ', Strings.toString(character_props.dex),
+                                '}, {"trait_type": "experience", "value": "', Strings.toString(character_props.exp),
+                                '"}, {"trait_type": "element", "value": "', CharacterLibrary.getElement(character_props.element),
+                                '"}, {"display_type": "boost_percentage", "trait_type": "', CharacterLibrary.getTalent(character_props.talent),'", "value": 10}, {"trait_type": "mood", "value": "',uri_details.mood,'"}',
                             ']}'
                         )
                     )
