@@ -58,6 +58,8 @@ struct character_uri_details {
     string name;
     string image;
     string mood;
+    string bonus;
+    string bonus_value;
 }
 
 struct attack_event {

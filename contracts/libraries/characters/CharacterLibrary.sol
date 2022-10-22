@@ -12,21 +12,23 @@ import "../../libraries/StructLibrary.sol";
 library CharacterLibrary {
     function getCharacter(uint32 character_class, uint32 mood) internal pure returns (character_uri_details memory character){
         string memory image_url = "https://chainlink-rpg2022.infura-ipfs.io/ipfs/QmTnCQVzkFecBjLUTJTbJmu1Ds3simimu8Z1XKKksgc7as/";
-        (string memory _class, string memory image_prefix, string memory mood_tag) = getClass(character_class, mood);
+        (string memory _class, string memory image_prefix, string memory mood_tag, string memory bonus_tag, string memory bonus_value) = getClass(character_class, mood);
         character = character_uri_details({
             name: _class,
             image: string.concat(image_url, image_prefix, _class, "/", mood_tag,".png"),
-            mood: mood_tag
+            mood: mood_tag,
+            bonus: bonus_tag,
+            bonus_value: bonus_value
         });
     }
 
-    function getClass(uint32 character_class, uint32 mood) internal pure returns (string memory _class, string memory image_prefix, string memory mood_tag){
-        if(character_class == 0){_class = "Viking"; image_prefix = "0%20";}
-        if(character_class == 1){_class = "Woodcutter"; image_prefix = "1%20";}
-        if(character_class == 2){_class = "Troll"; image_prefix = "4%20";}
-        if(character_class == 3){_class = "Mechanic"; image_prefix = "5%20";}
-        if(character_class == 4){_class = "Amphibian"; image_prefix = "2%20";}
-        if(character_class == 5){_class = "GraveRobber"; image_prefix = "3%20";}
+    function getClass(uint32 character_class, uint32 mood) internal pure returns (string memory _class, string memory image_prefix, string memory mood_tag, string memory bonus_tag, string memory bonus_value){
+        if(character_class == 0){_class = "Viking"; image_prefix = "0%20"; bonus_tag = "Attack"; bonus_value = "5";}
+        if(character_class == 1){_class = "Woodcutter"; image_prefix = "1%20"; bonus_tag = "Penetration Chance"; bonus_value = "10";}
+        if(character_class == 2){_class = "Troll"; image_prefix = "4%20"; bonus_tag = "HP"; bonus_value = "5";}
+        if(character_class == 3){_class = "Mechanic"; image_prefix = "5%20"; bonus_tag = "Defense"; bonus_value = "10";}
+        if(character_class == 4){_class = "Amphibian"; image_prefix = "2%20"; bonus_tag = "Critical Chance"; bonus_value = "10";}
+        if(character_class == 5){_class = "GraveRobber"; image_prefix = "3%20"; bonus_tag = "Evasion Chance"; bonus_value = "10";}
         mood_tag = getMood(mood);
     }
 

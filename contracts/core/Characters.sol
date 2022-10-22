@@ -5,7 +5,7 @@
     @notice: NFT Contract for playable characters.
     Originally created for CHAINLINK HACKATHON FALL 2022
 */
-pragma solidity =0.8.17;
+pragma solidity ^0.8.7;
 
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
@@ -16,6 +16,7 @@ import "@openzeppelin/contracts/utils/Strings.sol";
 import "../utils/Counters.sol";
 import "../utils/BreakdownUint256.sol";
 import "../libraries/characters/CharacterLibrary.sol";
+import "../libraries/characters/CharacterStatsCalculator.sol";
 import "../libraries/StructLibrary.sol";
 interface _EquipmentManager {
     function unEquipAllFromTransfer(uint256 _character_id) external;
@@ -99,9 +100,11 @@ contract Characters is ERC721, ERC721Enumerable, ERC721URIStorage, Ownable {
                                 '"}, {"display_type": "number", "trait_type": "strength", "max_value": 1000, "value": ', Strings.toString(character_props.str),
                                 '}, {"display_type": "number", "trait_type": "vitality", "max_value": 1000, "value": ', Strings.toString(character_props.vit),
                                 '}, {"display_type": "number", "trait_type": "dexterity", "max_value": 1000, "value": ', Strings.toString(character_props.dex),
-                                '}, {"trait_type": "experience", "value": "', Strings.toString(character_props.exp),
+                                '}, {"display_type": "number", "trait_type": "experience", "value": "', Strings.toString(character_props.exp),
                                 '"}, {"trait_type": "element", "value": "', CharacterLibrary.getElement(character_props.element),
-                                '"}, {"display_type": "boost_percentage", "trait_type": "', CharacterLibrary.getTalent(character_props.talent),'", "value": 10}, {"trait_type": "mood", "value": "',uri_details.mood,'"}',
+                                '"}, {"display_type": "boost_percentage", "trait_type": "', uri_details.bonus,'", "value": ',uri_details.bonus_value,'}, ',
+                                '{"display_type": "boost_percentage", "trait_type": "', CharacterLibrary.getTalent(character_props.talent),
+                                '", "value": 10}, {"trait_type": "mood", "value": "',uri_details.mood,'"}',
                             ']}'
                         )
                     )
@@ -116,7 +119,10 @@ contract Characters is ERC721, ERC721Enumerable, ERC721URIStorage, Ownable {
         internal
         override(ERC721, ERC721Enumerable)
     {   
-        equipmentManager.unEquipAllFromTransfer(tokenId);
+        ///@notice The unequip function in the managere would only fire from subsequent transfers after the initial transfer from mint.
+        if(from != address(0)){
+            equipmentManager.unEquipAllFromTransfer(tokenId);
+        }
         super._beforeTokenTransfer(from, to, tokenId);
     }
 

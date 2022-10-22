@@ -49,29 +49,33 @@ export const testnet_deployments = {
     },
     equipments:{
         nftContract:{
-            address: "0x044a41B42Ad7169093AC226dFbd72Ab594f0a3E6",
+            address: "0x6826d3cE750E5a8671Db6f1Ff1c534d6c392507F",
             abi:''
         },
         minter:{
-            address: "0xd706b7eb07293F49d2181Bb42E5E18c5e67eCE49",
+            address: "0x64B46507Be456b612A4f38975A8670c25EC285A1",
             abi:''
         },
         vrf:{
-            address: "0xDB68557e64cA0732bE1B95dd87C8344fC74F36E4",
+            address: "0xE550b5C285879529FaA8D45fa0080e8493f39472",
+            abi: ''
+        },
+        manager:{
+            address: "0x9b2b7F0a78Cd8c78C772654b979a092682C3bac9",
             abi: ''
         }
     },
     characters:{
         nftContract:{
-            address: "0xD9Ad5d57BEb67952B55823Fd43b4dEc62a60d76b",
+            address: "0x209D9c55f16fc2D7e50C726aE616645f24b64285",
             abi:''
         },
         minter:{
-            address: "0xed3fD02FcbdD13596d2f06179dC44A5de7438da7",
+            address: "0xb064992d8f1204c4A633a692862C67B0b3F1EA14",
             abi:''
         },
         vrf:{
-            address: "0xd58E67aD4B83A1D05d89ADc587C0E426De663835",
+            address: "0xe3302b2Bac0f3191b75c6C421Df90CE8cdC9A925",
             abi: ''
         }
     }

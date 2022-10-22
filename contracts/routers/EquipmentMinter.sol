@@ -320,7 +320,7 @@ contract EquipmentMinter is Ownable, Pausable{
         });
 
         (dominant_stat, dominant_roll_value)  = getDominantStat(roll_values);
-        extremity = getExtremity(dominant_roll_value, total_roll_value);
+        extremity = getExtremity(dominant_roll_value, total_roll_value, stat_sum);
     }
 
     function getDominantStat(uint256[8] memory roll_values) internal pure returns (uint64 dominant_stat, uint256 dominant_roll_value){
@@ -342,15 +342,15 @@ contract EquipmentMinter is Ownable, Pausable{
         dominant_roll_value = roll_values[0];
     }
 
-    function getExtremity(uint256 dominant_roll_value, uint256 total) internal pure returns (uint64 extremity){
-        uint256 percentage_allocation = (dominant_roll_value * 1000) / total;
-        if(percentage_allocation > 125 && percentage_allocation < 250){extremity = 1;}
-        if(percentage_allocation > 249 && percentage_allocation < 375){extremity = 2;}
-        if(percentage_allocation > 374 && percentage_allocation < 500){extremity = 3;}
-        if(percentage_allocation > 499 && percentage_allocation < 625){extremity = 4;}
-        if(percentage_allocation > 624 && percentage_allocation < 750){extremity = 5;}
-        if(percentage_allocation > 749 && percentage_allocation < 875){extremity = 6;}
-        if(percentage_allocation > 874 && percentage_allocation <= 999){extremity = 7;}
+    function getExtremity(uint256 dominant_roll_value, uint256 total_roll_value, uint256 stat_sum) internal pure returns (uint64 extremity){
+        uint256 stat_value = (dominant_roll_value * stat_sum) / total_roll_value;
+        if(stat_value > 5 && stat_value <= 10){extremity = 1;} //good
+        if(stat_value > 10 && stat_value <= 15){extremity = 2;} //great
+        if(stat_value > 15 && stat_value <= 20){extremity = 3;} //intense
+        if(stat_value > 20 && stat_value <= 30){extremity = 4;} //extraordinary
+        if(stat_value > 30 && stat_value <= 45){extremity = 5;} //ethereal
+        if(stat_value > 45 && stat_value <= 65){extremity = 6;} //astronomical
+        if(stat_value > 65){extremity = 7;} //divine
     }
 
     ///@notice Admin Functions

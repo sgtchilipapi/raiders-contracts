@@ -194,10 +194,10 @@ contract CharacterMinter is Ownable, Pausable{
         uint32[] memory randomNumbers = BreakdownUint256.break256BitsIntegerIntoBytesArrayOf32Bits(randomNumber);
 
         ///Compute for the character's properties
-        uint32 _element = getCharacterElement(randomNumbers[0]);
-        (uint32 _str, uint32 _vit, uint32 _dex) = getCharacterAttributes(randomNumbers[1], randomNumbers[2], randomNumbers[3]);
-        uint32 _talent = getCharacterTalent(randomNumbers[4]);
-        uint32 _mood = getCharacterMood(randomNumbers[5]);
+        uint32 _element = getCharacterElement(randomNumbers[7]);
+        (uint32 _str, uint32 _vit, uint32 _dex) = getCharacterAttributes(randomNumbers[6], randomNumbers[5], randomNumbers[4]);
+        uint32 _talent = getCharacterTalent(randomNumbers[3]);
+        uint32 _mood = getCharacterMood(randomNumbers[2]);
 
         character_props = character_properties({
             character_class: character_class,

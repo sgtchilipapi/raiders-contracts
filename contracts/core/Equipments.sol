@@ -4,7 +4,7 @@
     @author Eman Garciano
     @notice: NFT Contract for items equippable to characters. Originally created for CHAINLINK HACKATHON FALL 2022
 */
-pragma solidity =0.8.17;
+pragma solidity ^0.8.7;
 
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
@@ -12,6 +12,7 @@ import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Burnable.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/Base64.sol";
+import "@openzeppelin/contracts/utils/Strings.sol";
 import "../utils/Counters.sol";
 import "../libraries/StructLibrary.sol";
 import "../libraries/equipment/EquipmentLibrary.sol";
@@ -84,12 +85,14 @@ contract Equipments is ERC721, ERC721Enumerable, ERC721URIStorage, ERC721Burnabl
             "ERC721URIStorage: URI query for nonexistent token"
         );
         equipment_properties memory _equipment = equipment[tokenId];
+        equipment_stats memory _stats = stats[tokenId];
+        string memory stats_uri = encodeStats(_stats);
         equipment_details memory _details = EquipmentLibrary.getEquipment(_equipment);
-        tokenURIString = encodeStrings(_details);
+        tokenURIString = encodeStrings(_details, stats_uri);
     }
 
     ///@notice Encodes the strings into a JSON string
-    function encodeStrings(equipment_details memory _details) internal pure returns (string memory uriJSON){
+    function encodeStrings(equipment_details memory _details, string memory stats_uri) internal pure returns (string memory uriJSON){
         uriJSON = string(
             abi.encodePacked(
             "data:application/json;base64,",
@@ -99,7 +102,8 @@ contract Equipments is ERC721, ERC721Enumerable, ERC721URIStorage, ERC721Burnabl
                             '{"description": "RandomClash Equipment", "image": "',
                             _details.image,'", "name": "', _details.name, '", "attributes": [',
                             '{"trait_type": "equipment_type", "value": "',_details.type_tag,'"}, {"trait_type": "rarity", "value": "',_details.rarity_tag,'"}, {"trait_type": "aptitude", "value": "',_details.dominant_stat_tag,'"}, {"trait_type": "extremity", "value": "',_details.extremity_tag,
-                            '"}]}'
+                            stats_uri,
+                            '}]}'
                         )
                     )
                 )
@@ -107,12 +111,28 @@ contract Equipments is ERC721, ERC721Enumerable, ERC721URIStorage, ERC721Burnabl
         );
     }
 
+    function encodeStats(equipment_stats memory _stats) internal pure returns (string memory stats_uri){
+        stats_uri = string(abi.encodePacked(
+                            '"}, {"display_type": "number", "trait_type": "Attack", "max_value": 100, "value": ', Strings.toString(_stats.atk),
+                            '}, {"display_type": "number", "trait_type": "Defense", "max_value": 100, "value": ', Strings.toString(_stats.def),
+                            '}, {"display_type": "number", "trait_type": "Evade Chance", "max_value": 100, "value": ', Strings.toString(_stats.eva),
+                            '}, {"display_type": "number", "trait_type": "HP", "max_value": 100, "value": ', Strings.toString(_stats.hp),
+                            '}, {"display_type": "number", "trait_type": "Penetration Chance", "max_value": 100, "value": ', Strings.toString(_stats.pen),
+                            '}, {"display_type": "number", "trait_type": "Critical Chance", "max_value": 100, "value": ', Strings.toString(_stats.crit),
+                            '}, {"display_type": "number", "trait_type": "Luck", "max_value": 100, "value": ', Strings.toString(_stats.luck),
+                            '}, {"display_type": "number", "trait_type": "Energy Restoration", "max_value": 100, "value": ', Strings.toString(_stats.energy_regen)
+        ));
+    }
+
     // The following functions are overrides required by Solidity.
     function _beforeTokenTransfer(address from, address to, uint256 tokenId)
         internal
         override(ERC721, ERC721Enumerable)
-    {
-        equipmentManager.unEquipItemFromTransfer(tokenId);
+    {   
+        ///@notice The unequip function in the managere would only fire from subsequent transfers after the initial transfer from mint.
+        if(from != address(0)){
+            equipmentManager.unEquipItemFromTransfer(tokenId);
+        }
         super._beforeTokenTransfer(from, to, tokenId);
     }
 
