@@ -9,20 +9,18 @@ pragma solidity ^0.8.7;
 
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
-import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/Base64.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
-import "../utils/Counters.sol";
-import "../utils/BreakdownUint256.sol";
-import "../libraries/characters/CharacterLibrary.sol";
-import "../libraries/characters/CharacterStatsCalculator.sol";
-import "../libraries/StructLibrary.sol";
+import "../../periphery/utils/Counters.sol";
+import "../../periphery/libraries/characters/CharacterLibrary.sol";
+import "../../periphery/libraries/characters/CharacterStatsCalculator.sol";
+
 interface _EquipmentManager {
     function unEquipAllFromTransfer(uint256 _character_id) external;
 }
 
-contract Characters is ERC721, ERC721Enumerable, ERC721URIStorage, Ownable {
+contract Characters is ERC721, ERC721Enumerable, Ownable {
     using Counters for Counters.Counter;
     Counters.Counter private character_ids;
     _EquipmentManager equipmentManager;
@@ -33,6 +31,9 @@ contract Characters is ERC721, ERC721Enumerable, ERC721URIStorage, Ownable {
 
     ///The address for the minter router
     address private character_minter;
+
+    ///The address for the character updater
+    address private character_updater;
 
     event CharacterMinted(uint256 indexed character_id, character_properties character_props);
 
@@ -45,6 +46,11 @@ contract Characters is ERC721, ERC721Enumerable, ERC721URIStorage, Ownable {
         character_name[character_ids.current()] = _character_name;
         _mint(user, character_ids.current());
         emit CharacterMinted(character_ids.current(), character[character_ids.current()]);
+    }
+
+    ///@notice This function can only be called by the updater contract which shall be responsible for doing the necessary checks.
+    function updateCharacter(uint256 tokenId, character_properties memory updated_props) public onlyUpdater{
+        character[tokenId] = updated_props;
     }    
 
     ///@notice This function sets the minter contract.
@@ -54,7 +60,13 @@ contract Characters is ERC721, ERC721Enumerable, ERC721URIStorage, Ownable {
 
     ///@notice Custom modifier to only allow the minter for some functions.
     modifier onlyMinter(){
-        require(msg.sender == character_minter,"CTRS: Can only be called by the Router Minter.");
+        require(msg.sender == character_minter);
+        _;
+    }
+
+    ///@notice Custom modifier to only allow the character updater contract for some functions.
+    modifier onlyUpdater(){
+        require(msg.sender == character_updater);
         _;
     }
 
@@ -68,18 +80,22 @@ contract Characters is ERC721, ERC721Enumerable, ERC721URIStorage, Ownable {
         equipmentManager = _EquipmentManager(managerAddress);
     }
 
+    ///@notice This function sets the character properties updater contract.
+    function setCharacterUpdater(address updaterAddress) public onlyOwner{
+        character_updater = updaterAddress;
+    }
+
     ///@notice Instead of storing the tokenURI using setTokenURI, we are constructing it as it is being queried.
-    ///The reason for this is to save up on mints as it is done by our VRF's fulfillRandomWords()
     function tokenURI(uint256 tokenId)
         public
         view
         virtual
-        override(ERC721, ERC721URIStorage)
+        override(ERC721)
         returns (string memory tokenURIString)
     {
         require(
             super._exists(tokenId),
-            "ERC721URIStorage: URI query for nonexistent token"
+            "Nonexistent"
         );
         character_properties memory character_props = character[tokenId];
         character_uri_details memory uri_details = CharacterLibrary.getCharacter(character_props.character_class, character_props.mood);
@@ -88,30 +104,55 @@ contract Characters is ERC721, ERC721Enumerable, ERC721URIStorage, Ownable {
 
     ///@notice Encodes the strings into a JSON string
     function encodeStrings(character_properties memory character_props, character_uri_details memory uri_details, string memory _character_name) internal pure returns (string memory uriJSON){
-        uriJSON = string(
-            abi.encodePacked(
+        uriJSON =
+            string.concat(
             "data:application/json;base64,",
                 Base64.encode(
-                    bytes(
-                        abi.encodePacked(
+                    abi.encodePacked(
+                                encodeDetails(uri_details, _character_name),
+                                encodeProps(character_props)
+                                ///encodeStats(CharacterStatsCalculator.getCharacterStats(character_props))
+                    )
+                )
+            );
+    }
+
+    function encodeDetails(character_uri_details memory uri_details, string memory _character_name) internal pure returns (string memory details_part){
+        details_part = string.concat(
                             '{"description": "RandomClash Character", "image": "',uri_details.image,'", "name": "', _character_name,
                             '", "attributes": [',
                                 '{"trait_type": "character_class", "value": "', uri_details.name,
-                                '"}, {"display_type": "number", "trait_type": "strength", "max_value": 1000, "value": ', Strings.toString(character_props.str),
-                                '}, {"display_type": "number", "trait_type": "vitality", "max_value": 1000, "value": ', Strings.toString(character_props.vit),
-                                '}, {"display_type": "number", "trait_type": "dexterity", "max_value": 1000, "value": ', Strings.toString(character_props.dex),
-                                '}, {"display_type": "number", "trait_type": "experience", "value": "', Strings.toString(character_props.exp),
-                                '"}, {"trait_type": "element", "value": "', CharacterLibrary.getElement(character_props.element),
                                 '"}, {"display_type": "boost_percentage", "trait_type": "', uri_details.bonus,'", "value": ',uri_details.bonus_value,'}, ',
-                                '{"display_type": "boost_percentage", "trait_type": "', CharacterLibrary.getTalent(character_props.talent),
-                                '", "value": 10}, {"trait_type": "mood", "value": "',uri_details.mood,'"}',
-                            ']}'
-                        )
-                    )
-                )
-            )
+                                '{"trait_type": "mood", "value": "',uri_details.mood,'"}'
         );
     }
+
+    function encodeProps(character_properties memory character_props) internal pure returns (string memory props_part){
+        props_part = string.concat(
+                                ', {"display_type": "number", "trait_type": "STR", "value": ', Strings.toString(character_props.str),
+                                '}, {"display_type": "number", "trait_type": "VIT", "value": ', Strings.toString(character_props.vit),
+                                '}, {"display_type": "number", "trait_type": "DEX", "value": ', Strings.toString(character_props.dex),
+                                '}, {"trait_type": "LVL", "value": ', Strings.toString((character_props.exp / 100) + 1),
+                                '}, {"trait_type": "element", "value": "', CharacterLibrary.getElement(character_props.element),
+                                '"}, {"display_type": "boost_percentage", "trait_type": "', CharacterLibrary.getTalent(character_props.talent),
+                                '", "value": 10}]}' /// <<< attributes array and JSON uri closes here
+        );
+    }
+
+    ///@notice Removing the stats section in the URI due to the code size exceeding 24,576 bytes.
+    // function encodeStats(character_stats memory _stats) internal pure returns (string memory stats_part){
+    //     stats_part = string.concat(
+                            // ', {"trait_type": "ATK", "value": ', Strings.toString(_stats.atk),
+                            // '}, {"trait_type": "DEF", "value": ', Strings.toString(_stats.def),
+                            // '}, {"trait_type": "EVA %", "value": ', Strings.toString(_stats.eva / 10),
+                            // '}, {"trait_type": "HP", "value": ', Strings.toString(_stats.hp),
+                            // '}, {"trait_type": "PEN %", "value": ', Strings.toString(_stats.pen / 10),
+                            // '}, {"trait_type": "CRIT %", "value": ', Strings.toString(_stats.crit / 10),
+                            // '}, {"trait_type": "LUK %", "value": ', Strings.toString(_stats.luck / 10),
+                            // '}, {"trait_type": "RES %", "value": ', Strings.toString(_stats.energy_regen / 10),
+    //                         '}]}' /// <<< attributes array and JSON uri closes here
+    //     );
+    // }
 
     // The following functions are overrides required by Solidity.
 
@@ -126,7 +167,7 @@ contract Characters is ERC721, ERC721Enumerable, ERC721URIStorage, Ownable {
         super._beforeTokenTransfer(from, to, tokenId);
     }
 
-    function _burn(uint256 tokenId) internal override(ERC721, ERC721URIStorage) {
+    function _burn(uint256 tokenId) internal override(ERC721) {
         super._burn(tokenId);
     }
 

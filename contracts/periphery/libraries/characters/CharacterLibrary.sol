@@ -7,7 +7,7 @@
 */
 pragma solidity =0.8.17;
 
-import "../../libraries/StructLibrary.sol";
+import "../../libraries/structs/CharacterStructs.sol";
 
 library CharacterLibrary {
     function getCharacter(uint32 character_class, uint32 mood) internal pure returns (character_uri_details memory character){
@@ -53,8 +53,8 @@ library CharacterLibrary {
     }
 
     function getTalent(uint32 talent) internal pure returns (string memory talent_tag){
-        if(talent == 0){talent_tag = "Ruthless (+Attack)";}
-        if(talent == 1){talent_tag = "Tenacious (+Defense)";}
-        if(talent == 2){talent_tag = "Shifty (+Evasion)";}
+        if(talent == 0){talent_tag = "Ruthless (ATK)";}
+        if(talent == 1){talent_tag = "Tenacious (DEF)";}
+        if(talent == 2){talent_tag = "Shifty (EVA)";}
     }
 }

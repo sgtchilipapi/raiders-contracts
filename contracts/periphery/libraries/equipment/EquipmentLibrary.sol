@@ -11,7 +11,7 @@
 pragma solidity =0.8.17;
 
 import "@openzeppelin/contracts/utils/Strings.sol";
-import "../../libraries/StructLibrary.sol";
+import "../../libraries/structs/EquipmentStructs.sol";
 
 library EquipmentLibrary {
     function getEquipment(equipment_properties memory equipment) internal pure returns (equipment_details memory details){

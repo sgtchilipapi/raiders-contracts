@@ -13,7 +13,7 @@ pragma solidity ^0.8.7;
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/security/Pausable.sol";
 import "../utils/BreakdownUint256.sol";
-import "../libraries/StructLibrary.sol";
+import "../libraries/structs/CharacterStructs.sol";
 
 interface _RandomizationContract {
     function requestRandomWords(address user, bool experimental) external returns (uint256 requestId);

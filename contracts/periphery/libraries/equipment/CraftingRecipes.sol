@@ -10,7 +10,7 @@
 
 pragma solidity ^0.8.7;
 
-import "../../libraries/StructLibrary.sol";
+import "../../libraries/structs/EquipmentStructs.sol";
 
 library CraftingRecipes {
     function getRecipe(uint256 item_type) internal pure returns (item_recipe memory recipe){

@@ -1,7 +1,7 @@
 //SPDX-License-Identifier: MIT
 pragma solidity =0.8.17;
 
-import "../../libraries/StructLibrary.sol";
+import "../../libraries/structs/CharacterStructs.sol";
 
 library CharacterStatsCalculator{
     function getCharacterStats(character_properties memory properties) internal pure returns (character_stats memory stats){
@@ -12,8 +12,8 @@ library CharacterStatsCalculator{
             hp: getHP(properties),
             pen: getPenetrationChance(properties),
             crit: getCriticalChance(properties),
-            atk_min: getAttackMinimum(properties),
-            atk_max: getAttackMaximum(properties)
+            luck: getLuck(properties),
+            energy_regen: getEnergyRegen(properties)
         });
     }
 
@@ -58,24 +58,12 @@ library CharacterStatsCalculator{
         evasion_chance += (evasion_chance * evasion_bonus) / 100;
     }
 
-    function getAttackMinimum(character_properties memory properties) internal pure returns (uint256 atk_min){
-        uint256 atk = getAttackPower(properties);
-        if(properties.character_class == 0){atk_min = (atk * 84) / 100;}
-        if(properties.character_class == 1){atk_min = (atk * 84) / 100;}
-        if(properties.character_class == 2){atk_min = (atk * 88) / 100;}
-        if(properties.character_class == 3){atk_min = (atk * 88) / 100;}
-        if(properties.character_class == 4){atk_min = (atk * 92) / 100;}
-        if(properties.character_class == 5){atk_min = (atk * 92) / 100;}
+    function getLuck(character_properties memory properties) internal pure returns (uint256 luck){
+        luck = properties.dex / 10;
     }
 
-    function getAttackMaximum(character_properties memory properties) internal pure returns (uint256 atk_max){
-        uint256 atk = getAttackPower(properties);
-        if(properties.character_class == 0){atk_max = (atk * 106) / 100;}
-        if(properties.character_class == 1){atk_max = (atk * 106) / 100;}
-        if(properties.character_class == 2){atk_max = (atk * 104) / 100;}
-        if(properties.character_class == 3){atk_max = (atk * 104) / 100;}
-        if(properties.character_class == 4){atk_max = (atk * 102) / 100;}
-        if(properties.character_class == 5){atk_max = (atk * 102) / 100;}
+    function getEnergyRegen(character_properties memory properties) internal pure returns (uint256 energy_regen){
+        energy_regen = ((properties.vit + properties.str) / 2 ) / 10;
     }
 
     function getEnergyRegenBonus(character_properties memory properties) internal pure returns (uint256 energy_regen_bonus){

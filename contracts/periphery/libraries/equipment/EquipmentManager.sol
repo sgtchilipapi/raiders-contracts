@@ -8,7 +8,8 @@
 pragma solidity ^0.8.7;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
-import "../libraries/StructLibrary.sol";
+import "../../libraries/structs/CharacterStructs.sol";
+import "../../libraries/structs/EquipmentStructs.sol";
 
 interface ICharacters {
     function isOwner(address _owner, uint256 _character) external view returns (bool);

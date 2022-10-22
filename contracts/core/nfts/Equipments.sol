@@ -8,20 +8,17 @@ pragma solidity ^0.8.7;
 
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
-import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
-import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Burnable.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/Base64.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
-import "../utils/Counters.sol";
-import "../libraries/StructLibrary.sol";
-import "../libraries/equipment/EquipmentLibrary.sol";
+import "../../periphery/utils/Counters.sol";
+import "../../periphery/libraries/equipment/EquipmentLibrary.sol";
 
 interface _EquipmentManager {
     function unEquipItemFromTransfer(uint256 _equipment_id) external;
 }
 
-contract Equipments is ERC721, ERC721Enumerable, ERC721URIStorage, ERC721Burnable, Ownable {
+contract Equipments is ERC721, ERC721Enumerable, Ownable {
     using Counters for Counters.Counter;
     Counters.Counter private equipment_ids;
     _EquipmentManager equipmentManager;
@@ -77,12 +74,12 @@ contract Equipments is ERC721, ERC721Enumerable, ERC721URIStorage, ERC721Burnabl
         public
         view
         virtual
-        override(ERC721, ERC721URIStorage)
+        override(ERC721)
         returns (string memory tokenURIString)
     {
         require(
             super._exists(tokenId),
-            "ERC721URIStorage: URI query for nonexistent token"
+            "ERC721: URI query for nonexistent token"
         );
         equipment_properties memory _equipment = equipment[tokenId];
         equipment_stats memory _stats = stats[tokenId];
@@ -136,7 +133,7 @@ contract Equipments is ERC721, ERC721Enumerable, ERC721URIStorage, ERC721Burnabl
         super._beforeTokenTransfer(from, to, tokenId);
     }
 
-    function _burn(uint256 tokenId) internal override(ERC721, ERC721URIStorage) {
+    function _burn(uint256 tokenId) internal override(ERC721) {
         super._burn(tokenId);
     }
 
