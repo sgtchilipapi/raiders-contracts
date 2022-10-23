@@ -112,12 +112,12 @@ contract Equipments is ERC721, ERC721Enumerable, Ownable {
         stats_uri = string(abi.encodePacked(
                             '"}, {"display_type": "number", "trait_type": "Attack", "max_value": 100, "value": ', Strings.toString(_stats.atk),
                             '}, {"display_type": "number", "trait_type": "Defense", "max_value": 100, "value": ', Strings.toString(_stats.def),
-                            '}, {"display_type": "number", "trait_type": "Evade Chance", "max_value": 100, "value": ', Strings.toString(_stats.eva),
+                            '}, {"display_type": "number", "trait_type": "Evade Chance %", "max_value": 1000, "value": ', Strings.toString(_stats.eva),
                             '}, {"display_type": "number", "trait_type": "HP", "max_value": 100, "value": ', Strings.toString(_stats.hp),
-                            '}, {"display_type": "number", "trait_type": "Penetration Chance", "max_value": 100, "value": ', Strings.toString(_stats.pen),
-                            '}, {"display_type": "number", "trait_type": "Critical Chance", "max_value": 100, "value": ', Strings.toString(_stats.crit),
-                            '}, {"display_type": "number", "trait_type": "Luck", "max_value": 100, "value": ', Strings.toString(_stats.luck),
-                            '}, {"display_type": "number", "trait_type": "Energy Restoration", "max_value": 100, "value": ', Strings.toString(_stats.energy_regen)
+                            '}, {"display_type": "number", "trait_type": "Penetration Chance %", "max_value": 100, "value": ', Strings.toString(_stats.pen),
+                            '}, {"display_type": "number", "trait_type": "Critical Chance %", "max_value": 1000, "value": ', Strings.toString(_stats.crit),
+                            '}, {"display_type": "number", "trait_type": "Luck %", "max_value": 1000, "value": ', Strings.toString(_stats.luck),
+                            '}, {"display_type": "number", "trait_type": "Energy Restoration %", "max_value": 1000, "value": ', Strings.toString(_stats.energy_regen)
         ));
     }
 

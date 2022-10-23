@@ -48,6 +48,10 @@ contract EquipmentMinter is Ownable, Pausable{
     ///The msg.value required to mint to prevent spam and deplete VRF funds.
     ///Currently unset (0) for judging purposes as stated in the hackathon rules.
     uint256 mint_fee;
+
+    ///Variables for limiting the 1st 100 free mints.
+    uint256 public freeMints;
+    mapping(address => bool) public mintedFree;
     
     event EquipmentRequested(address indexed player_address, equipment_request request);
     constructor(address equipmentsNftAddress){
@@ -110,6 +114,35 @@ contract EquipmentMinter is Ownable, Pausable{
         bool enough = getEquipmentRequirements(_equipment_type, 1 /**item_count */);
         require(enough, "eMNTR: Not enough materials for this crafting transaction.");
         
+        ///@notice EXTCALL to VRF contract. Set the caller's current equipment_request to the returned request_id by the VRF contract.
+        ///Using a constant 1. See above reason on line 57 (unwrapped).
+        ///The bool argument here notifies the vrf contract that the request being sent is experimental.
+        request[msg.sender] = equipment_request({
+            request_id: randomizer.requestRandomWords(/**item_count */ 1, msg.sender, true),
+            equipment_type: _equipment_type,
+            number_of_items: 1,
+            time_requested: block.timestamp
+        });
+        
+        emit EquipmentRequested(msg.sender, request[msg.sender]);
+    }
+
+    ///@notice This is to mint equipments for free. Would only be available for the first 100 equipment mints and only 1 free mint per address.
+    ///Should only be available when the walkthrough quest has been completed by the user.
+    function requestEquipmentExperimentalFree(uint64 _equipment_type /**, uint32 item_count */) public payable whenNotPaused{
+        ///We can only allow one request per address at a time. A request shall be completed (minted the equipment) to be able request another one.
+        equipment_request memory _request = request[msg.sender];
+        require(_request.request_id == 0, "eMNTR: There is a request pending mint.");
+
+        ///Equipment/Items can only be weapon, armor, helm, accessory, and consumable. 0-4
+        require(_equipment_type < 5, "eMNTR: Incorrect number for an equipment type.");
+        require(msg.value >= (/**item_count */ 1 * mint_fee), "eMNTR: Incorrect amount for equipment minting. Send exactly 0.01 MATIC per item requested.");
+        
+        require(mintedFree[msg.sender] == false, "Already minted a free equipment.");
+        require(freeMints < 101, "Free mints are out.");
+        mintedFree[msg.sender] = true;
+        freeMints += 1;
+
         ///@notice EXTCALL to VRF contract. Set the caller's current equipment_request to the returned request_id by the VRF contract.
         ///Using a constant 1. See above reason on line 57 (unwrapped).
         ///The bool argument here notifies the vrf contract that the request being sent is experimental.
@@ -276,7 +309,7 @@ contract EquipmentMinter is Ownable, Pausable{
         ///In case of weapons, it determine's the weapon's type (hammer, dagger, bombard,...)
         ///Also, we check the extremity of the item's dominant stat (weak, minor, good, great, intense,...)
         uint64 _dominant_stat; uint64 _extremity;
-        (_equipment_stats, _dominant_stat, _extremity) = getStats(random_stats, stat_sum);
+        (_equipment_stats, _dominant_stat, _extremity) = getStats(random_stats, stat_sum, _equipment_type);
         equipment_props = equipment_properties({
             equipment_type: _equipment_type,
             rarity: _rarity,
@@ -294,7 +327,7 @@ contract EquipmentMinter is Ownable, Pausable{
         if(roll_value >= 0 && roll_value <= 748){rarity = 0; stat_sum = 15;} //75%
     }
 
-    function getStats(uint16[8] memory random_stats, uint256 stat_sum) internal pure returns (equipment_stats memory _equipment_stats, uint64 dominant_stat, uint64 extremity){
+    function getStats(uint16[8] memory random_stats, uint256 stat_sum, uint256 _equipment_type) internal pure returns (equipment_stats memory _equipment_stats, uint64 dominant_stat, uint64 extremity){
         uint256 total_roll_value;
         uint256 dominant_roll_value;
         uint256[8] memory roll_values;
@@ -307,6 +340,9 @@ contract EquipmentMinter is Ownable, Pausable{
         for(uint256 i = 0; i < roll_values.length; i++){
             _stats[i] = (roll_values[i] * stat_sum) / total_roll_value;
         }
+
+        (uint256 base_stat_index, uint256 base_stat_value) = getBaseStat(_equipment_type, stat_sum);
+        _stats[base_stat_index] += base_stat_value;
 
         _equipment_stats = equipment_stats({
             atk: uint32(_stats[0]),
@@ -321,6 +357,33 @@ contract EquipmentMinter is Ownable, Pausable{
 
         (dominant_stat, dominant_roll_value)  = getDominantStat(roll_values);
         extremity = getExtremity(dominant_roll_value, total_roll_value, stat_sum);
+    }
+
+    ///@notice This function calculates the equipment's base stat value. We determine the type of the equipment first to know what
+    ///particular stat it has as its primary stat. Then we calculate for its value using the stat_sum that is derived from the 
+    ///equipment's rarity. 
+    
+    ///For example, a weapon has ATK as its primary stat. Then we calculate for the value using the stat_sum.
+    function getBaseStat(uint256 _equipment_type, uint256 stat_sum) internal pure returns (uint256 stat_index, uint256 stat_value){
+        if(_equipment_type == 0){
+            stat_index = 0;
+            ///@notice We have arbitrarily set the MAX stat effect of any equipment here at 300 for simplicity purposes.
+            ///If further game balance should be desired, this library should be revised. We have also added a +50 bonus
+            ///multiplier & denominator to all kinds of equipment to dilute the effects of the rarity a bit to achieve reasonable game balance.
+            stat_value = (300 * (stat_sum + 50)) / 150;
+        }
+        if(_equipment_type == 1){
+            stat_index = 1;
+            stat_value = ((300 * (stat_sum + 50)) / 150) / 4;
+        }
+        if(_equipment_type == 2){
+            stat_index = 1;
+            stat_value = ((300 * (stat_sum + 50)) / 150) / 4;
+        }
+        if(_equipment_type == 3){
+            stat_index = 2;
+            stat_value = ((300 * (stat_sum + 50)) / 150) / 2;
+        }
     }
 
     function getDominantStat(uint256[8] memory roll_values) internal pure returns (uint64 dominant_stat, uint256 dominant_roll_value){

@@ -14,7 +14,7 @@ import "@openzeppelin/contracts/utils/Base64.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
 import "../../periphery/utils/Counters.sol";
 import "../../periphery/libraries/characters/CharacterLibrary.sol";
-import "../../periphery/libraries/characters/CharacterStatsCalculator.sol";
+// import "../../periphery/libraries/characters/CharacterStatsCalculator.sol";
 
 interface _EquipmentManager {
     function unEquipAllFromTransfer(uint256 _character_id) external;

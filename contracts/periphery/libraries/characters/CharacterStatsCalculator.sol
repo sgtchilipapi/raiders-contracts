@@ -18,7 +18,7 @@ library CharacterStatsCalculator{
     }
 
     function getAttackPower(character_properties memory properties) internal pure returns (uint256 attack_power){
-        attack_power = ((((properties.str * 6) + (properties.dex * 4)) / 10) * 3) / 4;
+        attack_power = (((properties.str * 6) + (properties.dex * 4)) / 10) / 4;
         uint256 attack_bonus;
         if(properties.character_class == 0){attack_bonus = 5;} //Viking
         attack_power += (attack_power * attack_bonus) / 100;
@@ -39,7 +39,7 @@ library CharacterStatsCalculator{
     }
 
     function getDefense(character_properties memory properties) internal pure returns (uint256 defense){
-        defense = (((properties.vit * 6) + (properties.str * 4)) / 10) / 4;
+        defense = (((properties.vit * 6) + (properties.str * 4)) / 10) / 8;
         uint256 defense_bonus;
         if(properties.character_class == 3){defense_bonus = 10;} //Troll
         defense += (defense * defense_bonus) / 100;
