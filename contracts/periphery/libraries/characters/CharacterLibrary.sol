@@ -53,8 +53,11 @@ library CharacterLibrary {
     }
 
     function getTalent(uint32 talent) internal pure returns (string memory talent_tag){
-        if(talent == 0){talent_tag = "Ruthless (ATK)";}
-        if(talent == 1){talent_tag = "Tenacious (DEF)";}
-        if(talent == 2){talent_tag = "Shifty (EVA)";}
+        if(talent == 0){talent_tag = "ATK";}
+        if(talent == 1){talent_tag = "DEF";}
+        if(talent == 2){talent_tag = "EVA";}
+        if(talent == 3){talent_tag = "HP";}
+        if(talent == 4){talent_tag = "PEN";}
+        if(talent == 5){talent_tag = "CRIT";}
     }
 }

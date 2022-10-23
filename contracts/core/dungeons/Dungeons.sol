@@ -31,13 +31,13 @@ contract Dungeons is Ownable{
     }
 
     ///@notice This function requests for the random numbers from the VRF.
-    function enter(uint256 character_id, uint256 dungeon, uint256 level) public {
+    function enter(uint256 character_id, uint256 dungeon, uint256 tier) public {
 
     }
 
     ///@notice This function consumes random numbers to pick a random enemy based the selected dungeon parameters.
-    function getEnemy(uint256 dungeon, uint256 level) internal pure returns(enemy_stats memory enemy){
-
+    function getEnemy(uint256 dungeon_type, uint256 tier, uint16[2] memory random_nums) internal pure returns(enemy_stats memory enemy){
+ 
     }
 
     ///@notice This function fetches the character's properties from the Characterse NFT contract.

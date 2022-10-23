@@ -8,9 +8,8 @@
             Originally made for a submission to CHAINLINK HACKATHON 2022.
  */
 
-pragma solidity =0.8.17;
+pragma solidity ^0.8.7;
 
-import "@openzeppelin/contracts/utils/Strings.sol";
 import "../../libraries/structs/EquipmentStructs.sol";
 
 library EquipmentLibrary {

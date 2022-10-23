@@ -39,7 +39,7 @@ library CharacterStatsCalculator{
     }
 
     function getDefense(character_properties memory properties) internal pure returns (uint256 defense){
-        defense = (((properties.vit * 6) + (properties.str * 4)) / 10) / 8;
+        defense = (((properties.vit * 6) + (properties.str * 4)) / 10) / 2;
         uint256 defense_bonus;
         if(properties.character_class == 3){defense_bonus = 10;} //Troll
         defense += (defense * defense_bonus) / 100;
@@ -65,17 +65,4 @@ library CharacterStatsCalculator{
     function getEnergyRegen(character_properties memory properties) internal pure returns (uint256 energy_regen){
         energy_regen = ((properties.vit + properties.str) / 2 ) / 10;
     }
-
-    function getEnergyRegenBonus(character_properties memory properties) internal pure returns (uint256 energy_regen_bonus){
-        if(properties.talent == 0){energy_regen_bonus = 20;}
-    }
-
-    function getCraftingBonus(character_properties memory properties) internal pure returns (uint256 crafting_bonus){
-        if(properties.talent == 1){crafting_bonus = 10;}
-    }
-
-    function getLootChanceBonus(character_properties memory properties) internal pure returns (uint256 loot_chance_bonus){
-        if(properties.talent == 2){loot_chance_bonus = 5;}
-    }
-
 }

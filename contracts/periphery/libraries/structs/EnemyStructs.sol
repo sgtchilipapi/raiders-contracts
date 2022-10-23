@@ -2,11 +2,20 @@
 
 pragma solidity ^0.8.7;
 
-struct enemy_props {
-    string name;
-    string _type;
-    string rank;
+struct enemy_properties {
+    uint256 dungeon;
+    uint256 tier;
+    uint256 _type;
+    uint256 attr_sum;
+    uint256 attr_alloc;
 }
+
+struct enemy_attributes {
+    uint256 str;
+    uint256 vit;
+    uint256 dex;
+}
+
 struct enemy_stats {
     uint256 atk;
     uint256 def;
