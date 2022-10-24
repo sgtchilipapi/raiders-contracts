@@ -19,15 +19,33 @@ interface _EquipmentManager{
 
 }
 
+interface _LibCharacterStatsCalculator{
+    function getCharacterStats(character_properties memory properties) external pure returns (character_stats memory character);
+}
+
+interface _LibEnemyStatsCalculator{
+    function getEnemyStats(uint256 dungeon_type, uint256 tier, uint16[2] memory random_numbers) external pure returns (enemy_stats memory enemy);
+}
+
 contract Dungeons is Ownable{
     _Characters characters;
     _Equipments equipments;
     _EquipmentManager equipment_manager;
+    _LibCharacterStatsCalculator character_stats_calculator;
+    _LibEnemyStatsCalculator enemy_stats_calculator;
 
-    constructor(address charactersNftAddress, address equipmentNftAddress, address equipmentManagerAddress){
+    constructor(
+        address charactersNftAddress, 
+        address equipmentNftAddress, 
+        address equipmentManagerAddress,
+        address libCharacterStatsCalculatorAddress,
+        address libEnemyStatsCalculatorAddress
+    ){
         characters = _Characters(charactersNftAddress);
         equipments = _Equipments(equipmentNftAddress);
         equipment_manager = _EquipmentManager(equipmentManagerAddress);
+        character_stats_calculator = _LibCharacterStatsCalculator(libCharacterStatsCalculatorAddress);
+        enemy_stats_calculator = _LibEnemyStatsCalculator(libEnemyStatsCalculatorAddress);
     }
 
     ///@notice This function requests for the random numbers from the VRF.

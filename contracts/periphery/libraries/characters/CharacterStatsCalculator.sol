@@ -1,11 +1,11 @@
 //SPDX-License-Identifier: MIT
-pragma solidity =0.8.17;
+pragma solidity ^0.8.7;
 
 import "../../libraries/structs/CharacterStructs.sol";
 
 library CharacterStatsCalculator{
-    function getCharacterStats(character_properties memory properties) internal pure returns (character_stats memory stats){
-        stats = character_stats({
+    function getCharacterStats(character_properties memory properties) public pure returns (character_stats memory character){
+        character = character_stats({
             atk: getAttackPower(properties),
             def: getDefense(properties),
             eva: getEvasionChance(properties),
