@@ -40,7 +40,7 @@ library EnemyStatsCalculator {
         attr_alloc = random_num % 400;
     }
 
-    function getEnemyAttributes(enemy_properties memory enemy_props) public pure returns (enemy_attributes memory enemy_attr){
+    function getEnemyAttributes(enemy_properties memory enemy_props) internal pure returns (enemy_attributes memory enemy_attr){
         if(enemy_props.dungeon == 0){
             enemy_attr.str = (600 * enemy_props.attr_sum) / 1000;
             enemy_attr.vit = (enemy_props.attr_alloc * enemy_props.attr_sum) / 1000;

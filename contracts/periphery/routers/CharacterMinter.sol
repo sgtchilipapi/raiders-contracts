@@ -26,8 +26,8 @@ interface _Characters {
 
 contract CharacterMinter is Ownable, Pausable{
     ///The randomization contract for generating random numbers for mint
-    _RandomizationContract randomizer;
-    address private vrfContract;
+    _RandomizationContract vrf_contract;
+    address private vrf_contract_address;
 
     ///The core: Characters NFT contract deployment.
     _Characters charactersNft;
@@ -65,7 +65,7 @@ contract CharacterMinter is Ownable, Pausable{
         ///EXTCALL to VRF contract. Set the caller's current character_request to the returned request_id by the VRF contract.
         ///The bool argument here notifies the vrf contract that the request being sent is NOT experimental.
         request[msg.sender] = character_request({
-            request_id: randomizer.requestRandomWords(msg.sender, false),
+            request_id: vrf_contract.requestRandomWords(msg.sender, false),
             character_class: _character_class,
             _name: _character_name,
             time_requested: block.timestamp
@@ -94,7 +94,7 @@ contract CharacterMinter is Ownable, Pausable{
         ///@notice EXTCALL to VRF contract. Set the caller's current character_request to the returned request_id by the VRF contract.
         ///The bool argument here notifies the vrf contract that the request being sent is experimental.
         request[msg.sender] = character_request({
-            request_id: randomizer.requestRandomWords(msg.sender, true),
+            request_id: vrf_contract.requestRandomWords(msg.sender, true),
             character_class: _character_class,
             _name: _character_name,
             time_requested: block.timestamp
@@ -109,7 +109,7 @@ contract CharacterMinter is Ownable, Pausable{
         require(_request.request_id > 0, "cMNTR: Cannot cancel non-existing requests.");
         require((block.timestamp - _request.time_requested) > 3600, "cMNTR: Cannot cancel requests that havent lapsed 1 hour from time requested.");
 
-        (bool fulfilled,) = randomizer.getRequestStatus(_request.request_id);
+        (bool fulfilled,) = vrf_contract.getRequestStatus(_request.request_id);
         require(!fulfilled, "cMNTR: Cannot cancel requests that have already been fulfilled.");
 
         request[msg.sender] = character_request({
@@ -129,7 +129,7 @@ contract CharacterMinter is Ownable, Pausable{
         require(_request.request_id > 0, "cMNTRS: No request to mint.");
 
         ///Fetch the request status from the VRF contract
-        (bool fulfilled, uint256[] memory randomNumberRequested) = randomizer.getRequestStatus(_request.request_id);
+        (bool fulfilled, uint256[] memory randomNumberRequested) = vrf_contract.getRequestStatus(_request.request_id);
 
         ///Verify if the random number request has been indeed fulfilled, revert if not.
         require(fulfilled, "cMNTRS: Request is not yet fulfilled or invalid request id.");
@@ -154,7 +154,7 @@ contract CharacterMinter is Ownable, Pausable{
         character_request memory _request = request[user];
         ///@notice Removing the immediate following external SLOAD since the VRF already knows the randomNumberRequested, 
         ///we simply pass it from the VRF's external call to this function
-            // (/** bool fulfilled */, uint256[] memory randomNumberRequested) = randomizer.getRequestStatus(_request.request_id);
+            // (/** bool fulfilled */, uint256[] memory randomNumberRequested) = vrf_contract.getRequestStatus(_request.request_id);
 
         ///@notice We are removing the immediate following requirements since we have shifted the minting responsibility to the VRF.
         ///When the fulfillRandomWords() is executed, there is no more need to check if the request has been fulfilled.
@@ -240,9 +240,9 @@ contract CharacterMinter is Ownable, Pausable{
     }
 
     ///@notice Admin Functions
-    function setRandomizationContract(address _vrfContract) public onlyOwner {
-        vrfContract = _vrfContract;
-        randomizer = _RandomizationContract(_vrfContract);
+    function setRandomizationContract(address _vrf_contract_address) public onlyOwner {
+        vrf_contract_address = _vrf_contract_address;
+        vrf_contract = _RandomizationContract(_vrf_contract_address);
     }
 
     function setMintFee(uint256 amount) public onlyOwner {
@@ -250,7 +250,7 @@ contract CharacterMinter is Ownable, Pausable{
     }
 
     modifier onlyVRF(){
-        require(msg.sender == vrfContract, "cMNTR: Can only be called by the VRF Contract for equipment crafting.");
+        require(msg.sender == vrf_contract_address, "cMNTR: Can only be called by the VRF Contract for equipment crafting.");
         _;
     }
 
