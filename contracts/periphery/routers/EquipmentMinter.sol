@@ -16,7 +16,7 @@ import "@openzeppelin/contracts/security/Pausable.sol";
 import "../utils/BreakdownUint256.sol";
 import "../libraries/equipment/CraftingRecipes.sol";
 import "../libraries/materials/MaterialsAddresses.sol";
-import "../libraries/StructLibrary.sol";
+import "../libraries/structs/GlobalStructs.sol";
 
 interface _RandomizationContract {
     function requestRandomWords(uint32 numWords, address user, bool experimental) external returns (uint256 requestId);
@@ -28,7 +28,7 @@ interface _EquipmentLibrary {
 }
 
 interface _Equipments {
-    function _mintEquipment(address user, equipment_properties memory equipment_props, equipment_stats memory _equipment_stats) external;
+    function _mintEquipment(address user, equipment_properties memory equipment_props, battle_stats memory _equipment_stats) external;
 }
 
 contract EquipmentMinter is Ownable, Pausable{
@@ -282,11 +282,11 @@ contract EquipmentMinter is Ownable, Pausable{
 
     ///@notice This includes external call to the Equipment NFT Contract to actually mint the tokens.
     function mintEquipment(address user, uint256 randomNumberRequested, uint64 equipment_type) internal {
-        (equipment_properties memory equipment_props, equipment_stats memory _equipment_stats) = getResult(randomNumberRequested, equipment_type);
+        (equipment_properties memory equipment_props, battle_stats memory _equipment_stats) = getResult(randomNumberRequested, equipment_type);
         equipmentsNft._mintEquipment(user, equipment_props, _equipment_stats);
     }
 
-    function getResult(uint256 randomNumber, uint64 _equipment_type) internal pure returns (equipment_properties memory equipment_props, equipment_stats memory _equipment_stats){
+    function getResult(uint256 randomNumber, uint64 _equipment_type) internal pure returns (equipment_properties memory equipment_props, battle_stats memory _equipment_stats){
         ///To save on LINK tokens for our VRF contract, we are breaking a single random word into 16 uint16s.
         ///The reason for this is we will need a lot(9) of random numbers for a single equipment mint.
         ///It is given that the chainlink VRF generates verifiable, truly random numbers that it is safe to assume that breaking this
@@ -327,7 +327,7 @@ contract EquipmentMinter is Ownable, Pausable{
         if(roll_value >= 0 && roll_value <= 748){rarity = 0; stat_sum = 15;} //75%
     }
 
-    function getStats(uint16[8] memory random_stats, uint256 stat_sum, uint256 _equipment_type) internal pure returns (equipment_stats memory _equipment_stats, uint64 dominant_stat, uint64 extremity){
+    function getStats(uint16[8] memory random_stats, uint256 stat_sum, uint256 _equipment_type) internal pure returns (battle_stats memory _equipment_stats, uint64 dominant_stat, uint64 extremity){
         uint256 total_roll_value;
         uint256 dominant_roll_value;
         uint256[8] memory roll_values;
@@ -344,7 +344,7 @@ contract EquipmentMinter is Ownable, Pausable{
         (uint256 base_stat_index, uint256 base_stat_value) = getBaseStat(_equipment_type, stat_sum);
         _stats[base_stat_index] += base_stat_value;
 
-        _equipment_stats = equipment_stats({
+        _equipment_stats = battle_stats({
             atk: uint32(_stats[0]),
             def: uint32(_stats[1]),
             eva: uint32(_stats[2]),

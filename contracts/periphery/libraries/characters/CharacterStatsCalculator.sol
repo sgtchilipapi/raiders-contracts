@@ -2,10 +2,11 @@
 pragma solidity ^0.8.7;
 
 import "../../libraries/structs/CharacterStructs.sol";
+import "../../libraries/structs/GlobalStructs.sol";
 
 library CharacterStatsCalculator{
-    function getCharacterStats(character_properties memory properties) public pure returns (character_stats memory character){
-        character = character_stats({
+    function getCharacter(character_properties memory properties) public pure returns (battle_stats memory character){
+        character = battle_stats({
             atk: getAttackPower(properties),
             def: getDefense(properties),
             eva: getEvasionChance(properties),

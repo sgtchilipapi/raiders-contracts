@@ -18,17 +18,6 @@ struct equipment_properties { //SSTORED
     uint64 extremity;
 }
 
-struct equipment_stats {
-    uint32 atk;
-    uint32 def;
-    uint32 eva;
-    uint32 hp;
-    uint32 pen;
-    uint32 crit;
-    uint32 luck; //for crafting and loot
-    uint32 energy_regen; //energy refund after actions
-}
-
 struct item_recipe {
     uint256 main_material;
     uint256 indirect_material;

@@ -2,21 +2,22 @@
 /**
     @title Struct Library
     @author Eman Garciano
-    @notice: Reference for structs across contracts. 
+    @notice: Reference for global structs across contracts. 
     Originally created for CHAINLINK HACKATHON FALL 2022
 */
 
 pragma solidity =0.8.17;
 
-/*
-    Character Classes Reference:
-    1. Viking
-    2. Woodcutter
-    3. Troll
-    4. Mechanic
-    5. Amphibian
-    6. Graverobber
-*/
+struct battle_stats {
+    uint256 atk;
+    uint256 def;
+    uint256 eva;
+    uint256 hp;
+    uint256 pen;
+    uint256 crit;
+    uint256 luck;
+    uint256 energy_regen;
+}
 
 
 

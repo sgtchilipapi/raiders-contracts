@@ -9,16 +9,17 @@
 pragma solidity ^0.8.7;
 
 import "../../libraries/structs/EnemyStructs.sol";
+import "../../libraries/structs/GlobalStructs.sol";
 
 library EnemyStatsCalculator {
 
-    function getEnemyStats(uint256 dungeon_type, uint256 tier, uint16[2] memory random_numbers) public pure returns (enemy_stats memory enemy){
-        enemy_properties memory enemy_props = enemy_properties({
+    function getEnemy(uint256 dungeon_type, uint256 tier, uint16 rnum_enemy_type, uint16 rnum_attr_alloc) public pure returns (enemy_properties memory enemy_props, battle_stats memory enemy){
+        enemy_props = enemy_properties({
             dungeon: dungeon_type,
             tier: tier,
-            _type: getEnemyType(random_numbers[0]),
+            _type: getEnemyType(rnum_enemy_type),
             attr_sum: getAttributeSum(tier),
-            attr_alloc: getAttributesAllocation(random_numbers[1])
+            attr_alloc: getAttributesAllocation(rnum_attr_alloc)
         });
         enemy_attributes memory enemy_attr = getEnemyAttributes(enemy_props);
         enemy = getStats(enemy_attr, enemy_props);
@@ -58,8 +59,8 @@ library EnemyStatsCalculator {
         }
     }
 
-    function getStats(enemy_attributes memory enemy_attr, enemy_properties memory enemy_props) internal pure returns (enemy_stats memory stats){
-        stats = enemy_stats({
+    function getStats(enemy_attributes memory enemy_attr, enemy_properties memory enemy_props) internal pure returns (battle_stats memory stats){
+        stats = battle_stats({
             atk: getAttackPower(enemy_attr, enemy_props),
             def: getDefense(enemy_attr, enemy_props),
             eva: getEvasionChance(enemy_attr, enemy_props),

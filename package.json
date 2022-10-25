@@ -8,6 +8,8 @@
     "@chainlink/contracts": "^0.5.1",
     "@nomiclabs/hardhat-etherscan": "^3.1.1",
     "@openzeppelin/contracts": "^4.7.3",
-    "dotenv": "^16.0.3"
+    "dotenv": "^16.0.3",
+    "hardhat-contract-sizer": "^2.6.1",
+    "yarn": "^1.22.19"
   }
 }

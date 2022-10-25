@@ -13,6 +13,7 @@ import "@openzeppelin/contracts/utils/Base64.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
 import "../../periphery/utils/Counters.sol";
 import "../../periphery/libraries/equipment/EquipmentLibrary.sol";
+import "../../periphery/libraries/structs/GlobalStructs.sol";
 
 interface _EquipmentManager {
     function unEquipItemFromTransfer(uint256 _equipment_id) external;
@@ -27,7 +28,7 @@ contract Equipments is ERC721, ERC721Enumerable, Ownable {
     mapping (uint256 => equipment_properties) public equipment;
 
     ///Map out a specific equipment NFT id to its stats {atk, def, eva, ...}
-    mapping (uint256 => equipment_stats) public stats;
+    mapping (uint256 => battle_stats) public stats;
 
     ///The address for the minter router
     address private equipment_minter;
@@ -39,7 +40,7 @@ contract Equipments is ERC721, ERC721Enumerable, Ownable {
 
     ///@notice This function mints the equipment requested and maps out its properties and stats.
     ///Can only be called by the designated minter.
-    function _mintEquipment(address user, equipment_properties memory equipment_props, equipment_stats memory _equipment_stats) external onlyMinter {
+    function _mintEquipment(address user, equipment_properties memory equipment_props, battle_stats memory _equipment_stats) external onlyMinter {
         equipment_ids.increment();
         equipment[equipment_ids.current()] = equipment_props;
         stats[equipment_ids.current()] = _equipment_stats;
@@ -82,7 +83,7 @@ contract Equipments is ERC721, ERC721Enumerable, Ownable {
             "ERC721: URI query for nonexistent token"
         );
         equipment_properties memory _equipment = equipment[tokenId];
-        equipment_stats memory _stats = stats[tokenId];
+        battle_stats memory _stats = stats[tokenId];
         string memory stats_uri = encodeStats(_stats);
         equipment_details memory _details = EquipmentLibrary.getEquipment(_equipment);
         tokenURIString = encodeStrings(_details, stats_uri);
@@ -108,7 +109,7 @@ contract Equipments is ERC721, ERC721Enumerable, Ownable {
         );
     }
 
-    function encodeStats(equipment_stats memory _stats) internal pure returns (string memory stats_uri){
+    function encodeStats(battle_stats memory _stats) internal pure returns (string memory stats_uri){
         stats_uri = string(abi.encodePacked(
                             '"}, {"display_type": "number", "trait_type": "Attack", "max_value": 100, "value": ', Strings.toString(_stats.atk),
                             '}, {"display_type": "number", "trait_type": "Defense", "max_value": 100, "value": ', Strings.toString(_stats.def),
