@@ -14,6 +14,7 @@ import "../../periphery/utils/BattleMath.sol";
 import "../../periphery/utils/BreakdownUint256.sol";
 import "../../periphery/libraries/materials/DungeonMaterials.sol";
 import "../../periphery/libraries/materials/MaterialsAddresses.sol";
+import "../../periphery/libraries/characters/CharacterExperience.sol";
 
 interface _RandomizationContract {
     function requestRandomWords(address user, uint32 numWords) external returns (uint256 requestId);
@@ -153,7 +154,7 @@ contract Dungeons is Ownable{
         ///The character only gets experience and attribute gains if he/she wins (1) or gets a draw (2).
         if(battle_result == 1 || battle_result == 2){
             ///@dev EXTCALL: Write to Character NFT contract the character's gain in experience and attributes from the battle if any.
-            applyCharacterEffects(request);
+            applyCharacterEffects(request, char_props);
         }
 
         ///The loot drops only if the character wins (1)
@@ -358,8 +359,32 @@ contract Dungeons is Ownable{
     }
 
     ///@notice Update the character properties in the Character NFT contract.
-    function applyCharacterEffects(battle_request memory request) internal {
-        
+    function applyCharacterEffects(battle_request memory request, character_properties memory char_props) internal {
+        ///Get the experience gained and attribute amount gained based on the enemy's tier level.
+        (uint32 experience_gained, uint32 stat_amount_gained) = CharacterExperience.getExpAndAttributeGains(request.tier);
+
+        ///Get the attribute affected by the specified dungeon in the battle.
+        ///For dungeon 0, the character's STR is increased.
+        ///For dungeon 1, the character's VIT is increased.
+        ///For dungeon 2, the character's DEX is increased.
+        uint256 specific_stat = CharacterExperience.getAttributeAffected(request.dungeon_type);
+
+        ///If the character already has reached the maximum exp of 10,000. He/she shall no longer gain any exp and attribute points from dungeon
+        ///battles. Take note that the higher the enemy tier, the higher the attribute point to exp ratio gained. This being said, the character
+        ///who do battles mostly on the highest tier will earn more attribute points than a character who do battles mostly on lower tiers when
+        ///they both reach 10,000 exp.
+        if(char_props.exp < 10000){
+            ///Increase the character's exp with a ceiling of 10,000
+            char_props.exp = uint32(BattleMath.safeAddUint256(char_props.exp, experience_gained, 10000));
+
+            ///Increase the corresponding attribute by the amount based on the enemy tier.
+            if(specific_stat == 0){char_props.str += stat_amount_gained;}
+            if(specific_stat == 1){char_props.vit += stat_amount_gained;}
+            if(specific_stat == 2){char_props.dex += stat_amount_gained;}
+
+            ///EXTCALL: update the character in the Characters NFT contract.
+            characters.updateCharacter(request.character_id, char_props);
+        }
     }
 
     ///@notice Determine the loot amount and transfer it to the character's owner

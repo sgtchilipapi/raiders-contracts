@@ -52,6 +52,7 @@ contract Characters is ERC721, ERC721Enumerable, Ownable {
     ///@notice This function can only be called by the updater contract which shall be responsible for doing the necessary checks.
     function updateCharacter(uint256 tokenId, character_properties memory updated_props) public onlyDungeon{
         character[tokenId] = updated_props;
+        emit CharacterUpdated(tokenId, updated_props);
     }    
 
     ///@notice This function sets the minter contract.

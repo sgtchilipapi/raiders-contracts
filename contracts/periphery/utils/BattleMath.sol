@@ -17,4 +17,5 @@ library BattleMath {
     ) internal pure returns (uint256 sum) {
         sum = (addend1 + addend2) > max ? max : addend1 + addend2;
     }
+    
 }
