@@ -14,7 +14,7 @@ library CharacterStatsCalculator{
             pen: getPenetrationChance(properties),
             crit: getCriticalChance(properties),
             luck: getLuck(properties),
-            energy_regen: getEnergyRegen(properties)
+            energy_restoration: getEnergyRegen(properties)
         });
     }
 
@@ -63,7 +63,7 @@ library CharacterStatsCalculator{
         luck = properties.dex / 10;
     }
 
-    function getEnergyRegen(character_properties memory properties) internal pure returns (uint256 energy_regen){
-        energy_regen = ((properties.vit + properties.str) / 2 ) / 10;
+    function getEnergyRegen(character_properties memory properties) internal pure returns (uint256 energy_restoration){
+        energy_restoration = ((properties.vit + properties.str) / 2 ) / 10;
     }
 }

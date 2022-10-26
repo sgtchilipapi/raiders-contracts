@@ -12,6 +12,8 @@ import "../../periphery/libraries/characters/CharacterStatsCalculator.sol";
 import "../../periphery/libraries/enemies/EnemyStatsCalculator.sol";
 import "../../periphery/utils/BattleMath.sol";
 import "../../periphery/utils/BreakdownUint256.sol";
+import "../../periphery/libraries/materials/DungeonMaterials.sol";
+import "../../periphery/libraries/materials/MaterialsAddresses.sol";
 
 interface _RandomizationContract {
     function requestRandomWords(address user, uint32 numWords) external returns (uint256 requestId);
@@ -20,6 +22,7 @@ interface _RandomizationContract {
 interface _Characters{
     function isOwner(address _owner, uint256 _character) external view returns (bool);
     function character(uint256 _character_id) external view returns (character_properties memory);
+    function updateCharacter(uint256 tokenId, character_properties memory updated_props) external;
 }
 
 interface _Equipments{
@@ -30,14 +33,9 @@ interface _EquipmentManager{
     function equippedWith(uint256 character_id) external view returns (character_equipments memory);
 }
 
-interface _LibCharacterStatsCalculator{
-    function getCharacterStats(character_properties memory properties) external pure returns (battle_stats memory character);
+interface _MaterialToken{
+    function mint(address to, uint256 amount) external;
 }
-
-interface _LibEnemyStatsCalculator{
-    function getEnemyStats(uint128 dungeon_type, uint128 tier, uint16[2] memory random_numbers) external pure returns (battle_stats memory enemy);
-}
-
 
 ///@notice This contract keeps track of pending PVE battles and provides logic for completing them.
 ///A battle consists of two (2) steps/transactions from the player:
@@ -50,8 +48,6 @@ contract Dungeons is Ownable{
     _Characters private characters;
     _Equipments private equipments;
     _EquipmentManager private equipment_manager;
-    // _LibCharacterStatsCalculator character_stats_calculator;
-    // _LibEnemyStatsCalculator enemy_stats_calculator;
 
     ///The beneficiary of the msg.value being sent to the contract for every battle request.
     address private vrf_refunder;
@@ -69,23 +65,25 @@ contract Dungeons is Ownable{
     ///Once the sender has an outstanding request, he/she should complete the battle before sending another request.
     mapping(address => battle_request) public battle_requests;
 
-    ///
+    ///This maps the energy balances of characters to their respective character_ids. Specifying the last updated balance and
+    ///the time it was last updated.
     mapping(uint256 => last_energy_update) public energy_balances;
 
     event BattleRequested(address indexed user, battle_request request);
+    event BattleStarted(battle_request indexed request, battle_stats character, battle_stats enemy);
+    event Clashed(
+        uint256 indexed battle_id, 
+        clash_event clash
+    );
 
     constructor(
         address charactersNftAddress, 
         address equipmentNftAddress, 
         address equipmentManagerAddress
-        // address libCharacterStatsCalculatorAddress,
-        // address libEnemyStatsCalculatorAddress
     ){
         characters = _Characters(charactersNftAddress);
         equipments = _Equipments(equipmentNftAddress);
         equipment_manager = _EquipmentManager(equipmentManagerAddress);
-        // character_stats_calculator = _LibCharacterStatsCalculator(libCharacterStatsCalculatorAddress);
-        // enemy_stats_calculator = _LibEnemyStatsCalculator(libEnemyStatsCalculatorAddress);
         vrf_refunder = msg.sender;
     }
 
@@ -111,7 +109,6 @@ contract Dungeons is Ownable{
         energy_balances[character_id].energy = BattleMath.safeMinusUint256(character_energy, 100);
         energy_balances[character_id].time_last_updated = block.timestamp;
 
-
         ///Map the battle request parameters to the sender's address
         battle_requests[msg.sender] = battle_request({
             request_id: vrf_contract.requestRandomWords(msg.sender, 11),
@@ -125,7 +122,7 @@ contract Dungeons is Ownable{
 
     ///@notice This function calculates for the character's energy balance
     function getCharacterEnergy(uint256 character_id) internal view returns (uint256 character_energy){
-        uint256 time_elapsed = BattleMath.safeMinusUint256(block.timestamp, energy_balances[character_id].time_last_updated);
+        uint256 time_elapsed = (BattleMath.safeMinusUint256(block.timestamp, energy_balances[character_id].time_last_updated)) / 60;
         character_energy = BattleMath.safeAddUint256(energy_balances[character_id].energy, (time_elapsed * ENERGY_RES_RATE), 1000);
     }
 
@@ -148,11 +145,23 @@ contract Dungeons is Ownable{
         ///Calculate the enemy's stats within the requests parameters and 2 random uint16s
         (enemy_properties memory enem_props, battle_stats memory enem_stats) = EnemyStatsCalculator.getEnemy(request.dungeon_type, request.tier, random_set1[0], random_set1[1]);
 
-        ///Simulate the actual battle
-        uint256 battle_result = simulateBattle(char_props, char_stats, enem_props, enem_stats, random_words);
+        emit BattleStarted(request, char_stats, enem_stats);
 
-        ///@dev EXTCALL: Write to Character NFT contract the character's gain in experience and attributes from the battle if any.
-        applyCharacterEffects(request, random_set1[2]);
+        ///Simulate the actual battle
+        uint256 battle_result = simulateBattle(request.request_id, char_props, char_stats, enem_props, enem_stats, random_words);
+        
+        ///The character only gets experience and attribute gains if he/she wins (1) or gets a draw (2).
+        if(battle_result == 1 || battle_result == 2){
+            ///@dev EXTCALL: Write to Character NFT contract the character's gain in experience and attributes from the battle if any.
+            applyCharacterEffects(request);
+        }
+
+        ///The loot drops only if the character wins (1)
+        if(battle_result == 1){
+            getAndTransferLoot(request, random_set1[2], random_set1[3], random_set1[4], msg.sender);
+        }
+
+        restoreEnergy(request.character_id, char_stats.energy_restoration);
     }
 
     ///@notice This function fetches the character properties, stats and equipment and returns only the stats for use in battle.
@@ -188,7 +197,7 @@ contract Dungeons is Ownable{
         stats1.pen += stats2.pen;
         stats1.crit += stats2.crit;
         stats1.luck += stats2.luck;
-        stats1.energy_regen += stats2.energy_regen;
+        stats1.energy_restoration += stats2.energy_restoration;
     }
 
     ///@notice This function combines the stat effects of 2 set of stats by directly mutating the first set.
@@ -200,17 +209,18 @@ contract Dungeons is Ownable{
         stats1.pen += stats2.pen;
         stats1.crit += stats2.crit;
         stats1.luck += stats2.luck;
-        stats1.energy_regen += stats2.energy_regen;
+        stats1.energy_restoration += stats2.energy_restoration;
     }
 
     ///@notice Simulate the actual battle using the character and enemy stats.
     function simulateBattle(
+        uint256 battle_id,
         character_properties memory char_props,
         battle_stats memory char_stats,
         enemy_properties memory enem_props,
         battle_stats memory enem_stats,
         uint256[] memory random_nums
-        ) internal pure returns (uint256 battle_result){
+        ) internal returns (uint256 battle_result){
         ///Initiate a variable to serve as counter for how many back and forth attacks happened (character attacks -> enemy & enemy attacks -> character)
         uint256 clashCount;
 
@@ -226,14 +236,16 @@ contract Dungeons is Ownable{
                 clashCount++;
                 ///Check if the battle hasn't ended yet.
                 if(char_stats.hp > 0 && enem_stats.hp > 0 && clashCount <= 20){
+                    clash_event memory clashed;
                     ///Apply character's damage to enemy's defense & hp effectively consuming 4 uint16 random numbers.
                     ///The first random number would be used to determine whether the attack would be evaded.
                     ///The second random number would be used to determine the actual attack damage within the character's damage range (min and max damage).
                     ///The third random number would be used to determine whether the attack would penetrate (slice through defense).
                     ///The fourth random number would be used to determine whether the attack would deal critical damage.
-                    attack(char_props.character_class, char_stats, enem_stats, [rnums[c], rnums[c+1], rnums[c+2], rnums[c+3]]);
+                    clashed.attack1 = attack(char_props.character_class, char_stats, enem_stats, [rnums[c], rnums[c+1], rnums[c+2], rnums[c+3]]);
                     ///Apply enemy's damage to character's defense & hp effectively consuming 4 uint16 random numbers.
-                    attack(enem_props._type, enem_stats, char_stats, [rnums[c+4], rnums[c+5], rnums[c+6], rnums[c+7]]);
+                    clashed.attack2 = attack(enem_props._type, enem_stats, char_stats, [rnums[c+4], rnums[c+5], rnums[c+6], rnums[c+7]]);
+                    emit Clashed(battle_id, clashed);
                 }else{
                     ///In case the number of clash instances reached 20 times and both still have remaining hp left, the battle comes to a draw.
                     if(char_stats.hp > 0 && enem_stats.hp > 0 && clashCount > 20){battle_result = 2;}
@@ -252,18 +264,58 @@ contract Dungeons is Ownable{
     }
 
     ///@notice Calculate the damage dealt and taken by the battlers in each attack.
-    function attack(uint256 attacker_class, battle_stats memory attacker, battle_stats memory defender, uint16[4] memory random_numbers) internal pure {
+    function attack(uint256 attacker_class, battle_stats memory attacker, battle_stats memory defender, uint16[4] memory random_numbers) internal pure returns(attack_event memory atk_ev){
+        ///Initiate the following variables without values since we wont have to set these anyway if it turns out that the attack has been evaded.
         uint256 damage;
         bool penetrated;
         bool critical_hit;
-        bool evaded = evade(random_numbers[0], defender);
+
+        ///Determine whether the attack will be evaded by the defender.
+        bool evaded = rollEvade(random_numbers[0], defender);
+
+        ///Calculate the damage if the attack is not evaded.
         if(!evaded){
-            damage = getDamage(random_numbers[1], attacker, attacker_class);
+            ///Calculate the damage using a random num and the attacker's class/type
+            damage = rollDamage(random_numbers[1], attacker, attacker_class);
+
+            ///Determine whether the attack penetrates the defender's armor
+            penetrated = rollPenetrate(random_numbers[2], attacker);
+
+            ///Determine whether the attack does a critical hit/double damage
+            critical_hit = rollCriticalHit(random_numbers[3], attacker);
+
+            ///If the attack penetrates the armor, apply the damage (doesn't stack with critical hit) from the defender's HP
+            if(penetrated){defender.hp = BattleMath.safeMinusUint256(defender.hp, damage);}
+
+            ///If the attack does a critical hit, the damage is doubled.
+            if(critical_hit){damage *= 2;}
+            
+            ///If the attack damage is greater than the defender's DEF, the excess shall be applied to the defender's HP but with half the amount only.
+            ///This is the armor break effect. Even if the DEF has only a value of 1, it still has the armor break effect.
+            if(damage > defender.def){
+                defender.hp = BattleMath.safeMinusUint256(defender.hp, ((damage - defender.def) / 2));
+                defender.def = 0;
+            }else{
+                defender.def = BattleMath.safeMinusUint256(defender.def, damage);
+            }
+
+            atk_ev = attack_event({
+                evaded : evaded,
+                penetrated: penetrated,
+                critical_hit: critical_hit,
+                damage: damage
+            });
         }
     }
 
+    ///@notice Determine if the attack would be evaded
+    function rollEvade(uint16 random_num_evade, battle_stats memory defender) internal pure returns (bool evaded){
+        uint256 evade_roll = random_num_evade % 1000;
+        if(evade_roll <= defender.eva){evaded = true;}
+    }
+
     ///@notice Determine the actual attack damage within the attacker's damage range
-    function getDamage(uint16 random_num_damage, battle_stats memory attacker, uint256 attacker_class) internal pure returns (uint256 damage){
+    function rollDamage(uint16 random_num_damage, battle_stats memory attacker, uint256 attacker_class) internal pure returns (uint256 damage){
         (uint256 minMultiplier, uint256 maxMultiplier) = getMinMaxDmg(attacker_class);
         uint256 minDamage = (minMultiplier * attacker.atk) / 1000;
         uint256 maxDamage = (maxMultiplier * attacker.atk) / 1000;
@@ -276,26 +328,85 @@ contract Dungeons is Ownable{
     ///@notice Determine minimum and maximum attack damage of a specified character/enemy class/type.
     function getMinMaxDmg(uint256 attacker_class) internal pure returns (uint256 min, uint256 max){
         if(attacker_class == 0){min = 650; max = 1350;} ///Viking
-        if(attacker_class == 0){min = 700; max = 1250;} ///Woodcutter
-        if(attacker_class == 0){min = 750; max = 1100;} ///Troll
-        if(attacker_class == 0){min = 800; max = 1050;} ///Mechanic
-        if(attacker_class == 0){min = 850; max = 1000;} ///Amphibian
-        if(attacker_class == 0){min = 900; max = 950;} ///Graverobber
+        if(attacker_class == 1){min = 700; max = 1250;} ///Woodcutter
+        if(attacker_class == 2){min = 750; max = 1100;} ///Troll
+        if(attacker_class == 3){min = 800; max = 1050;} ///Mechanic
+        if(attacker_class == 4){min = 850; max = 1000;} ///Amphibian
+        if(attacker_class == 5){min = 900; max = 950;} ///Graverobber
     }
 
-    ///@notice Determine if the attack would be evaded
-    function evade(uint16 random_num_evade, battle_stats memory defender) internal pure returns (bool evaded){
-        uint256 evade_roll = random_num_evade % 1000;
-        if(evade_roll <= defender.eva){evaded = true;}
+    ///@notice Determine if the attack penetrated the defender's armor
+    ///When it penetrates, the Defender's HP will get reduced even if he still has remaining DEF.
+    function rollPenetrate(uint16 random_num_penetrate, battle_stats memory attacker) internal pure returns (bool penetrated){
+        uint256 penetrate_roll = random_num_penetrate % 1000;
+        if(penetrate_roll <= attacker.pen){penetrated = true;}
+    }
+
+    ///@notice Determine if the attack did a critical hit
+    ///When it does, the Attacker's damage would deal double damage but it does not stack with the penetrated damage
+    ///When it does a critical hit and penetrated armor at the same time, the damage to the HP resulting from the armor penetration
+    ///will deal only 1x damage.
+    function rollCriticalHit(uint16 random_num_critical, battle_stats memory attacker) internal pure returns (bool critical_hit){
+        uint256 critical_hit_roll = random_num_critical % 1000;
+        if(critical_hit_roll <= attacker.crit){critical_hit = true;}
+    }
+
+    ///@notice This function restores the character's energy in the amount of his/her energy_restoration stats including that of the
+    ///equipments currently equipped.
+    function restoreEnergy(uint256 character_id, uint256 energy_restoration) internal {
+        energy_balances[character_id].energy = BattleMath.safeAddUint256(energy_balances[character_id].energy, energy_restoration, 1000);
     }
 
     ///@notice Update the character properties in the Character NFT contract.
-    function applyCharacterEffects(battle_request memory request, uint16 random_num_loot) internal {
+    function applyCharacterEffects(battle_request memory request) internal {
+        
+    }
 
+    ///@notice Determine the loot amount and transfer it to the character's owner
+    function getAndTransferLoot(
+        battle_request memory request, 
+        uint256 random_num_loot, 
+        uint256 random_num_snap, 
+        uint256 random_num_snap_amount, 
+        address sender
+    ) internal {
+        ///Get the material type and the minimum and maximum amount for the specific tier
+        (uint256 material, uint256 min_amount, uint256 max_amount) = DungeonMaterials.getDungeonMaterials(request.dungeon_type, request.tier);
+        
+        ///Get the actual amount of loot by consuming a random number and the material's min and max amount
+        uint256 actual_amount = getActualLootAmount(random_num_loot, min_amount, max_amount);
+
+        ///Instantiate a token contract instance with the corresponding address of the loot material
+        _MaterialToken material_token = _MaterialToken(MaterialsAddresses.getMaterialAddress(material));
+
+        ///EXTCALL: mint the actual tokens
+        material_token.mint(sender, actual_amount);
+
+        ///Determine whether there will be a snaplink loot drop
+        bool snap_loot = rollSnapLink(random_num_snap);
+
+        ///If there is, calculate the loot amount using the same min and max
+        if(snap_loot){
+            uint256 snap_amount = getActualLootAmount(random_num_snap_amount, min_amount, max_amount);
+            _MaterialToken snap_link = _MaterialToken(MaterialsAddresses.getMaterialAddress(3));
+            snap_link.mint(sender, snap_amount);
+        }
+    }
+
+    ///@notice Determine the actual loot amount
+    function getActualLootAmount(uint256 random_num, uint256 min_amount, uint256 max_amount) internal pure returns (uint256 loot_amount){
+        uint256 roll_amount = random_num % 1000;
+        uint256 amount_spread = BattleMath.safeMinusUint256(max_amount, min_amount);
+        loot_amount = BattleMath.safeAddUint256(min_amount, ((amount_spread * roll_amount) / 1000), max_amount);
+    }
+
+    ///@notice Determine whether there will be snaplink loot
+    function rollSnapLink(uint256 random_num_snap) internal pure returns (bool isSnap){
+        uint256 roll_snap = random_num_snap % 1000;
+        if(roll_snap <= 250){isSnap = true;}
     }
 
     ///@notice The following are ADMIN functions.
-
     function setBattleFee(uint256 amount) public onlyOwner {
         battle_fee = amount * 1 gwei;
     }

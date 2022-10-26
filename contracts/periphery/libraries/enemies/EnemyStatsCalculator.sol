@@ -68,7 +68,7 @@ library EnemyStatsCalculator {
             pen: getPenetrationChance(enemy_attr, enemy_props),
             crit: getCriticalChance(enemy_attr, enemy_props),
             luck: 0,
-            energy_regen: 0
+            energy_restoration: 0
         });
     }
 

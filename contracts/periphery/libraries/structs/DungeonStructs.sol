@@ -12,3 +12,15 @@ struct last_energy_update {
     uint256 energy;
     uint256 time_last_updated;
 }
+
+struct attack_event {
+    bool evaded;
+    bool penetrated;
+    bool critical_hit;
+    uint256 damage;
+}
+
+struct clash_event {
+    attack_event attack1;
+    attack_event attack2;
+}

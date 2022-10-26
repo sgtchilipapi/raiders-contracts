@@ -33,9 +33,10 @@ contract Characters is ERC721, ERC721Enumerable, Ownable {
     address private character_minter;
 
     ///The address for the character updater
-    address private character_updater;
+    address private dungeon;
 
     event CharacterMinted(uint256 indexed character_id, character_properties character_props);
+    event CharacterUpdated(uint256 indexed character_id, character_properties character_props);
 
     constructor() ERC721("Characters", "CTRS") {
     }
@@ -49,7 +50,7 @@ contract Characters is ERC721, ERC721Enumerable, Ownable {
     }
 
     ///@notice This function can only be called by the updater contract which shall be responsible for doing the necessary checks.
-    function updateCharacter(uint256 tokenId, character_properties memory updated_props) public onlyUpdater{
+    function updateCharacter(uint256 tokenId, character_properties memory updated_props) public onlyDungeon{
         character[tokenId] = updated_props;
     }    
 
@@ -65,8 +66,8 @@ contract Characters is ERC721, ERC721Enumerable, Ownable {
     }
 
     ///@notice Custom modifier to only allow the character updater contract for some functions.
-    modifier onlyUpdater(){
-        require(msg.sender == character_updater);
+    modifier onlyDungeon(){
+        require(msg.sender == dungeon);
         _;
     }
 
@@ -81,8 +82,8 @@ contract Characters is ERC721, ERC721Enumerable, Ownable {
     }
 
     ///@notice This function sets the character properties updater contract.
-    function setCharacterUpdater(address updaterAddress) public onlyOwner{
-        character_updater = updaterAddress;
+    function setDungeon(address dungeonAddress) public onlyOwner{
+        dungeon = dungeonAddress;
     }
 
     ///@notice Instead of storing the tokenURI using setTokenURI, we are constructing it as it is being queried.

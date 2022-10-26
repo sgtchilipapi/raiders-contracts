@@ -16,7 +16,7 @@ struct battle_stats {
     uint256 pen;
     uint256 crit;
     uint256 luck;
-    uint256 energy_regen;
+    uint256 energy_restoration;
 }
 
 
@@ -25,16 +25,16 @@ struct battle_stats {
 
 
 
-struct attack_event {
-    uint256 attack_index;
-    uint256 challenger_hp;
-    uint256 defender_hp;
-    uint256 evaded;
-    uint256 critical_hit;
-    uint256 penetrated;
-    uint256 damage_to_challenger;
-    uint256 damage_to_defender;  
-}
+// struct attack_event {
+//     uint256 attack_index;
+//     uint256 challenger_hp;
+//     uint256 defender_hp;
+//     uint256 evaded;
+//     uint256 critical_hit;
+//     uint256 penetrated;
+//     uint256 damage_to_challenger;
+//     uint256 damage_to_defender;  
+// }
 
 
 

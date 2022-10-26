@@ -352,7 +352,7 @@ contract EquipmentMinter is Ownable, Pausable{
             pen: uint32(_stats[4]),
             crit: uint32(_stats[5]),
             luck: uint32(_stats[6]),
-            energy_regen: uint32(_stats[7])
+            energy_restoration: uint32(_stats[7])
         });
 
         (dominant_stat, dominant_roll_value)  = getDominantStat(roll_values);

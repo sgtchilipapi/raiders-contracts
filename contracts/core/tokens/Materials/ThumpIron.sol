@@ -624,11 +624,22 @@ abstract contract ERC20Burnable is Context, ERC20 {
 pragma solidity ^0.8.4;
 
 contract ThumpIron is ERC20, ERC20Burnable, Ownable {
+
+    address dungeon;
     constructor() ERC20("Material ThumpIron", " THUMP!") {
         mint(msg.sender, 10000 * 10 ** decimals());
     }
 
-    function mint(address to, uint256 amount) public onlyOwner {
+    function mint(address to, uint256 amount) public onlyDungeon {
         _mint(to, amount);
+    }
+
+    modifier onlyDungeon(){
+        require(msg.sender == dungeon, "Only the dungeon contract can mint tokens.");
+        _;
+    }
+
+    function setDungeonContract(address _dungeon) public onlyOwner {
+        dungeon = _dungeon;
     }
 }
