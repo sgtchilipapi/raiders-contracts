@@ -437,6 +437,11 @@ contract Dungeons is Ownable{
     }
 
     ///@notice The following are ADMIN functions.
+
+    function setRandomizationContract(address _vrf_contract_address) public onlyOwner {
+        vrf_contract = _RandomizationContract(_vrf_contract_address);
+    }
+
     function setBattleFee(uint256 amount) public onlyOwner {
         battle_fee = amount * 1 gwei;
     }
