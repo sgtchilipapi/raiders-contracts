@@ -1,5 +1,10 @@
 //SPDX-License-Identifier: MIT
-
+/**
+    @title Dungeons
+    @author Eman Garciano
+    @notice: This contract keeps track of pending PVE battles and provides logic for completing them.
+    Originally created for CHAINLINK HACKATHON FALL 2022
+*/
 pragma solidity ^0.8.7;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
