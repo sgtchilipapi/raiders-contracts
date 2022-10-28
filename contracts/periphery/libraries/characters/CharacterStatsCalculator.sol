@@ -1,11 +1,16 @@
 //SPDX-License-Identifier: MIT
 pragma solidity ^0.8.7;
 
+/**
+    @title Character Stats Calculator
+    @author Eman @SgtChiliPapi
+*/
+
 import "../../libraries/structs/CharacterStructs.sol";
 import "../../libraries/structs/GlobalStructs.sol";
 
 library CharacterStatsCalculator{
-    function getCharacter(character_properties memory properties) public pure returns (battle_stats memory character){
+    function getCharacter(character_properties memory properties) internal pure returns (battle_stats memory character){
         character = battle_stats({
             atk: getAttackPower(properties),
             def: getDefense(properties),

@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 /**
     @title Characters
-    @author Eman "Sgt"
+    @author Eman @SgtChiliPapi
     @notice: NFT Contract for playable characters.
     Originally created for CHAINLINK HACKATHON FALL 2022
 */

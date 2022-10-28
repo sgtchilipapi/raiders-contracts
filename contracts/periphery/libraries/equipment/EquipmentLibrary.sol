@@ -3,7 +3,7 @@
 
 /**
     @title Equipment Library
-    @author Eman 'Sgt' Garciano https://www.linkedin.com/in/eman-garciano-04a14211a/
+    @author Eman @SgtChiliPapi
     @notice This library constructs the name and image URL of an equipment according to its type, rarity, dominant stat, and dominance extremity.
             Originally made for a submission to CHAINLINK HACKATHON 2022.
  */

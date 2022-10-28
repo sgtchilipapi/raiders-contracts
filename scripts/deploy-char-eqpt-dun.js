@@ -10,11 +10,12 @@ require('dotenv').config()
 const deployments  = require("../contracts-apis/deployments")
 
 async function main() {
-    const character_system = await characters()
-    const equipment_system = await equipments()
-    const equipment_manager  = await equipmentManager(character_system, equipment_system)
-    const dungeons_system = await dungeons(character_system, equipment_system, equipment_manager)
+    const [character_contract, cminter_contract] = await characters()
+    const [equipment_contract, eminter_contract] = await equipments()
+    const equipment_manager  = await equipmentManager(character_contract, equipment_contract)
+    const dungeons_system = await dungeons(character_contract, equipment_contract, equipment_manager)
     await tokens()
+    await approveEquipmentMinter()
 }
 
 async function characters(){
@@ -77,7 +78,7 @@ async function characters(){
         return addTx
     }
 
-    return ctrs
+    return [ctrs, minter]
 }
 
 async function equipments() {
@@ -87,7 +88,6 @@ async function equipments() {
     ///For mumbai testnet
     const eqpts = await deployEquipments("Equipments")
     const minter = await deployMinter("EquipmentMinter")
-    // const minter = {address: "0x00b3019DcE6bafA09A6a7E1f4103e7a143bfA81a"}
     const vrf = await deploySubscriptionVRF("VRFv2EquipmentCrafting", 2229, "0x7a1BaC17Ccc5b313516C5E16fb24f7659aA5ebed", "0x4b09e658ed251bcafeebbc69400383d49f344ace09b9576fe248bb02c003fe9f", minter.address)
     const setMinterTx = await setMinter(eqpts, minter)
     const setVrfTx = await setVrf(minter, vrf.address)
@@ -140,7 +140,7 @@ async function equipments() {
         return addTx
     }
 
-    return eqpts
+    return [eqpts, minter]
 }
 
 async function equipmentManager(ctrs, eqpts) {
@@ -233,6 +233,29 @@ async function tokens(){
         const setDungeon = await token.setDungeonContract(dungeons_system.address)
         await setDungeon.wait()
         console.log(`Dungeon address set in token ${tokenName}!`)
+    }
+}
+
+async function approveEquipmentMinter(){
+    ///For MATIC mainnet
+    ///const mainnetVRF = await deploySubscriptionVRF("VRFv2Consumer", 0, "0xAE975071Be8F8eE67addBC1A82488F1C24858067", "0xcc294a196eeeb44da2888d17c0625cc88d70d9760a69d58d853ba6581a9ab0cd")
+
+    ///For mumbai testnet
+    const ERC20Token = await ethers.getContractFactory("BoomSteel")
+    await approveMinter(deployments.testnet_deployments.tokens.boom, "Boom")
+    await approveMinter(deployments.testnet_deployments.tokens.thump, "Thump")
+    await approveMinter(deployments.testnet_deployments.tokens.clink, "Clink")
+    await approveMinter(deployments.testnet_deployments.tokens.snap, "Snap")
+    await approveMinter(deployments.testnet_deployments.tokens.yellowspark, "Yspark")
+    await approveMinter(deployments.testnet_deployments.tokens.whitespark, "Wspark")
+    await approveMinter(deployments.testnet_deployments.tokens.redspark, "Rspark")
+    await approveMinter(deployments.testnet_deployments.tokens.bluespark, "Bspark")
+
+    async function approveMinter(tokenDeployment, tokenName){
+        const token = ERC20Token.attach(tokenDeployment.address)
+        const approveTx = await token.approve(equipment_contract.address, ethers.utils.parseEther("1000000"))
+        await approveTx.wait()
+        console.log(`Minter approved for token ${tokenName}!`)
     }
 }
 

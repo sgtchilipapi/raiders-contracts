@@ -1,7 +1,7 @@
 //SPDX-License-Identifier: MIT
 /**
     @title Struct Library
-    @author Eman Garciano
+    @author Eman @SgtChiliPapi
     @notice: Reference for global structs across contracts. 
     Originally created for CHAINLINK HACKATHON FALL 2022
 */

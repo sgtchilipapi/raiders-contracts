@@ -1,8 +1,8 @@
-export const mainnet_deployments = {
+const mainnet_deployments = {
 
 }
 
-export const testnet_deployments = {
+const testnet_deployments = {
     tokens:{
         clank:{
             address:"0xB0b99d6f65c3423cB0c2848c8cdadb91E5127649",

@@ -1,7 +1,7 @@
 //SPDX-License-Identifier: MIT
 /**
     @title Character Experience
-    @author Eman "Sgt"
+    @author Eman @SgtChiliPapi
     @notice: Reference for character experience and attribute gains in dungeons.
             A simple library. Might prove useful when the experience and leveling system is further improved in complexity.
     Originally created for CHAINLINK HACKATHON FALL 2022

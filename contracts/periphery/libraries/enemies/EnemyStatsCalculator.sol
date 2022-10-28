@@ -1,9 +1,8 @@
 //SPDX-License-Identifier: MIT
-//EquipmentLibrary.sol
 
 /**
-    @title Equipment Library
-    @author Eman 'Sgt'
+    @title Enemy Stats Calculator
+    @author Eman @SgtChiliPapi
 */
 
 pragma solidity ^0.8.7;
@@ -13,7 +12,7 @@ import "../../libraries/structs/GlobalStructs.sol";
 
 library EnemyStatsCalculator {
 
-    function getEnemy(uint256 dungeon_type, uint256 tier, uint16 rnum_enemy_type, uint16 rnum_attr_alloc) public pure returns (enemy_properties memory enemy_props, battle_stats memory enemy){
+    function getEnemy(uint256 dungeon_type, uint256 tier, uint16 rnum_enemy_type, uint16 rnum_attr_alloc) internal pure returns (enemy_properties memory enemy_props, battle_stats memory enemy){
         enemy_props = enemy_properties({
             dungeon: dungeon_type,
             tier: tier,

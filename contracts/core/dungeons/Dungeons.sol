@@ -1,7 +1,7 @@
 //SPDX-License-Identifier: MIT
 /**
     @title Dungeons
-    @author Eman Garciano
+    @author Eman @SgtChiliPapi
     @notice: This contract keeps track of pending PVE battles and provides logic for completing them.
     Originally created for CHAINLINK HACKATHON FALL 2022
 */

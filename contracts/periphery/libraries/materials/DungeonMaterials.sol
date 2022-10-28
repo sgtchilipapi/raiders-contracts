@@ -2,7 +2,7 @@
 
 /**
     @title DungeonMaterials
-    @author Eman 'Sgt' Garciano
+    @author Eman @SgtChiliPapi
     @notice This library specifies the specific material rewards for each dungeon.
             Originally made for a submission to CHAINLINK HACKATHON 2022.
  */
