@@ -120,7 +120,8 @@ contract Dungeons is Ownable{
             request_id: vrf_contract.requestRandomWords(msg.sender, 11),
             dungeon_type: dungeon,
             tier: tier,
-            character_id: character_id
+            character_id: character_id,
+            completed: false
         });
 
         emit BattleRequested(msg.sender, battle_requests[msg.sender]);
@@ -153,6 +154,12 @@ contract Dungeons is Ownable{
 
         emit BattleStarted(request, char_stats, enem_stats);
 
+        ///Check if the battle has been completed
+        require(request.completed == false, "Dungeons: Battle already completed.");
+
+        ///Set the request as completed
+        battle_requests[msg.sender].completed = true;
+
         ///Simulate the actual battle
         uint256 battle_result = simulateBattle(request.request_id, char_props, char_stats, enem_props, enem_stats, random_words);
         
@@ -168,6 +175,8 @@ contract Dungeons is Ownable{
         }
 
         restoreEnergy(request.character_id, char_stats.energy_restoration);
+
+        emit BattleEnded(request, battle_result);
     }
 
     ///@notice This function fetches the character properties, stats and equipment and returns only the stats for use in battle.

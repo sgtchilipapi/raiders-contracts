@@ -6,6 +6,7 @@ struct battle_request {
     uint128 dungeon_type;
     uint128 tier;
     uint256 character_id;
+    bool completed;
 }
 
 struct last_energy_update {
