@@ -77,10 +77,8 @@ contract Dungeons is Ownable{
 
     event BattleRequested(address indexed user, battle_request request);
     event BattleStarted(battle_request indexed request, battle_stats character, battle_stats enemy);
-    event Clashed(
-        uint256 indexed battle_id, 
-        clash_event clash
-    );
+    event Clashed(uint256 indexed battle_id, clash_event clash);
+    event BattleEnded(uint256 indexed battle_id, uint256 battle_result);
 
     constructor(
         address charactersNftAddress, 
@@ -176,7 +174,7 @@ contract Dungeons is Ownable{
 
         restoreEnergy(request.character_id, char_stats.energy_restoration);
 
-        emit BattleEnded(request, battle_result);
+        emit BattleEnded(request.request_id, battle_result);
     }
 
     ///@notice This function fetches the character properties, stats and equipment and returns only the stats for use in battle.
