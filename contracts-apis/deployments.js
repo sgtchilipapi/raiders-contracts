@@ -5,45 +5,45 @@ export const mainnet_deployments = {
 export const testnet_deployments = {
     tokens:{
         clank:{
-            address:"0x011D014289fC9af2fd9A36F5Fc90eb1f13C04121",
+            address:"0xB0b99d6f65c3423cB0c2848c8cdadb91E5127649",
             abi: ""
         },
         boom:{
-            address:"0x75B3ae45690f9e2dbC3CA8bd7674696cC96174Ae",
+            address:"0x5Ff4BDc310a1A96Acac76361d97601F112781BfE",
             abi: ""
         },
         thump:{
-            address:"0xF2dCef12241Df197BFcBb688cD8FcaCB25404405",
+            address:"0xC642e01D88650cA17e9D7Eff66E034Fd2f863AbA",
             abi: ""
         },
         clink:{
-            address:"0x81b7f46B11B115732bEEe91f17eA4Cb73Da37a92",
+            address:"0x633BCD5093Ac8FaC60183eFDA151e3C55D98BbCE",
             abi: ""
         },
         snap:{
-            address:"0x700E443C63ff1F5f35DC15fde97AbB19601B64e3",
+            address:"0x94FC8D420D7488bC0FF198168d0155a7a1936527",
             abi: ""
         },
         yellowspark:{
-            address:"0x6B91938986F3043724B217CFF8514B0B897993FC",
+            address:"0xd0d61c5b3a57875d1747fa4a336A40AEDE9108aa",
             abi: ""
         },
         whitespark:{
-            address:"0x3eCa97c9eac5c9f0689935e27F23eD81Dc274C34",
+            address:"0x1258558Fd5A0b91b3f0e07F458BbdF473cd2093e",
             abi: ""
         },
         redspark:{
-            address:"0x2DaD4EE39f7Ea601B802821Cb169D389bC91Be15",
+            address:"0x6dC194934FD405D8dd228Bcd2776EFF4B1A9d254",
             abi: ""
         },
         bluespark:{
-            address:"0x6594139f482C4F50a093384Ab306b2e20a6Fff7b",
+            address:"0x97c5BC77970CC64Fe1b9A0eC9a315A3Ea5Fe3Eb8",
             abi: ""
         },
     },
     farms:{
         minichefv2:{
-            address: "0x0A555a2fdedE0742D406ba94d6DBeeeFcFAaFac2",
+            address: "0x162509510CC81C0cCbFE3CB3401F71Ab9D298599",
             abi:""
         },
     },

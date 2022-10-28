@@ -627,7 +627,7 @@ contract SnapLink is ERC20, ERC20Burnable, Ownable {
 
     address dungeon;
     constructor() ERC20("Material SnapLink", " SNAP!") {
-        mint(msg.sender, 10000 * 10 ** decimals());
+        _mint(msg.sender, 10000 * 10 ** decimals());
     }
 
     function mint(address to, uint256 amount) public onlyDungeon {

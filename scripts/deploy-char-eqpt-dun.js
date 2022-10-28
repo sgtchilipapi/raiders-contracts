@@ -7,12 +7,14 @@
 const { ethers } = require("hardhat");
 const hre = require("hardhat");
 require('dotenv').config()
+const deployments  = require("../contracts-apis/deployments")
 
 async function main() {
     const character_system = await characters()
     const equipment_system = await equipments()
     const equipment_manager  = await equipmentManager(character_system, equipment_system)
     const dungeons_system = await dungeons(character_system, equipment_system, equipment_manager)
+    await tokens()
 }
 
 async function characters(){
@@ -213,6 +215,25 @@ async function dungeons(_ctrs, _eqpts, _eqpt_mgr){
     }
 
     return dgns
+}
+
+async function tokens(){
+    ///For MATIC mainnet
+    ///const mainnetVRF = await deploySubscriptionVRF("VRFv2Consumer", 0, "0xAE975071Be8F8eE67addBC1A82488F1C24858067", "0xcc294a196eeeb44da2888d17c0625cc88d70d9760a69d58d853ba6581a9ab0cd")
+
+    ///For mumbai testnet
+    const ERC20Token = await ethers.getContractFactory("BoomSteel")
+    await setDungeonToken(deployments.testnet_deployments.tokens.boom, "Boom")
+    await setDungeonToken(deployments.testnet_deployments.tokens.thump, "Thump")
+    await setDungeonToken(deployments.testnet_deployments.tokens.clink, "Clink")
+    await setDungeonToken(deployments.testnet_deployments.tokens.snap, "Snap")
+
+    async function setDungeonToken(tokenDeployment, tokenName){
+        const token = ERC20Token.attach(tokenDeployment.address)
+        const setDungeon = await token.setDungeonContract(dungeons_system.address)
+        await setDungeon.wait()
+        console.log(`Dungeon address set in token ${tokenName}!`)
+    }
 }
 
 // We recommend this pattern to be able to use async/await everywhere
