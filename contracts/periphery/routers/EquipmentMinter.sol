@@ -30,9 +30,15 @@ interface _Equipments {
     function _mintEquipment(address user, equipment_properties memory equipment_props, battle_stats memory _equipment_stats) external;
 }
 
+interface _Characters {
+    function isOwner(address _owner, uint256 _character) external view returns (bool);
+    function character(uint256 _character_id) external view returns (character_properties memory);
+}
+
 contract EquipmentMinter is Ownable, Pausable{
     ///The randomization contract for generating random numbers for mint
     _RandomizationContract randomizer;
+    _Characters private characters;
     address private vrfContract;
 
     ///The core: Equipment NFT contract deployment.
@@ -48,17 +54,18 @@ contract EquipmentMinter is Ownable, Pausable{
     ///Currently unset (0) for judging purposes as stated in the hackathon rules.
     uint256 mint_fee;
 
-    ///Variables for limiting the 1st 100 free mints.
-    uint256 public freeMints;
-    mapping(address => bool) public mintedFree;
+    ///mapping to restrict free mints to players/characters
+    mapping(uint256 => bool) public character_minted_free;
+    mapping(address => bool) public user_minted_free;
 
     ///Arrays of addresses for the materials and catalyst tokens
     address[4] private materials_addresses;
     address[4] private catalysts_addresses; 
     
     event EquipmentRequested(address indexed player_address, equipment_request request);
-    constructor(address equipmentsNftAddress, address[4] memory materials, address[4] memory catalysts){
+    constructor(address equipmentsNftAddress, address charactersAddress, address[4] memory materials, address[4] memory catalysts){
         equipmentsNft = _Equipments(equipmentsNftAddress);
+        characters = _Characters(charactersAddress);
         materials_addresses = materials;
         catalysts_addresses = catalysts;
         vrf_refunder = msg.sender;
@@ -88,7 +95,8 @@ contract EquipmentMinter is Ownable, Pausable{
             request_id: randomizer.requestRandomWords(msg.sender, uint32(item_count),  false),
             equipment_type: _equipment_type,
             number_of_items: uint32(item_count),
-            time_requested: block.timestamp
+            time_requested: block.timestamp,
+            free: false
         });
         
         emit EquipmentRequested(msg.sender, request[msg.sender]);
@@ -127,6 +135,7 @@ contract EquipmentMinter is Ownable, Pausable{
             equipment_type: _equipment_type,
             number_of_items: 1,
             time_requested: block.timestamp
+            free: false
         });
         
         emit EquipmentRequested(msg.sender, request[msg.sender]);
@@ -134,28 +143,37 @@ contract EquipmentMinter is Ownable, Pausable{
 
     ///@notice This is to mint equipments for free. Would only be available for the first 100 equipment mints and only 1 free mint per address.
     ///Should only be available when the walkthrough quest has been completed by the user.
-    function requestEquipmentExperimentalFree(uint64 _equipment_type /**, uint32 item_count */) public payable whenNotPaused{
+    function requestEquipmentExperimentalFree(uint256 character_id, uint64 _equipment_type /**, uint32 item_count */) public payable whenNotPaused{
         ///We can only allow one request per address at a time. A request shall be completed (minted the equipment) to be able request another one.
         equipment_request memory _request = request[msg.sender];
         require(_request.request_id == 0, "eMNTR: There is a request pending mint.");
 
         ///Equipment/Items can only be weapon, armor, helm, accessory, and consumable. 0-4
-        require(_equipment_type < 5, "eMNTR: Incorrect number for an equipment type.");
-        require(msg.value >= (/**item_count */ 1 * mint_fee), "eMNTR: Incorrect amount for equipment minting. Send exactly 0.01 MATIC per item requested.");
-        
-        require(mintedFree[msg.sender] == false, "Already minted a free equipment.");
-        require(freeMints < 101, "Free mints are out.");
-        mintedFree[msg.sender] = true;
-        freeMints += 1;
+        require(_equipment_type < 5, "eMNTR: invalid eqpt type.");
+
+        ///Require 0.01 msg.value
+        require(msg.value >= (/**item_count */ 1 * mint_fee), "eMNTR: send 0.01 matic");
+
+        ///Allow only one free mint per character AND per wallet address
+        require(!character_minted_free[character_id], "eMNTR: character already minted.");
+        require(!user_minted_free[character_id], "eMNTR: user already minted.");
+
+        ///Allow only characters with exp greater than 200
+        require(characters.character(character_id).exp > 200, "eMNTR: insuf char exp.");
+
+        ///Update the character and user mapping to free mints immediately after checking
+        character_minted_free[msg.sender] = true;
+        user_minted_free[msg.sender] = true;
 
         ///@notice EXTCALL to VRF contract. Set the caller's current equipment_request to the returned request_id by the VRF contract.
         ///Using a constant 1. See above reason on line 57 (unwrapped).
-        ///The bool argument here notifies the vrf contract that the request being sent is experimental.
+        ///The first bool argument here notifies the vrf contract that the request being sent is experimental.
         request[msg.sender] = equipment_request({
             request_id: randomizer.requestRandomWords(/**item_count */ msg.sender, 1, true),
             equipment_type: _equipment_type,
             number_of_items: 1,
-            time_requested: block.timestamp
+            time_requested: block.timestamp,
+            free: true
         });
         
         emit EquipmentRequested(msg.sender, request[msg.sender]);
@@ -173,6 +191,7 @@ contract EquipmentMinter is Ownable, Pausable{
             equipment_type: 0,
             number_of_items: 0,
             time_requested: block.timestamp
+            free: false
         });
     }
 
@@ -243,14 +262,15 @@ contract EquipmentMinter is Ownable, Pausable{
 
         ///Loop thru the number of items requested to be minted.
         for(uint256 i=0; i < _request.number_of_items; i++){
-            mintEquipment(msg.sender, randomNumberRequested[i], _request.equipment_type);
+            mintEquipment(msg.sender, randomNumberRequested[i], _request.equipment_type, _request.free);
         }
         ///Reset the sender's request property values to 0
         request[msg.sender] = equipment_request({
             request_id: 0,
             equipment_type: 0,
             number_of_items: 0,
-            time_requested: block.timestamp
+            time_requested: block.timestamp,
+            free: false
         });
     }
 
@@ -274,24 +294,25 @@ contract EquipmentMinter is Ownable, Pausable{
 
         ///Loop thru the number of items requested to be minted.
         for(uint256 i=0; i < _request.number_of_items; i++){
-            mintEquipment(user, randomNumberRequested[i], _request.equipment_type);
+            mintEquipment(user, randomNumberRequested[i], _request.equipment_type, _request.free);
         }
         ///Reset the sender's request property values to 0
         request[user] = equipment_request({
             request_id: 0,
             equipment_type: 0,
             number_of_items: 0,
-            time_requested: block.timestamp
+            time_requested: block.timestamp,
+            free: false
         });
     }
 
     ///@notice This includes external call to the Equipment NFT Contract to actually mint the tokens.
-    function mintEquipment(address user, uint256 randomNumberRequested, uint64 equipment_type) internal {
-        (equipment_properties memory equipment_props, battle_stats memory _equipment_stats) = getResult(randomNumberRequested, equipment_type);
+    function mintEquipment(address user, uint256 randomNumberRequested, uint64 equipment_type, bool _free) internal {
+        (equipment_properties memory equipment_props, battle_stats memory _equipment_stats) = getResult(randomNumberRequested, equipment_type, _free);
         equipmentsNft._mintEquipment(user, equipment_props, _equipment_stats);
     }
 
-    function getResult(uint256 randomNumber, uint64 _equipment_type) internal pure returns (equipment_properties memory equipment_props, battle_stats memory _equipment_stats){
+    function getResult(uint256 randomNumber, uint64 _equipment_type, bool _free) internal pure returns (equipment_properties memory equipment_props, battle_stats memory _equipment_stats){
         ///To save on LINK tokens for our VRF contract, we are breaking a single random word into 16 uint16s.
         ///The reason for this is we will need a lot(9) of random numbers for a single equipment mint.
         ///It is given that the chainlink VRF generates verifiable, truly random numbers that it is safe to assume that breaking this
@@ -305,6 +326,9 @@ contract EquipmentMinter is Ownable, Pausable{
         ///Get the rarity of the equipment using the last item in the uint16[]. The rarity also determines how much stat points the equipment has.
         ///The rarer the item, the higher the stat points it holds.
         (uint64 _rarity, uint256 stat_sum) = getRarity(randomNumbers[15]);
+
+        ///If the mint request is a free one, limit the rarity to the lowest tier
+        if(_free){_rarity = 0};
 
         ///Get the stat allocation of the equipment using the next 8 items from the last in the uint16[]. The stat points determined from
         ///rarity of the item from the getRarity() is allocated this way.

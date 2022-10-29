@@ -32,6 +32,7 @@ struct equipment_request { //SSTORED
     uint64 equipment_type;
     uint32 number_of_items;
     uint256 time_requested;
+    bool free;
 }
 
 struct character_equipments {

@@ -142,6 +142,7 @@ contract Characters is ERC721, ERC721Enumerable, Ownable {
     }
 
     ///@notice Removing the stats section in the URI due to the code size exceeding 24,576 bytes.
+    ///I might deploy a contract specifically for constructing the URI if I still have time.
     // function encodeStats(character_stats memory _stats) internal pure returns (string memory stats_part){
     //     stats_part = string.concat(
                             // ', {"trait_type": "ATK", "value": ', Strings.toString(_stats.atk),

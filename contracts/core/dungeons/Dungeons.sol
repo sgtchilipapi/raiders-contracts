@@ -155,6 +155,9 @@ contract Dungeons is Ownable{
         ///Calculate the enemy's stats within the requests parameters and 2 random uint16s
         (enemy_properties memory enem_props, battle_stats memory enem_stats) = EnemyStatsCalculator.getEnemy(request.dungeon_type, request.tier, random_set1[0], random_set1[1]);
 
+        ///Set the enemy's handicap to only 25% for players/characters that are just starting out (exp with less than 220)
+        if(char_props.exp < 220 && request.tier == 0){enem_stats.hp = (enem_stats.hp * 25) / 100;}
+
         emit BattleStarted(request, char_stats, enem_stats);
 
         ///Check if the battle has been completed
