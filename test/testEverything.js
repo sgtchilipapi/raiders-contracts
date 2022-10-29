@@ -2,7 +2,13 @@ const { ethers } = require("hardhat");
 const { doesNotMatch } = require("assert");
 
 describe("Characters, Minter and VRF test.", function () {
-    it("Test Character Minting", async function () {
+    it("Test Everything", async function() {
+        const [characters, c_minter] = await characterSystem()
+        const [equipments, e_minter, materials, catalysts] = await equipmentSystem()
+        
+    }).timeout(5000000);
+
+    async function characterSystem() {
         const [owner] = await ethers.getSigners()
 
         const Characters = await ethers.getContractFactory("Characters")
@@ -38,10 +44,17 @@ describe("Characters, Minter and VRF test.", function () {
 
         console.log(`Character name: ${await characters.character_name(1)}`)
 
-    }).timeout(5000000);
+        return [characters, minter]
 
-    it("Test Equipment Minting", async function () {
+    }
+
+    async function equipmentSystem() {
         const [owner] = await ethers.getSigners()
+
+        //Deploy the tokens
+        const [materials, catalysts] = await deployTokens()
+        const materials_addresses = [materials[0].address, materials[1].address, materials[2].address, materials[3].address]
+        const catalysts_addresses = [catalysts[0].address, catalysts[1].address, catalysts[2].address, catalysts[3].address]
 
         const Equipments = await ethers.getContractFactory("Equipments")
         const equipments = await Equipments.deploy()
@@ -49,7 +62,7 @@ describe("Characters, Minter and VRF test.", function () {
         console.log(`Equipments deployed at: ${equipments.address}`)
 
         const Minter = await ethers.getContractFactory("EquipmentMinter")
-        const minter = await Minter.deploy(equipments.address)
+        const minter = await Minter.deploy(equipments.address, materials_addresses, catalysts_addresses)
         await minter.deployed()
         console.log(`EquipmentMinter deployed at ${minter.address}`)
 
@@ -66,7 +79,8 @@ describe("Characters, Minter and VRF test.", function () {
         await setVRF.wait()
         console.log(`VRF contract has been successfuly set!`)
 
-        tokens(minter)
+        //Approve the minter
+        await approveEquipmentMinter(minter.address, materials, catalysts)
 
         const requestEquipment = await minter.requestEquipment(0, 1)
         await requestEquipment.wait()
@@ -78,9 +92,11 @@ describe("Characters, Minter and VRF test.", function () {
 
         console.log(await equipments.equipment(1))
 
-    }).timeout(5000000);
+        return[equipments, minter, materials, catalysts]
 
-    async function tokens(equipment_minter){
+    }
+
+    async function deployTokens(){
         const clank = await deployERC20("ClankToken")
         const boom = await deployERC20("BoomSteel")
         const thump = await deployERC20("ThumpIron")
@@ -91,25 +107,32 @@ describe("Characters, Minter and VRF test.", function () {
         const redspark = await deployERC20("RedSparkstone")
         const bluespark = await deployERC20("BlueSparkstone")
 
-        await approveMinter(boom, "Boom")
-        await approveMinter(thump, "Thump")
-        await approveMinter(clink, "Clink")
-        await approveMinter(snap, "Snap")
-        await approveMinter(yellowspark, "Yspark")
-        await approveMinter(whitespark, "Wspark")
-        await approveMinter(redspark, "Rspark")
-        await approveMinter(bluespark, "Bspark")
-
         async function deployERC20(ContractName){
             const ERC20Token = await ethers.getContractFactory(ContractName)
             const token = await ERC20Token.deploy()
             await token.deployed()
             console.log(`${ContractName} token deployed at: ${token.address}`)
-            return token.address
+            return token
         }
 
+        const materials = [boom, thump, clink, snap]
+        const catalysts = [yellowspark, whitespark, redspark, bluespark]
+        return [materials, catalysts]
+    }
+
+    async function approveEquipmentMinter(minter_address, materials, catalysts){
+
+        await approveMinter(materials[0], "Boom")
+        await approveMinter(materials[1], "Thump")
+        await approveMinter(materials[2], "Clink")
+        await approveMinter(materials[3], "Snap")
+        await approveMinter(catalysts[0], "Yspark")
+        await approveMinter(catalysts[1], "Wspark")
+        await approveMinter(catalysts[2], "Rspark")
+        await approveMinter(catalysts[3], "Bspark")
+
         async function approveMinter(tokenContract, tokenName){
-            const approveTx = await tokenContract.approve(equipment_minter.address, ethers.utils.parseEther("1000000"))
+            const approveTx = await tokenContract.approve(minter_address, ethers.utils.parseEther("1000000"))
             await approveTx.wait()
             console.log(`Equipment Minter approved for token ${tokenName}!`)
         }
