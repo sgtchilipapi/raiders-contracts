@@ -15,7 +15,6 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/security/Pausable.sol";
 import "../utils/BreakdownUint256.sol";
 import "../libraries/equipment/CraftingRecipes.sol";
-import "../libraries/materials/MaterialsAddresses.sol";
 import "../libraries/structs/GlobalStructs.sol";
 
 interface _RandomizationContract {
@@ -52,6 +51,10 @@ contract EquipmentMinter is Ownable, Pausable{
     ///Variables for limiting the 1st 100 free mints.
     uint256 public freeMints;
     mapping(address => bool) public mintedFree;
+
+    ///Arrays of addresses for the materials and catalyst tokens
+    address[4] private materials_addresses;
+    address[4] private catalysts_addresses; 
     
     event EquipmentRequested(address indexed player_address, equipment_request request);
     constructor(address equipmentsNftAddress){
@@ -210,14 +213,14 @@ contract EquipmentMinter is Ownable, Pausable{
 
     ///@notice This function checks the user's balance and returns the corresponding token contract instance.
     function checkMaterialBalance(uint256 material_index) internal view returns (uint256 balance, ERC20Burnable material_contract){
-            address material_address = MaterialsAddresses.getMaterialAddress(material_index);
+            address material_address = materials_addresses[material_index];
             material_contract = ERC20Burnable(material_address);
             balance = material_contract.balanceOf(msg.sender);
     }
 
     ///@notice This function checks the user's balance and returns the corresponding token contract instance.
     function checkCatalystBalance(uint256 catalyst_index) internal view returns (uint256 balance, ERC20Burnable catalyst_contract){
-        address catalyst_address = MaterialsAddresses.getCatalystAddress(catalyst_index);
+        address catalyst_address = catalysts_addresses[catalyst_index];
         catalyst_contract = ERC20Burnable(catalyst_address);
         balance = catalyst_contract.balanceOf(msg.sender);
     }
