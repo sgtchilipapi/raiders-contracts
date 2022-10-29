@@ -16,7 +16,7 @@ import "../utils/BreakdownUint256.sol";
 import "../libraries/structs/CharacterStructs.sol";
 
 interface _RandomizationContract {
-    function requestRandomWords(address user, bool experimental) external returns (uint256 requestId);
+    function requestRandomWords(address user, uint32 numWords, bool experimental) external returns (uint256 requestId);
     function getRequestStatus(uint256 _requestId) external view returns(bool fulfilled, uint256[] memory randomWords);
 }
 
@@ -65,7 +65,7 @@ contract CharacterMinter is Ownable, Pausable{
         ///EXTCALL to VRF contract. Set the caller's current character_request to the returned request_id by the VRF contract.
         ///The bool argument here notifies the vrf contract that the request being sent is NOT experimental.
         request[msg.sender] = character_request({
-            request_id: vrf_contract.requestRandomWords(msg.sender, false),
+            request_id: vrf_contract.requestRandomWords(msg.sender, 1, false),
             character_class: _character_class,
             _name: _character_name,
             time_requested: block.timestamp
@@ -94,7 +94,7 @@ contract CharacterMinter is Ownable, Pausable{
         ///@notice EXTCALL to VRF contract. Set the caller's current character_request to the returned request_id by the VRF contract.
         ///The bool argument here notifies the vrf contract that the request being sent is experimental.
         request[msg.sender] = character_request({
-            request_id: vrf_contract.requestRandomWords(msg.sender, true),
+            request_id: vrf_contract.requestRandomWords(msg.sender, 1, true),
             character_class: _character_class,
             _name: _character_name,
             time_requested: block.timestamp

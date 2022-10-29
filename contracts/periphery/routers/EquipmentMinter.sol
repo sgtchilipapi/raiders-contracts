@@ -19,7 +19,7 @@ import "../libraries/materials/MaterialsAddresses.sol";
 import "../libraries/structs/GlobalStructs.sol";
 
 interface _RandomizationContract {
-    function requestRandomWords(uint32 numWords, address user, bool experimental) external returns (uint256 requestId);
+    function requestRandomWords(address user, uint32 numWords, bool experimental) external returns (uint256 requestId);
     function getRequestStatus(uint256 _requestId) external view returns(bool fulfilled, uint256[] memory randomWords);
 }
 
@@ -80,7 +80,7 @@ contract EquipmentMinter is Ownable, Pausable{
         ///@notice EXTCALL to VRF contract. Set the caller's current equipment_request to the returned request_id by the VRF contract.
         ///The bool argument here notifies the vrf contract that the request being sent is NOT experimental.
         request[msg.sender] = equipment_request({
-            request_id: randomizer.requestRandomWords(uint32(item_count), msg.sender, false),
+            request_id: randomizer.requestRandomWords(msg.sender, uint32(item_count),  false),
             equipment_type: _equipment_type,
             number_of_items: uint32(item_count),
             time_requested: block.timestamp
@@ -118,7 +118,7 @@ contract EquipmentMinter is Ownable, Pausable{
         ///Using a constant 1. See above reason on line 57 (unwrapped).
         ///The bool argument here notifies the vrf contract that the request being sent is experimental.
         request[msg.sender] = equipment_request({
-            request_id: randomizer.requestRandomWords(/**item_count */ 1, msg.sender, true),
+            request_id: randomizer.requestRandomWords(/**item_count */msg.sender, 1, true),
             equipment_type: _equipment_type,
             number_of_items: 1,
             time_requested: block.timestamp
@@ -147,7 +147,7 @@ contract EquipmentMinter is Ownable, Pausable{
         ///Using a constant 1. See above reason on line 57 (unwrapped).
         ///The bool argument here notifies the vrf contract that the request being sent is experimental.
         request[msg.sender] = equipment_request({
-            request_id: randomizer.requestRandomWords(/**item_count */ 1, msg.sender, true),
+            request_id: randomizer.requestRandomWords(/**item_count */ msg.sender, 1, true),
             equipment_type: _equipment_type,
             number_of_items: 1,
             time_requested: block.timestamp

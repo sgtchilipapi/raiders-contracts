@@ -22,7 +22,7 @@ import "../../periphery/libraries/materials/MaterialsAddresses.sol";
 import "../../periphery/libraries/characters/CharacterExperience.sol";
 
 interface _RandomizationContract {
-    function requestRandomWords(address user, uint32 numWords) external returns (uint256 requestId);
+    function requestRandomWords(address user, uint32 numWords, bool experimental) external returns (uint256 requestId);
     function getRequestStatus(uint256 _requestId) external view returns(bool fulfilled, uint256[] memory randomWords);
 }
 interface _Characters{
@@ -115,7 +115,7 @@ contract Dungeons is Ownable{
 
         ///Map the battle request parameters to the sender's address
         battle_requests[msg.sender] = battle_request({
-            request_id: vrf_contract.requestRandomWords(msg.sender, 11),
+            request_id: vrf_contract.requestRandomWords(msg.sender, uint32(11), false),
             dungeon_type: dungeon,
             tier: tier,
             character_id: character_id,
@@ -153,7 +153,7 @@ contract Dungeons is Ownable{
         emit BattleStarted(request, char_stats, enem_stats);
 
         ///Check if the battle has been completed
-        require(request.completed == false, "Dungeons: Battle already completed.");
+        require(!request.completed, "Dungeons: Battle already completed.");
 
         ///Set the request as completed
         battle_requests[msg.sender].completed = true;

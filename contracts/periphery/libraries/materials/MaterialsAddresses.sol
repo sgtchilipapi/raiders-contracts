@@ -23,29 +23,29 @@
      */
     function getMaterialAddress(uint256 material_index) internal pure returns (address material_address){
         //BOOMSTEEL: Main material for weapons
-        if(material_index == 0){material_address = address(0x75B3ae45690f9e2dbC3CA8bd7674696cC96174Ae);} 
+        if(material_index == 0){material_address = address(0x5Ff4BDc310a1A96Acac76361d97601F112781BfE);} 
 
         //THUMPIRON: Main material for armors and helms
-        if(material_index == 1){material_address = address(0xF2dCef12241Df197BFcBb688cD8FcaCB25404405);}
+        if(material_index == 1){material_address = address(0xC642e01D88650cA17e9D7Eff66E034Fd2f863AbA);}
 
         //CLINKGLASS: Main material for accessories
-        if(material_index == 2){material_address = address(0x81b7f46B11B115732bEEe91f17eA4Cb73Da37a92);}
+        if(material_index == 2){material_address = address(0x633BCD5093Ac8FaC60183eFDA151e3C55D98BbCE);}
 
         //SNAPLINK: Main material for consumables
-        if(material_index == 3){material_address = address(0x700E443C63ff1F5f35DC15fde97AbB19601B64e3);}
+        if(material_index == 3){material_address = address(0x94FC8D420D7488bC0FF198168d0155a7a1936527);}
     }
 
     function getCatalystAddress(uint256 catalyst_index) internal pure returns (address catalyst_address){
-        //BLACK SPARKSTONE: Catalyst for weapons
-        if(catalyst_index == 0){catalyst_address = address(0x6B91938986F3043724B217CFF8514B0B897993FC);}
+        //YELLOW SPARKSTONE: Catalyst for weapons
+        if(catalyst_index == 0){catalyst_address = address(0xd0d61c5b3a57875d1747fa4a336A40AEDE9108aa);}
 
         //WHITE SPARKSTONE: Catalyst for armors and helms
-        if(catalyst_index == 1){catalyst_address = address(0x3eCa97c9eac5c9f0689935e27F23eD81Dc274C34);}
+        if(catalyst_index == 1){catalyst_address = address(0x1258558Fd5A0b91b3f0e07F458BbdF473cd2093e);}
 
         //RED SPARKSTONE: Catalyst for accessories
-        if(catalyst_index == 2){catalyst_address = address(0x2DaD4EE39f7Ea601B802821Cb169D389bC91Be15);}
+        if(catalyst_index == 2){catalyst_address = address(0x6dC194934FD405D8dd228Bcd2776EFF4B1A9d254);}
 
         //BLUE SPARKSTONE: Catalyst for consumables
-        if(catalyst_index == 3){catalyst_address = address(0x6594139f482C4F50a093384Ab306b2e20a6Fff7b);}
+        if(catalyst_index == 3){catalyst_address = address(0x97c5BC77970CC64Fe1b9A0eC9a315A3Ea5Fe3Eb8);}
     }
  }
