@@ -63,7 +63,7 @@ describe("Characters, Minter and VRF test.", function () {
         console.log(`Equipments deployed at: ${equipments.address}`)
 
         const Minter = await ethers.getContractFactory("EquipmentMinter")
-        const minter = await Minter.deploy(equipments.address, materials_addresses, catalysts_addresses)
+        const minter = await Minter.deploy(equipments.address, _characters.address, materials_addresses, catalysts_addresses)
         await minter.deployed()
         console.log(`EquipmentMinter deployed at ${minter.address}`)
 

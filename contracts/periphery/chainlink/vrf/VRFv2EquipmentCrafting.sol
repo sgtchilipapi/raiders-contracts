@@ -53,9 +53,9 @@ contract VRFv2EquipmentCrafting is VRFConsumerBaseV2, ConfirmedOwner {
     }
 
     // Assumes the subscription is funded sufficiently.
-    function requestRandomWords(uint32 numWords, address user, bool _experimental)external onlyOwner returns (uint256 requestId) {
+    function requestRandomWords(address user, uint32 numWords, bool _experimental)external onlyOwner returns (uint256 requestId) {
         // Will revert if subscription is not set and funded.
-        uint32 callbackGasLimit = 100000 + (50000 * numWords);
+        uint32 callbackGasLimit = 100000 + (20000 * numWords);
 
         ///@notice if the request being set is experimental, we set the callbackGasLimit higher to a safe level to ensure that
         ///fulfillRandomWords() has enough gas to process the transaction since it will have the responsibility to complete

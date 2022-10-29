@@ -31,9 +31,9 @@ library EquipmentLibrary {
     }
 
     function getEquipmentType(uint256 equipment_type, uint256 dominant_stat) internal pure returns (bytes memory type_tag, bytes memory type_image){
-        if(equipment_type == 0){type_tag = "Helm "; type_image = "HELMS/";}
+        if(equipment_type == 0){type_tag = getWeapon(dominant_stat); type_image = "WEAPONS/";}
         if(equipment_type == 1){type_tag = "Armor "; type_image = "ARMORS/";}
-        if(equipment_type == 2){type_tag = getWeapon(dominant_stat); type_image = "WEAPONS/";}
+        if(equipment_type == 2){type_tag = "Helm "; type_image = "HELMS/";}
         if(equipment_type == 3){type_tag = getAccessory(dominant_stat); type_image = "ACCESSORIES/";}
     }
 

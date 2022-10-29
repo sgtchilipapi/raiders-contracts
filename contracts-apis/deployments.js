@@ -54,42 +54,42 @@ module.exports = {
         },
         equipments: {
             nftContract: {
-                address: "0x68E0cff14D6992aa6057Fe849b26a0fD1D4222ee",
+                address: "0x0CBEcBf3fab48A06EF1E79Ce8685B752DE837890",
                 abi: ''
             },
             minter: {
-                address: "0x548027771022D4aeB3A50de65B5a7d9d1fc6A495",
+                address: "0xF526F67a1d78478225c7803d5E09771A90B64609",
                 abi: ''
             },
             vrf: {
-                address: "0x076A56e03DeE91713B857cc6b366499064C98F7B",
+                address: "0x63A9b343B5957c29321a77aa484418545fFacCA9",
                 abi: ''
             },
             manager: {
-                address: "0xEEca486e1e1CF4b41ab5E0a78Cb625d1a2Fb7a96",
+                address: "0x8a81a739fA5df8964f6404a7022ADc2898b12414",
                 abi: ''
             }
         },
         characters: {
             nftContract: {
-                address: "0x69FCc7b0A5c0187f3fDB5D65E274b7184E938115",
+                address: "0xb50BE54Ae2Dc4249C13ECC9e238F497caD9Bfc00",
                 abi: ''
             },
             minter: {
-                address: "0x68d2587fb7BE2bb50d62B36A453b637B89348904",
+                address: "0xC2C563ADb82378ea4028FE49D73F48477Bb8Ed42",
                 abi: ''
             },
             vrf: {
-                address: "0xA11Bd9C1CD23978c49C426d1E5723d6854537340",
+                address: "0x8203d63ca6b9eEbc4Ce1D85Cb21e873096771A9d",
                 abi: ''
             }
         },
         dungeons: {
             dungeon: {
-                address: "0xA1638391C1c093a9147B1F6659d72585c16Fb28a",
+                address: "0x9b4817e17D76c6100af68b09e11b8345F4e82e66",
             },
             vrf: {
-                address: "0xAD2e2cbC5Ca26A9142EF2F5E54b76ff601F18fFE"
+                address: "0x585AE3a8827d0ED061475067a6126FB3CA4c300F"
             }
         }
     }

@@ -16,6 +16,7 @@ import "@openzeppelin/contracts/security/Pausable.sol";
 import "../utils/BreakdownUint256.sol";
 import "../libraries/equipment/CraftingRecipes.sol";
 import "../libraries/structs/GlobalStructs.sol";
+import "../libraries/structs/CharacterStructs.sol";
 
 interface _RandomizationContract {
     function requestRandomWords(address user, uint32 numWords, bool experimental) external returns (uint256 requestId);
@@ -134,7 +135,7 @@ contract EquipmentMinter is Ownable, Pausable{
             request_id: randomizer.requestRandomWords(/**item_count */msg.sender, 1, true),
             equipment_type: _equipment_type,
             number_of_items: 1,
-            time_requested: block.timestamp
+            time_requested: block.timestamp,
             free: false
         });
         
@@ -156,13 +157,13 @@ contract EquipmentMinter is Ownable, Pausable{
 
         ///Allow only one free mint per character AND per wallet address
         require(!character_minted_free[character_id], "eMNTR: character already minted.");
-        require(!user_minted_free[character_id], "eMNTR: user already minted.");
+        require(!user_minted_free[msg.sender], "eMNTR: user already minted.");
 
         ///Allow only characters with exp greater than 200
         require(characters.character(character_id).exp > 200, "eMNTR: insuf char exp.");
 
         ///Update the character and user mapping to free mints immediately after checking
-        character_minted_free[msg.sender] = true;
+        character_minted_free[character_id] = true;
         user_minted_free[msg.sender] = true;
 
         ///@notice EXTCALL to VRF contract. Set the caller's current equipment_request to the returned request_id by the VRF contract.
@@ -190,7 +191,7 @@ contract EquipmentMinter is Ownable, Pausable{
             request_id: 0,
             equipment_type: 0,
             number_of_items: 0,
-            time_requested: block.timestamp
+            time_requested: block.timestamp,
             free: false
         });
     }
@@ -328,7 +329,7 @@ contract EquipmentMinter is Ownable, Pausable{
         (uint64 _rarity, uint256 stat_sum) = getRarity(randomNumbers[15]);
 
         ///If the mint request is a free one, limit the rarity to the lowest tier
-        if(_free){_rarity = 0};
+        if(_free){_rarity = 0;}
 
         ///Get the stat allocation of the equipment using the next 8 items from the last in the uint16[]. The stat points determined from
         ///rarity of the item from the getRarity() is allocated this way.

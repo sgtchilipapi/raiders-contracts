@@ -44,7 +44,7 @@ contract VRFv2DungeonBattles is VRFConsumerBaseV2, ConfirmedOwner {
     }
 
     // Assumes the subscription is funded sufficiently.
-    function requestRandomWords(address user, uint32 numWords)external onlyOwner returns (uint256 requestId) {
+    function requestRandomWords(address user, uint32 numWords, bool experimental)external onlyOwner returns (uint256 requestId) {
         ///Will revert if subscription is not set and funded.
         uint32 callbackGasLimit = 100000 + (numWords * 20000);
 

@@ -23,6 +23,7 @@ async function characters(){
     ///const mainnetVRF = await deploySubscriptionVRF("VRFv2Consumer", 0, "0xAE975071Be8F8eE67addBC1A82488F1C24858067", "0xcc294a196eeeb44da2888d17c0625cc88d70d9760a69d58d853ba6581a9ab0cd")
 
     ///For mumbai testnet
+    const tokens = deployments.testnet_deployments.tokens
     const ctrs = await deployCharacters("Characters")
     const minter = await deployMinter("CharacterMinter", tokens)
     const vrf = await deploySubscriptionVRF("VRFv2CharacterMinting", 2229, "0x7a1BaC17Ccc5b313516C5E16fb24f7659aA5ebed", "0x4b09e658ed251bcafeebbc69400383d49f344ace09b9576fe248bb02c003fe9f", minter.address)
