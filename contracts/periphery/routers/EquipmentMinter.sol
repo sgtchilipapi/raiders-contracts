@@ -57,7 +57,6 @@ contract EquipmentMinter is Ownable, Pausable{
 
     ///mapping to restrict free mints to players/characters
     mapping(uint256 => bool) public character_minted_free;
-    mapping(address => bool) public user_minted_free;
 
     ///Arrays of addresses for the materials and catalyst tokens
     address[4] private materials_addresses;
@@ -157,14 +156,12 @@ contract EquipmentMinter is Ownable, Pausable{
 
         ///Allow only one free mint per character AND per wallet address
         require(!character_minted_free[character_id], "eMNTR: character already minted.");
-        require(!user_minted_free[msg.sender], "eMNTR: user already minted.");
 
         ///Allow only characters with exp greater than 200
         require(characters.character(character_id).exp > 200, "eMNTR: insuf char exp.");
 
         ///Update the character and user mapping to free mints immediately after checking
         character_minted_free[character_id] = true;
-        user_minted_free[msg.sender] = true;
 
         ///@notice EXTCALL to VRF contract. Set the caller's current equipment_request to the returned request_id by the VRF contract.
         ///Using a constant 1. See above reason on line 57 (unwrapped).
