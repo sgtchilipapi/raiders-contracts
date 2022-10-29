@@ -8,8 +8,8 @@
 pragma solidity ^0.8.7;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
-import "../../libraries/structs/CharacterStructs.sol";
-import "../../libraries/structs/EquipmentStructs.sol";
+import "../libraries/structs/CharacterStructs.sol";
+import "../libraries/structs/EquipmentStructs.sol";
 
 interface ICharacters {
     function isOwner(address _owner, uint256 _character) external view returns (bool);
@@ -51,10 +51,13 @@ contract EquipmentManager {
         ///Fetch equipment properties from their respective contracts.
         equipment_properties memory equipment =  equipment_contract.equipment(_equipment_id);
 
+        ///Check if the items is equippable
+        require(equipment.equipment_type < 4, "EQPD: Item not equippable.");
+
         //Reference the equipment's _type prop to update the appropriate equipment slot (helm, armor, weapon, accessory) of the character.
-        if(equipment.equipment_type == 0){equipHelm(_character_id, _equipment_id);}
-        if(equipment.equipment_type == 1){equipArmor(_character_id, _equipment_id);}
-        if(equipment.equipment_type == 2){equipWeapon(_character_id, _equipment_id);}
+        if(equipment.equipment_type == 0){equipWeapon(_character_id, _equipment_id);}
+        if(equipment.equipment_type == 1){equipHelm(_character_id, _equipment_id);}
+        if(equipment.equipment_type == 2){equipArmor(_character_id, _equipment_id);}
         if(equipment.equipment_type == 3){equipAccessory(_character_id, _equipment_id);}
     }
 
@@ -79,7 +82,7 @@ contract EquipmentManager {
         //Lastly, equip the item to the character
         equippedTo[_equipment_id] = _character_id;
         equippedWith[_character_id].headgear = uint64(_equipment_id);
-        emit ItemEquipped(_character_id, _equipment_id, 0); //0 => headgear
+        emit ItemEquipped(_character_id, _equipment_id, 1); //1 => headgear
     }
 
     ///@notice Same effect with equipHelm but for Armors.
@@ -94,7 +97,7 @@ contract EquipmentManager {
         //Lastly, equip the item to the character
         equippedTo[_equipment_id] = _character_id;
         equippedWith[_character_id].armor = uint64(_equipment_id);
-        emit ItemEquipped(_character_id, _equipment_id, 1); //1 => armor
+        emit ItemEquipped(_character_id, _equipment_id, 2); //2 => armor
     }
 
     ///@notice Same effect with equipHelm but for Weapons.
@@ -109,7 +112,7 @@ contract EquipmentManager {
         //Lastly, equip the item to the character
         equippedTo[_equipment_id] = _character_id;
         equippedWith[_character_id].weapon = uint64(_equipment_id);
-        emit ItemEquipped(_character_id, _equipment_id, 2); //2 => weapon
+        emit ItemEquipped(_character_id, _equipment_id, 0); //0 => weapon
     }
 
     ///@notice Same effect with equipHelm but for Accessories.
@@ -130,9 +133,9 @@ contract EquipmentManager {
     ///@notice The owner of the character can unequip items by type (headgear, armor, weapon, accessory)
     function unEquipType(uint256 _character_id, uint256 equipment_type) public{
         require(character_contract.isOwner(msg.sender, _character_id), "EQPD: Cannot unequip from character not owned.");
-        if(equipment_type == 0){unequipHelm(_character_id);}
-        if(equipment_type == 1){unequipArmor(_character_id);}
-        if(equipment_type == 2){unequipWeapon(_character_id);}
+        if(equipment_type == 0){unequipWeapon(_character_id);}
+        if(equipment_type == 1){unequipHelm(_character_id);}
+        if(equipment_type == 2){unequipArmor(_character_id);}
         if(equipment_type == 3){unequipAccessory(_character_id);}
     }
 
@@ -149,9 +152,9 @@ contract EquipmentManager {
     function unEquipItemFromTransfer(uint256 _equipment_id) external onlyEquipmentContract returns (bool success){
         if(equippedTo[_equipment_id] != 0){
             equipment_properties memory equipment =  equipment_contract.equipment(_equipment_id);
-            if(equipment.equipment_type == 0){unequipHelm(equippedTo[_equipment_id]);}
-            if(equipment.equipment_type == 1){unequipArmor(equippedTo[_equipment_id]);}
-            if(equipment.equipment_type == 2){unequipWeapon(equippedTo[_equipment_id]);}
+            if(equipment.equipment_type == 0){unequipWeapon(equippedTo[_equipment_id]);}
+            if(equipment.equipment_type == 1){unequipHelm(equippedTo[_equipment_id]);}
+            if(equipment.equipment_type == 2){unequipArmor(equippedTo[_equipment_id]);}
             if(equipment.equipment_type == 3){unequipAccessory(equippedTo[_equipment_id]);}
         }
         success = true;
@@ -170,7 +173,7 @@ contract EquipmentManager {
         uint256 _equipment_id = equippedWith[_character_id].headgear;
         equippedTo[_equipment_id] = 0;
         equippedWith[_character_id].headgear = 0;
-        emit ItemUnequipped(_character_id, _equipment_id, 0);
+        emit ItemUnequipped(_character_id, _equipment_id, 1);
         
     }
 
@@ -178,14 +181,14 @@ contract EquipmentManager {
         uint256 _equipment_id = equippedWith[_character_id].armor;
         equippedTo[_equipment_id] = 0;
         equippedWith[_character_id].armor = 0;
-        emit ItemUnequipped(_character_id, _equipment_id, 1);
+        emit ItemUnequipped(_character_id, _equipment_id, 2);
     }
 
     function unequipWeapon(uint256 _character_id) internal {
         uint256 _equipment_id = equippedWith[_character_id].weapon;
         equippedTo[_equipment_id] = 0;
         equippedWith[_character_id].weapon = 0;
-        emit ItemUnequipped(_character_id, _equipment_id, 2);
+        emit ItemUnequipped(_character_id, _equipment_id, 0);
     }
 
     function unequipAccessory(uint256 _character_id) internal {

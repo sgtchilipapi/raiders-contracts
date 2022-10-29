@@ -4,7 +4,7 @@ const { doesNotMatch } = require("assert");
 describe("Characters, Minter and VRF test.", function () {
     it("Test Everything", async function() {
         const [characters, c_minter] = await characterSystem()
-        const [equipments, e_minter, materials, catalysts] = await equipmentSystem()
+        const [equipments, e_minter, materials, catalysts, equipment_manager] = await equipmentSystem(characters)
         
     }).timeout(5000000);
 
@@ -48,7 +48,7 @@ describe("Characters, Minter and VRF test.", function () {
 
     }
 
-    async function equipmentSystem() {
+    async function equipmentSystem(_characters) {
         const [owner] = await ethers.getSigners()
 
         //Deploy the tokens
@@ -82,7 +82,7 @@ describe("Characters, Minter and VRF test.", function () {
         //Approve the minter
         await approveEquipmentMinter(minter.address, materials, catalysts)
 
-        const requestEquipment = await minter.requestEquipment(0, 1)
+        const requestEquipment = await minter.requestEquipment(0, 1) //Mint one weapon (eqpt_type, eqpt_count)
         await requestEquipment.wait()
         console.log(`Mint equipment request has been sent!`)
 
@@ -92,7 +92,26 @@ describe("Characters, Minter and VRF test.", function () {
 
         console.log(await equipments.equipment(1))
 
-        return[equipments, minter, materials, catalysts]
+        const EquipmentManager = await ethers.getContractFactory("EquipmentManager")
+        const equipment_manager = await EquipmentManager.deploy(_characters.address, equipments.address)
+        await equipment_manager.deployed()
+        console.log(`Equipment Manager deployed at ${equipment_manager.address}`)
+
+        const setEquipmentInCharacters = await _characters.setEquipmentManager(equipment_manager.address)
+        await setEquipmentInCharacters.wait()
+        console.log(`Equipment Manager set in Characters successfully!`)
+
+        const setEquipmentInEquipments = await equipments.setEquipmentManager(equipment_manager.address)
+        await setEquipmentInEquipments.wait()
+        console.log(`Equipment Manager set in Equipments successfully!`)
+
+        const equipItemToCharacter = await equipment_manager.equip(1, 1)
+        await equipItemToCharacter.wait()
+        console.log(`The items currently equipped with ${await _characters.character_name(1)}`)
+        console.log(await equipment_manager.equippedWith(1))
+
+
+        return[equipments, minter, materials, catalysts, equipment_manager]
 
     }
 

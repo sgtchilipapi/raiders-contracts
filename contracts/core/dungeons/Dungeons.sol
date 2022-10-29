@@ -18,7 +18,6 @@ import "../../periphery/libraries/enemies/EnemyStatsCalculator.sol";
 import "../../periphery/utils/BattleMath.sol";
 import "../../periphery/utils/BreakdownUint256.sol";
 import "../../periphery/libraries/materials/DungeonMaterials.sol";
-import "../../periphery/libraries/materials/MaterialsAddresses.sol";
 import "../../periphery/libraries/characters/CharacterExperience.sol";
 
 interface _RandomizationContract {
@@ -75,6 +74,9 @@ contract Dungeons is Ownable{
     ///the time it was last updated.
     mapping(uint256 => last_energy_update) public energy_balances;
 
+    ///Arrays of addresses for the materials and catalyst tokens
+    address[4] private materials_addresses;
+
     event BattleRequested(address indexed user, battle_request request);
     event BattleStarted(battle_request indexed request, battle_stats character, battle_stats enemy);
     event Clashed(uint256 indexed battle_id, clash_event clash);
@@ -83,11 +85,13 @@ contract Dungeons is Ownable{
     constructor(
         address charactersNftAddress, 
         address equipmentNftAddress, 
-        address equipmentManagerAddress
+        address equipmentManagerAddress,
+        address[4] memory materials
     ){
         characters = _Characters(charactersNftAddress);
         equipments = _Equipments(equipmentNftAddress);
         equipment_manager = _EquipmentManager(equipmentManagerAddress);
+        materials_addresses = materials;
         vrf_refunder = msg.sender;
     }
 
@@ -414,7 +418,7 @@ contract Dungeons is Ownable{
         uint256 actual_amount = getActualLootAmount(random_num_loot, min_amount, max_amount);
 
         ///Instantiate a token contract instance with the corresponding address of the loot material
-        _MaterialToken material_token = _MaterialToken(MaterialsAddresses.getMaterialAddress(material));
+        _MaterialToken material_token = _MaterialToken(materials_addresses[material]);
 
         ///EXTCALL: mint the actual tokens
         material_token.mint(sender, actual_amount);
@@ -425,7 +429,7 @@ contract Dungeons is Ownable{
         ///If there is, calculate the loot amount using the same min and max
         if(snap_loot){
             uint256 snap_amount = getActualLootAmount(random_num_snap_amount, min_amount, max_amount);
-            _MaterialToken snap_link = _MaterialToken(MaterialsAddresses.getMaterialAddress(3));
+            _MaterialToken snap_link = _MaterialToken(materials_addresses[3]);
             snap_link.mint(sender, snap_amount);
         }
     }
