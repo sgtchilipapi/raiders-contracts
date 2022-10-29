@@ -3,8 +3,9 @@ pragma solidity ^0.8.7;
 
 struct battle_request {
     uint256 request_id;
-    uint128 dungeon_type;
-    uint128 tier;
+    uint64 dungeon_type;
+    uint64 tier;
+    uint64 result;
     uint256 character_id;
     bool completed;
 }

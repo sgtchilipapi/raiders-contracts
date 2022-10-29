@@ -99,7 +99,7 @@ contract Dungeons is Ownable{
     ///The character that would be sent into the dungeon to fight, the dungeon and the specific tier in that dungeon.
     ///Once the request is sent, the sender would not be able to send another request until the request has been fulfilled AND
     ///the battle has been completed. That is the battle has been actually played out and its effects have been reflected in the contract's state.
-    function findBattle(uint256 character_id, uint128 dungeon, uint128 tier) public payable{
+    function findBattle(uint256 character_id, uint64 dungeon, uint64 tier) public payable{
         ///Ensure ownership of the character to be sent to battle
         require(characters.isOwner(msg.sender, character_id), "Dungeons: Character not owned");
 
@@ -122,6 +122,7 @@ contract Dungeons is Ownable{
             request_id: vrf_contract.requestRandomWords(msg.sender, uint32(11), false),
             dungeon_type: dungeon,
             tier: tier,
+            result: 0,
             character_id: character_id,
             completed: false
         });
@@ -163,8 +164,10 @@ contract Dungeons is Ownable{
         battle_requests[msg.sender].completed = true;
 
         ///Simulate the actual battle
-        uint256 battle_result = simulateBattle(request.request_id, char_props, char_stats, enem_props, enem_stats, random_words);
-        
+        uint64 battle_result = simulateBattle(request.request_id, char_props, char_stats, enem_props, enem_stats, random_words);
+
+        battle_requests[msg.sender].result = battle_result;
+
         ///The character only gets experience and attribute gains if he/she wins (1) or gets a draw (2).
         if(battle_result == 1 || battle_result == 2){
             ///@dev EXTCALL: Write to Character NFT contract the character's gain in experience and attributes from the battle if any.
@@ -237,7 +240,7 @@ contract Dungeons is Ownable{
         enemy_properties memory enem_props,
         battle_stats memory enem_stats,
         uint256[] memory random_nums
-        ) internal returns (uint256 battle_result){
+        ) internal returns (uint64 battle_result){
         ///Initiate a variable to serve as counter for how many back and forth attacks happened (character attacks -> enemy & enemy attacks -> character)
         uint256 clashCount;
 
@@ -421,7 +424,7 @@ contract Dungeons is Ownable{
         _MaterialToken material_token = _MaterialToken(materials_addresses[material]);
 
         ///EXTCALL: mint the actual tokens
-        material_token.mint(sender, actual_amount);
+        material_token.mint(sender, actual_amount * 1 ether);
 
         ///Determine whether there will be a snaplink loot drop
         bool snap_loot = rollSnapLink(random_num_snap);
@@ -430,7 +433,7 @@ contract Dungeons is Ownable{
         if(snap_loot){
             uint256 snap_amount = getActualLootAmount(random_num_snap_amount, min_amount, max_amount);
             _MaterialToken snap_link = _MaterialToken(materials_addresses[3]);
-            snap_link.mint(sender, snap_amount);
+            snap_link.mint(sender, snap_amount * 1 ether);
         }
     }
 

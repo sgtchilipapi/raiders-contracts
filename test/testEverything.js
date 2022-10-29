@@ -5,6 +5,7 @@ describe("Characters, Minter and VRF test.", function () {
     it("Test Everything", async function() {
         const [characters, c_minter] = await characterSystem()
         const [equipments, e_minter, materials, catalysts, equipment_manager] = await equipmentSystem(characters)
+        const [dungeons] = await battleSystem(characters, equipments, equipment_manager, [materials[0],materials[1],materials[2],materials[3]])
         
     }).timeout(5000000);
 
@@ -42,7 +43,7 @@ describe("Characters, Minter and VRF test.", function () {
         await mintCharacter.wait()
         console.log(`Character has been minted successfully!`)
 
-        console.log(`Character name: ${await characters.character_name(1)}`)
+        console.log(await characters.character(1))
 
         return [characters, minter]
 
@@ -91,6 +92,14 @@ describe("Characters, Minter and VRF test.", function () {
         console.log(`Equipment has been minted successfully!`)
 
         console.log(await equipments.equipment(1))
+
+        const ownerAddress = await owner.getAddress()
+        console.log(`Token balances`)
+        console.log(`$BOOM!: ${await materials[0].balanceOf(ownerAddress)}`)
+        console.log(`$THUMP!: ${await materials[1].balanceOf(ownerAddress)}`)
+        console.log(`$CLINK!: ${await materials[2].balanceOf(ownerAddress)}`)
+        console.log(`$SNAP!: ${await materials[3].balanceOf(ownerAddress)}`)
+
 
         const EquipmentManager = await ethers.getContractFactory("EquipmentManager")
         const equipment_manager = await EquipmentManager.deploy(_characters.address, equipments.address)
@@ -157,5 +166,59 @@ describe("Characters, Minter and VRF test.", function () {
         }
     }
 
+    async function battleSystem(_characters, _equipments, _equipment_manager, _materials){
+        const [owner] = await ethers.getSigners()
+        const Dungeons = await ethers.getContractFactory("Dungeons")
+        const dungeons = await Dungeons.deploy(_characters.address, _equipments.address, _equipment_manager.address, [_materials[0].address, _materials[1].address, _materials[2].address, _materials[3].address])
+        await dungeons.deployed()
+        console.log(`Dungeons deployed at ${dungeons.address}`)
+
+        const VRF = await ethers.getContractFactory("TestVRF")
+        const vrf = await VRF.deploy()
+        await vrf.deployed()
+        console.log(`VRF contract has been deployed!`)
+    
+        const setVRF = await dungeons.setRandomizationContract(vrf.address)
+        await setVRF.wait()
+        console.log(`VRF contract has been successfuly set!`)
+
+        await setDungeonInTokenContract(_materials[0], "Boom")
+        await setDungeonInTokenContract(_materials[1], "Thump")
+        await setDungeonInTokenContract(_materials[2], "Clink")
+        await setDungeonInTokenContract(_materials[3], "Snap")
+
+        async function setDungeonInTokenContract(token, token_name){
+            const setDungeonInToken = await token.setDungeonContract(dungeons.address)
+            await setDungeonInToken.wait()
+            console.log(`Dungeons Contract set in Token: ${token_name}`)
+        }
+
+        const setDungeonInCharacters = await _characters.setDungeon(dungeons.address)
+        await setDungeonInCharacters.wait()
+        console.log(`Dungeons address set in Characters contract successfully!`)
+
+        const findBattle = await dungeons.findBattle(1,0,0)
+        await findBattle.wait()
+
+        const startBattle = await dungeons.startBattle()
+        const battleTx = await startBattle.wait()
+        console.log(`Battle Completed!`)
+        
+        const ownerAddress = await owner.getAddress()
+        const battleRequestProps = await dungeons.battle_requests(ownerAddress)
+        console.log(battleRequestProps)
+
+        console.log(`Updated character properties:`)
+        console.log(await _characters.character(1))
+
+        console.log(`Updated token balances`)
+        console.log(`$BOOM!: ${await _materials[0].balanceOf(ownerAddress)}`)
+        console.log(`$THUMP!: ${await _materials[1].balanceOf(ownerAddress)}`)
+        console.log(`$CLINK!: ${await _materials[2].balanceOf(ownerAddress)}`)
+        console.log(`$SNAP!: ${await _materials[3].balanceOf(ownerAddress)}`)
+
+        
+        return [dungeons]
+    }
 
 });
