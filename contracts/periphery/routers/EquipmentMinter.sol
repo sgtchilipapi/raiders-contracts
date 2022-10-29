@@ -57,8 +57,10 @@ contract EquipmentMinter is Ownable, Pausable{
     address[4] private catalysts_addresses; 
     
     event EquipmentRequested(address indexed player_address, equipment_request request);
-    constructor(address equipmentsNftAddress){
+    constructor(address equipmentsNftAddress, address[4] memory materials, address[4] memory catalysts){
         equipmentsNft = _Equipments(equipmentsNftAddress);
+        materials_addresses = materials;
+        catalysts_addresses = catalysts;
         vrf_refunder = msg.sender;
     }
 
