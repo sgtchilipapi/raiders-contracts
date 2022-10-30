@@ -1,5 +1,5 @@
-const {ethers} = require("ethers")
-const Web3Modal = require('web3modal')
+import {ethers} from 'ethers'
+import Web3Modal from 'web3modal'
 const networks = require("../../../app-config/networks")
 const deployments = require("../../../app-config/deployments")
 const abis = require("../../../app-config/contract-abis")
