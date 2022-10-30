@@ -36,10 +36,15 @@ interface _Characters {
     function character(uint256 _character_id) external view returns (character_properties memory);
 }
 
+interface _EnerLink {
+    function mint(address to, uint256 amount) public;
+}
+
 contract EquipmentMinter is Ownable, Pausable{
     ///The randomization contract for generating random numbers for mint
-    _RandomizationContract randomizer;
+    _RandomizationContract private randomizer;
     _Characters private characters;
+    _Enerlink private enerlink;
     address private vrfContract;
 
     ///The core: Equipment NFT contract deployment.
@@ -63,9 +68,10 @@ contract EquipmentMinter is Ownable, Pausable{
     address[4] private catalysts_addresses; 
     
     event EquipmentRequested(address indexed player_address, equipment_request request);
-    constructor(address equipmentsNftAddress, address charactersAddress, address[4] memory materials, address[4] memory catalysts){
+    constructor(address equipmentsNftAddress, address charactersAddress, address enerlinkAddress, address[4] memory materials, address[4] memory catalysts){
         equipmentsNft = _Equipments(equipmentsNftAddress);
         characters = _Characters(charactersAddress);
+        enerlink = _Enerlink(enerlinkAddress);
         materials_addresses = materials;
         catalysts_addresses = catalysts;
         vrf_refunder = msg.sender;
@@ -304,10 +310,18 @@ contract EquipmentMinter is Ownable, Pausable{
         });
     }
 
-    ///@notice This includes external call to the Equipment NFT Contract to actually mint the tokens.
+    ///@notice This includes external call to the Equipment NFT Contract or the EnerLink Contract to actually mint the tokens.
     function mintEquipment(address user, uint256 randomNumberRequested, uint64 equipment_type, bool _free) internal {
-        (equipment_properties memory equipment_props, battle_stats memory _equipment_stats) = getResult(randomNumberRequested, equipment_type, _free);
-        equipmentsNft._mintEquipment(user, equipment_props, _equipment_stats);
+        ///If the item being minted is a consumable / EnerLink token
+        if(equipment_type == 4){
+            uint256 consumable_minted = (randomNumberRequested % 3) + 1;
+            enerlink.mint(user, consumable_minted * 1 ether);
+        }
+        ///If the item being minted is an equipment
+        if(equipment_type != 4){
+            (equipment_properties memory equipment_props, battle_stats memory _equipment_stats) = getResult(randomNumberRequested, equipment_type, _free);
+            equipmentsNft._mintEquipment(user, equipment_props, _equipment_stats);
+        }
     }
 
     function getResult(uint256 randomNumber, uint64 _equipment_type, bool _free) internal pure returns (equipment_properties memory equipment_props, battle_stats memory _equipment_stats){

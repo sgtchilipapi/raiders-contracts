@@ -45,6 +45,10 @@ module.exports = {
                 address: "0x97c5BC77970CC64Fe1b9A0eC9a315A3Ea5Fe3Eb8",
                 abi: ""
             },
+            enerlink:{
+                address: "",
+                abi: ""
+            },
         },
         farms: {
             minichefv2: {

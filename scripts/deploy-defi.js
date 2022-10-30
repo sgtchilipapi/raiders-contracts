@@ -18,6 +18,7 @@ async function main() {
   const white = await deployERC20("WhiteSparkstone")
   const red = await deployERC20("RedSparkstone")
   const blue = await deployERC20("BlueSparkstone")
+  const enerlink = await deployERC20("EnerLink")
   const _chef = await deployChef(clank)
   
 

@@ -14,7 +14,8 @@ async function main() {
     const [equipment_contract, eminter_contract] = await equipments(character_contract)
     const equipment_manager  = await equipmentManager(character_contract, equipment_contract)
     const dungeons_system = await dungeons(character_contract, equipment_contract, equipment_manager)
-    await approveDungeonInTokens(dungeons_system)
+    await setMinterInEnerLink(eminter_contract)
+    await setDungeonInTokens(dungeons_system)
     await approveEquipmentMinter(eminter_contract)
 }
 
@@ -228,7 +229,23 @@ async function dungeons(_ctrs, _eqpts, _eqpt_mgr){
     return dgns
 }
 
-async function approveDungeonInTokens(_dungeons_system){
+async function setMinterInEnerLink(minter){
+    ///For MATIC mainnet
+    ///const mainnetVRF = await deploySubscriptionVRF("VRFv2Consumer", 0, "0xAE975071Be8F8eE67addBC1A82488F1C24858067", "0xcc294a196eeeb44da2888d17c0625cc88d70d9760a69d58d853ba6581a9ab0cd")
+
+    ///For mumbai testnet
+    const ERC20Token = await ethers.getContractFactory("EnerLink")
+    await setMinter(deployments.testnet_deployments.tokens.enerlink, "EnerLink")
+
+    async function setMinter(tokenDeployment, tokenName){
+        const token = ERC20Token.attach(tokenDeployment.address)
+        const set = await token.setMinter(minter.address)
+        await set.wait()
+        console.log(`Equipment minter address set in token ${tokenName}!`)
+    }
+}
+
+async function setDungeonInTokens(_dungeons_system){
     ///For MATIC mainnet
     ///const mainnetVRF = await deploySubscriptionVRF("VRFv2Consumer", 0, "0xAE975071Be8F8eE67addBC1A82488F1C24858067", "0xcc294a196eeeb44da2888d17c0625cc88d70d9760a69d58d853ba6581a9ab0cd")
 
