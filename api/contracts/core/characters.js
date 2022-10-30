@@ -44,4 +44,3 @@ async function getCharacterProperties(character_id){
     const char_props = await contract.character(character_id)
     return char_props
 }
-
