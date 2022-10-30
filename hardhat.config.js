@@ -1,6 +1,7 @@
 require("@nomicfoundation/hardhat-toolbox");
 require("@nomiclabs/hardhat-etherscan");
 require('hardhat-contract-sizer');
+const _networks = require("./app-config/networks.js")
 require('dotenv').config()
 
 /** @type import('hardhat/config').HardhatUserConfig */
@@ -19,7 +20,7 @@ module.exports = {
       accounts: [`0x${process.env.DEPLOYER_KEY}`]
     },
     mumbai: {
-      url: "https://rpc.ankr.com/polygon_mumbai",
+      url: _networks.endpoint.testnet.http,
       accounts: [`0x${process.env.DEPLOYER_KEY}`]
     }
   },

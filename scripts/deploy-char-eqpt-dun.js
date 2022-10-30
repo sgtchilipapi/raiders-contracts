@@ -7,7 +7,7 @@
 const { ethers } = require("hardhat");
 const hre = require("hardhat");
 require('dotenv').config()
-const deployments  = require("../contracts-apis/deployments")
+const deployments  = require("../../app-config/deployments")
 
 async function main() {
     const [character_contract, cminter_contract] = await characters()

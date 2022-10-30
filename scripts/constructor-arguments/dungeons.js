@@ -1,4 +1,4 @@
-const deployments  = require("../../contracts-apis/deployments")
+const deployments  = require("../../app-config/deployments")
 
 module.exports = [
     deployments.testnet_deployments.characters.nftContract.address, ///characters nft address
