@@ -107,7 +107,7 @@ async function equipments(ctrs) {
         const materials = [tokens.boom.address, tokens.thump.address, tokens.clink.address, tokens.snap.address]
         const catalysts = [tokens.yellowspark.address, tokens.whitespark.address, tokens.redspark.address, tokens.bluespark.address]
         const EquipmentMinter = await ethers.getContractFactory(contractName)
-        const equipmentMinter = await EquipmentMinter.deploy(eqpts.address, ctrs.address, materials, catalysts)
+        const equipmentMinter = await EquipmentMinter.deploy(eqpts.address, ctrs.address, tokens.enerlink.address, materials, catalysts)
         await equipmentMinter.deployed()
         console.log(`EquipmentMinter deployed at: ${equipmentMinter.address}`)
         return equipmentMinter

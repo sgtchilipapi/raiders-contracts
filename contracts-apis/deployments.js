@@ -10,90 +10,90 @@ module.exports = {
     testnet_deployments: {
         tokens: {
             clank: {
-                address: "0xB0b99d6f65c3423cB0c2848c8cdadb91E5127649",
+                address: "0x7C4026E0FEA9b0777a3d6Ee5EeC04dC9E1df64f7",
                 abi: ""
             },
             boom: {
-                address: "0x5Ff4BDc310a1A96Acac76361d97601F112781BfE",
+                address: "0x90Deea1f5F013F8942E69C067AD670375bADE800",
                 abi: ""
             },
             thump: {
-                address: "0xC642e01D88650cA17e9D7Eff66E034Fd2f863AbA",
+                address: "0xacF03970BcC1033855BaBf70820535D5061eFa03",
                 abi: ""
             },
             clink: {
-                address: "0x633BCD5093Ac8FaC60183eFDA151e3C55D98BbCE",
+                address: "0x80E3007742D97a3571870Fd0Db1CA2BA80c10f53",
                 abi: ""
             },
             snap: {
-                address: "0x94FC8D420D7488bC0FF198168d0155a7a1936527",
+                address: "0xb6A1A7ec64fF8Cb53eD870a10365746515A0dCF4",
                 abi: ""
             },
             yellowspark: {
-                address: "0xd0d61c5b3a57875d1747fa4a336A40AEDE9108aa",
+                address: "0x8AdCb3b89955ed40BB35Cd07471e345fbED8682e",
                 abi: ""
             },
             whitespark: {
-                address: "0x1258558Fd5A0b91b3f0e07F458BbdF473cd2093e",
+                address: "0x1a728825800B8fbc16447a9B86778dD3e2a41e86",
                 abi: ""
             },
             redspark: {
-                address: "0x6dC194934FD405D8dd228Bcd2776EFF4B1A9d254",
+                address: "0xBb58987C2Ef8f1e73622cE8B77f1159eaF4fBc97",
                 abi: ""
             },
             bluespark: {
-                address: "0x97c5BC77970CC64Fe1b9A0eC9a315A3Ea5Fe3Eb8",
+                address: "0x2AC719EF20E7dc7858FB2Fe79E25D843d1Ed2AbB",
                 abi: ""
             },
             enerlink:{
-                address: "",
+                address: "0xC018D71542a0f392fb3d4a10c8476C9A81082405",
                 abi: ""
             },
         },
         farms: {
             minichefv2: {
-                address: "0x162509510CC81C0cCbFE3CB3401F71Ab9D298599",
+                address: "0xEf1dBD14Cf0D1baB9F43cbe9f1b8553875fFaD4C",
                 abi: ""
             },
         },
         equipments: {
             nftContract: {
-                address: "0x0CBEcBf3fab48A06EF1E79Ce8685B752DE837890",
+                address: "0x7Ce46246C52ade9E52F2Ddc723bd5121741ffBa2",
                 abi: ''
             },
             minter: {
-                address: "0xF526F67a1d78478225c7803d5E09771A90B64609",
+                address: "0xc1dA840075277b0D0b6D84A131821f8c7A121371",
                 abi: ''
             },
             vrf: {
-                address: "0x63A9b343B5957c29321a77aa484418545fFacCA9",
+                address: "0x89646796D63d1F93D97B4353f96bA3D9Ab094572",
                 abi: ''
             },
             manager: {
-                address: "0x8a81a739fA5df8964f6404a7022ADc2898b12414",
+                address: "0x2e9c1b64a8a4266A449050C7dF56858a9485553d",
                 abi: ''
             }
         },
         characters: {
             nftContract: {
-                address: "0xb50BE54Ae2Dc4249C13ECC9e238F497caD9Bfc00",
+                address: "0x82e9d60307605c07ac03e4E16196241AB581804A",
                 abi: ''
             },
             minter: {
-                address: "0xC2C563ADb82378ea4028FE49D73F48477Bb8Ed42",
+                address: "0x04261dE3F1CBb4c8C5Fe5784288d5d5c11e95Fe8",
                 abi: ''
             },
             vrf: {
-                address: "0x8203d63ca6b9eEbc4Ce1D85Cb21e873096771A9d",
+                address: "0xb569E9263B2C51e0F01bc97A319111F2af9Dee84",
                 abi: ''
             }
         },
         dungeons: {
             dungeon: {
-                address: "0x9b4817e17D76c6100af68b09e11b8345F4e82e66",
+                address: "0x558DB7e93Ab420a7Fc4186Be76A9d9c4764a9739",
             },
             vrf: {
-                address: "0x585AE3a8827d0ED061475067a6126FB3CA4c300F"
+                address: "0x8bB6dB3F8031A092265584F3207ebA40ACb5eCe0"
             }
         }
     }

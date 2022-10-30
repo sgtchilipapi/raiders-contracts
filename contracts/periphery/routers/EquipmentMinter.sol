@@ -37,14 +37,14 @@ interface _Characters {
 }
 
 interface _EnerLink {
-    function mint(address to, uint256 amount) public;
+    function mint(address to, uint256 amount) external;
 }
 
 contract EquipmentMinter is Ownable, Pausable{
     ///The randomization contract for generating random numbers for mint
     _RandomizationContract private randomizer;
     _Characters private characters;
-    _Enerlink private enerlink;
+    _EnerLink private enerlink;
     address private vrfContract;
 
     ///The core: Equipment NFT contract deployment.
@@ -71,7 +71,7 @@ contract EquipmentMinter is Ownable, Pausable{
     constructor(address equipmentsNftAddress, address charactersAddress, address enerlinkAddress, address[4] memory materials, address[4] memory catalysts){
         equipmentsNft = _Equipments(equipmentsNftAddress);
         characters = _Characters(charactersAddress);
-        enerlink = _Enerlink(enerlinkAddress);
+        enerlink = _EnerLink(enerlinkAddress);
         materials_addresses = materials;
         catalysts_addresses = catalysts;
         vrf_refunder = msg.sender;
