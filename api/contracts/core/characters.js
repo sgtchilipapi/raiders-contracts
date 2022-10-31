@@ -4,19 +4,8 @@ const networks = require("../../../app-config/networks")
 const deployments = require("../../../app-config/deployments")
 const abis = require("../../../app-config/contract-abis")
 
-module.exports = {
-    view:{
-        character_properties: getCharacterProperties()
-    },
-    transaction:{
-
-    }
-}
-
 async function getProvider(){
-    const web3Modal = new Web3Modal(networks.endpoint.testnet.http)
-    const connection = await web3Modal.connect()
-    const provider = new ethers.providers.Web3Provider(connection)
+    const provider = new ethers.providers.JsonRpcProvider(networks.endpoint.testnet.http)
     return provider
 }
 
@@ -39,7 +28,7 @@ async function getSignedContractInstance(){
 }
 
 ///view functions
-async function getCharacterProperties(character_id){
+export async function getCharacterProperties(character_id){
     const contract = await getContractInstance()
     const char_props = await contract.character(character_id)
     return char_props
