@@ -1,7 +1,7 @@
-const networks = require("../../../app-config/networks")
-const deployments = require("../../../app-config/deployments")
-const abis = require("../../../app-config/contract-abis")
-import * as connection from "../utils/connection"
+const networks = require("../../../../app-config/networks")
+const deployments = require("../../../../app-config/deployments")
+const abis = require("../../../../app-config/contract-abis")
+import * as connection from "../../utils/connection"
 
 ///contract config
 const network = networks.endpoint.testnet.http
