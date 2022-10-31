@@ -2,6 +2,7 @@ const networks = require("../../../../app-config/networks")
 const deployments = require("../../../../app-config/deployments")
 const abis = require("../../../../app-config/contract-abis")
 import * as connection from "../../utils/connection"
+import { ethers } from "ethers"
 
 ///contract config
 const network = networks.endpoint.testnet.http
@@ -20,44 +21,40 @@ async function getSignedContract(){
 }
 
 ///view functions
-export async function getCharacterEquipments(character_id){
+export async function getRequest(address){
     const contract = await getContract()
-    const char_eqpts = await contract.equippedWith(character_id)
-    return char_eqpts
-}
-
-export async function getItemEquippedToWho(equipment_id){
-    const contract = await getContract()
-    const character_id = await contract.equippedTo(equipment_id)
-    return character_id
+    const request = await contract.request(address)
+    return request
 }
 
 ///transaction functions
-export async function equip(character_id, equipment_id){
+export async function requestCharacter(character_class, character_name, value){
+    const msgvalue = ethers.utils.parseEther(value)
     const contract = await getSignedContract()
-    const equipTx = await contract.equip(character_id, equipment_id)
-    const receipt = await equipTx.wait()
+    const requestTx = await contract.requestCharacter(character_class, character_name, {value: msgvalue})
+    const receipt = await requestTx.wait()
     return receipt
 }
 
-export async function equipMany(character_id, equipment_id_arr){
+export async function mintCharacter(){
     const contract = await getSignedContract()
-    const equipTx = await contract.equipMany(character_id, equipment_id_arr)
-    const receipt = await equipTx.wait()
+    const mintTx = await contract.mintCharacter()
+    const receipt = await mintTx.wait()
     return receipt
 }
 
-export async function unequipByType(character_id, equipment_type){
+export async function requestCharacterExperimental(character_class, character_name, value){
+    const msgvalue = ethers.utils.parseEther(value)
     const contract = await getSignedContract()
-    const unequipTx = await contract.unEquipType(character_id, equipment_type)
-    const receipt = await unequipTx.wait()
+    const requestTx = await contract.requestCharacterExperimental(character_class, character_name, {value: msgvalue})
+    const receipt = await requestTx.wait()
     return receipt
 }
 
-export async function unequipAll(character_id){
+export async function cancelRequestExperimental(){
     const contract = await getSignedContract()
-    const unequipTx = await contract.unEquipAll(character_id)
-    const receipt = await unequipTx.wait()
+    const cancelTx = await contract.cancelRequestExperimental()
+    const receipt = await cancelTx.wait()
     return receipt
 }
 
