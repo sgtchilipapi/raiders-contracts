@@ -621,14 +621,28 @@ abstract contract ERC20Burnable is Context, ERC20 {
 }
 
 
+interface _Characters {
+    function isOwner(address _owner, uint256 _character) external view returns (bool);
+    function character(uint256 _character_id) external view returns (character_properties memory);
+}
+
 pragma solidity ^0.8.4;
 
-contract ClankToken is ERC20, ERC20Burnable, Ownable {
+import "../../periphery/libraries/structs/CharacterStructs.sol";
 
-    address questContract;
-    bool questOver;
+contract ClankToken is ERC20, ERC20Burnable, Ownable {
+    _Characters characters;
+
+    ///Status whether the free mint is over
+    bool freeMintOver;
+
+    ///Status whether the character has already minted free tokens or not
+    mapping(uint256 => bool) public character_minted_free;
+
+    ///Status whether the address has already minted free tokens or not
+    mapping(address => bool) public address_minted_free;
     constructor() ERC20("Clank Token", " CLANK!") {
-        mint(msg.sender, 80000 * 10 ** decimals());
+        mint(msg.sender, 100000 * 10 ** decimals());
     }
 
     ///@notice Can only be called by the owner, which is set to be the MasterChefV2 contract.
@@ -636,23 +650,37 @@ contract ClankToken is ERC20, ERC20Burnable, Ownable {
         _mint(to, amount);
     }
 
-    ///@notice Can only be called by the game walkthrough quest contract but only for the 1st 200,000 token supply (including the 80k allocated as initial liquidity).
+    ///@notice Can only be called by the first players to reach >500 exp for the 1st 200,000 token supply (including the 80k allocated as initial liquidity).
     ///After which, the tokens can only be emitted thru the MasterChefV2 contract.
-    function mintFromQuest(address to, uint256 amount) public onlyQuest {
-        if(questOver == false){
-            _mint(to, amount);
-            if(totalSupply() >= (200000 * 10 ** decimals())){
-                questOver = true; 
-            }
+    function mintFree(uint256 character_id) public {
+        ///Check is the mint period is over.
+        require(!freeMintOver, "$CLANK: free mint period is over");
+
+        ///Check ownership
+        require(characters.isOwner(msg.sender, character_id), "$CLANK: character not owned");
+
+        ///Allow only characters with exp greater than 500
+        require(characters.character(character_id).exp > 500, "$CLANK: insuf char exp");
+
+        ///Allow free mint only once per character AND wallet address
+        require(!character_minted_free[character_id], "$CLANK: character already minted");
+        require(!address_minted_free[msg.sender], "$CLANK: address already minted");
+
+        if(totalSupply() < (200000 * 10 ** decimals())){
+            ///Update the character & address free mint statuses immediately
+            character_minted_free[character_id] = true;
+            address_minted_free[msg.sender] = true;
+
+            ///Mint 1,000 tokens
+            _mint(msg.sender, (1000 * 10 ** decimals()));
+            
+            ///Update the status of the free mint to false once the `totalSupply()` reaches 200,000 for the first time to prevent
+            ///subsequent minting of tokens if the supply goes below 200,000 due to burning of tokens in-game.
+            if(totalSupply() >= (200000 * 10 ** decimals())){freeMintOver = true;}
         }
     }
 
-    function setQuestContract(address _questContract) public onlyOwner {
-        questContract = _questContract;
-    }
-
-    modifier onlyQuest {
-        require(msg.sender == questContract);
-        _;
+    function setCharactersContract(address charactersAddress) public onlyOwner {
+        characters = _Characters(charactersAddress);
     }
 }

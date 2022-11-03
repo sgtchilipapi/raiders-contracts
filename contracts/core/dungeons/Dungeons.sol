@@ -78,10 +78,18 @@ contract Dungeons is Ownable{
     ///Arrays of addresses for the materials and catalyst tokens
     address[4] private materials_addresses;
 
+    ///Supply cap of each dungeon every 3 hours
+    mapping(uint256 => uint256) public dungeon_loot_remaining;
+    mapping(uint256 => uint256) public dungeon_loot_cap;
+
+    ///The keepers compatible contract that replenishes the dungeon loot supply
+    address dungeonLootReplenisher;
+
     event BattleRequested(address indexed user, battle_request request);
     event BattleStarted(battle_request indexed request, battle_stats character, battle_stats enemy);
     event Clashed(uint256 indexed battle_id, clash_event clash);
     event BattleEnded(uint256 indexed battle_id, uint256 battle_result);
+    event DungeonsReplenished(uint256 dungeon1, uint256 dungeon2, uint256 dungeon3);
 
     constructor(
         address charactersNftAddress, 
@@ -94,6 +102,12 @@ contract Dungeons is Ownable{
         equipment_manager = _EquipmentManager(equipmentManagerAddress);
         materials_addresses = materials;
         vrf_refunder = msg.sender;
+        dungeon_loot_remaining[0] = 844;
+        dungeon_loot_remaining[1] = 900;
+        dungeon_loot_remaining[2] = 144;
+        dungeon_loot_cap[0] = 844;
+        dungeon_loot_cap[1] = 900;
+        dungeon_loot_cap[2] = 144;
     }
 
     ///@notice This function initiates a battle by requesting random numbers from the VRF and setting the battle parameters:
@@ -118,12 +132,22 @@ contract Dungeons is Ownable{
         energy_balances[character_id].energy = BattleMath.safeMinusUint256(character_energy, 100);
         energy_balances[character_id].time_last_updated = block.timestamp;
 
+        ///Get the maximum amount currently available for the dungeon
+        (,, uint256 max_amount) = DungeonMaterials.getDungeonMaterials(dungeon, tier);
+        uint256 loot_remaining = dungeon_loot_remaining[dungeon];
+        if(loot_remaining < max_amount){
+            max_amount = loot_remaining;
+        }
+        ///Update the dungeon's remaining loot
+        dungeon_loot_remaining[dungeon] = BattleMath.safeMinusUint256(loot_remaining, max_amount);
+
         ///Map the battle request parameters to the sender's address
         battle_requests[msg.sender] = battle_request({
             request_id: vrf_contract.requestRandomWords(msg.sender, uint32(11), false),
             dungeon_type: dungeon,
             tier: tier,
             result: 0,
+            max_loot: uint64(max_amount),
             character_id: character_id,
             completed: false
         });
@@ -420,9 +444,9 @@ contract Dungeons is Ownable{
     ) internal {
         ///Get the material type and the minimum and maximum amount for the specific tier
         (uint256 material, uint256 min_amount, uint256 max_amount) = DungeonMaterials.getDungeonMaterials(request.dungeon_type, request.tier);
-        
+
         ///Get the actual amount of loot by consuming a random number and the material's min and max amount
-        uint256 actual_amount = getActualLootAmount(random_num_loot, min_amount, max_amount);
+        uint256 actual_amount = getActualLootAmount(random_num_loot, min_amount, request.max_loot);
 
         ///Instantiate a token contract instance with the corresponding address of the loot material
         _MaterialToken material_token = _MaterialToken(materials_addresses[material]);
@@ -443,9 +467,14 @@ contract Dungeons is Ownable{
 
     ///@notice Determine the actual loot amount
     function getActualLootAmount(uint256 random_num, uint256 min_amount, uint256 max_amount) internal pure returns (uint256 loot_amount){
-        uint256 roll_amount = random_num % 1000;
-        uint256 amount_spread = BattleMath.safeMinusUint256(max_amount, min_amount);
-        loot_amount = BattleMath.safeAddUint256(min_amount, ((amount_spread * roll_amount) / 1000), max_amount);
+        if(max_amount > min_amount){
+            uint256 roll_amount = random_num % 1000;
+            uint256 amount_spread = BattleMath.safeMinusUint256(max_amount, min_amount);
+            loot_amount = BattleMath.safeAddUint256(min_amount, ((amount_spread * roll_amount) / 1000), max_amount);
+        }
+        if(max_amount <= min_amount){
+            loot_amount = max_amount;
+        }
     }
 
     ///@notice Determine whether there will be snaplink loot
@@ -462,6 +491,26 @@ contract Dungeons is Ownable{
 
     function setBattleFee(uint256 amount) public onlyOwner {
         battle_fee = amount * 1 gwei;
+    }
+
+    function replenishDungeonLoot() public onlyReplenisher {
+        dungeon_loot_remaining[0] = dungeon_loot_cap[0];
+        dungeon_loot_remaining[1] = dungeon_loot_cap[1];
+        dungeon_loot_remaining[2] = dungeon_loot_cap[2];
+        emit DungeonsReplenished(dungeon_loot_remaining[0], dungeon_loot_remaining[1], dungeon_loot_remaining[2]);
+    }
+
+    function setDungeonReplenisher(address replenisherAddress) public onlyOwner {
+        dungeonLootReplenisher = replenisherAddress;
+    }
+
+    modifier onlyReplenisher(){
+        require(msg.sender == dungeonLootReplenisher, "Dungeons: only replenisher contract");
+        _;
+    }
+
+    function setDungeonLootCap(uint256 dungeon, uint256 amount) public onlyOwner {
+        dungeon_loot_cap[dungeon] = amount;
     }
 
     function withdraw() public onlyOwner{

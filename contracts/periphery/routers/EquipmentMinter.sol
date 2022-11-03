@@ -147,8 +147,8 @@ contract EquipmentMinter is Ownable, Pausable{
         emit EquipmentRequested(msg.sender, request[msg.sender]);
     }
 
-    ///@notice This is to mint equipments for free. Would only be available for the first 100 equipment mints and only 1 free mint per address.
-    ///Should only be available when the walkthrough quest has been completed by the user.
+    ///@notice This is to mint equipments for free to give out starting characters a minting experience. The free mint will always
+    ///give out common equipment.
     function requestEquipmentExperimentalFree(uint256 character_id, uint64 _equipment_type /**, uint32 item_count */) public payable whenNotPaused{
         ///We can only allow one request per address at a time. A request shall be completed (minted the equipment) to be able request another one.
         equipment_request memory _request = request[msg.sender];
@@ -160,11 +160,14 @@ contract EquipmentMinter is Ownable, Pausable{
         ///Require 0.01 msg.value
         require(msg.value >= (/**item_count */ 1 * mint_fee), "eMNTR: send 0.01 matic");
 
-        ///Allow only one free mint per character AND per wallet address
+        ///Allow only one free mint per character
         require(!character_minted_free[character_id], "eMNTR: character already minted.");
 
         ///Allow only characters with exp greater than 200
         require(characters.character(character_id).exp > 200, "eMNTR: insuf char exp.");
+
+        ///Check ownership
+        require(characters.isOwner(msg.sender, character_id), "eMNTR: character not owned.");
 
         ///Update the character and user mapping to free mints immediately after checking
         character_minted_free[character_id] = true;

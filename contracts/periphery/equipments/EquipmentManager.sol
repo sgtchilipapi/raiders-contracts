@@ -131,7 +131,7 @@ contract EquipmentManager {
     }
 
     ///@notice The owner of the character can unequip items by type (headgear, armor, weapon, accessory)
-    function unEquipType(uint256 _character_id, uint256 equipment_type) public{
+    function unequipType(uint256 _character_id, uint256 equipment_type) public{
         require(character_contract.isOwner(msg.sender, _character_id), "EQPD: Cannot unequip from character not owned.");
         if(equipment_type == 0){unequipWeapon(_character_id);}
         if(equipment_type == 1){unequipHelm(_character_id);}
@@ -140,7 +140,7 @@ contract EquipmentManager {
     }
 
     ///@notice The owner can unequip everything from his character
-    function unEquipAll(uint256 _character_id) public{
+    function unequipAll(uint256 _character_id) public{
         require(character_contract.isOwner(msg.sender, _character_id), "EQPD: Cannot unequip from character not owned.");
         unequipHelm(_character_id);
         unequipArmor(_character_id);
@@ -149,7 +149,7 @@ contract EquipmentManager {
     }
 
     ///@notice This function is triggered everytime an equipment item is transferred
-    function unEquipItemFromTransfer(uint256 _equipment_id) external onlyEquipmentContract returns (bool success){
+    function unequipItemFromTransfer(uint256 _equipment_id) external onlyEquipmentContract returns (bool success){
         if(equippedTo[_equipment_id] != 0){
             equipment_properties memory equipment =  equipment_contract.equipment(_equipment_id);
             if(equipment.equipment_type == 0){unequipWeapon(equippedTo[_equipment_id]);}
@@ -161,7 +161,7 @@ contract EquipmentManager {
     }
 
     ///@notice This is triggered everytime a character is transferred
-    function unEquipAllFromTransfer(uint256 _character_id) external onlyCharacterContract returns (bool success){
+    function unequipAllFromTransfer(uint256 _character_id) external onlyCharacterContract returns (bool success){
         unequipHelm(_character_id);
         unequipArmor(_character_id);
         unequipWeapon(_character_id);

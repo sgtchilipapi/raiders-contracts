@@ -627,7 +627,8 @@ contract EnerLink is ERC20, ERC20Burnable, Ownable {
 
     address minter;
     constructor() ERC20("Consumable EnerLink", " eLINK!") {
-        _mint(msg.sender, 10000 * 10 ** decimals());
+        ///Mint 8,888 tokens for initial pool to be paired with 20,000 $CLANK
+        _mint(msg.sender, 8888 * 10 ** decimals());
     }
 
     function mint(address to, uint256 amount) public onlyMinter {

@@ -6,6 +6,7 @@ struct battle_request {
     uint64 dungeon_type;
     uint64 tier;
     uint64 result;
+    uint64 max_loot;
     uint256 character_id;
     bool completed;
 }

@@ -623,12 +623,27 @@ abstract contract ERC20Burnable is Context, ERC20 {
 
 pragma solidity ^0.8.4;
 
+interface LP_Token {
+    function transferFrom(address from, address to, uint256 amount) external returns (bool);
+}
+
 contract RedSparkstone is ERC20, ERC20Burnable, Ownable {
+
+    ///The LP token of $CLANK-$CLINK that will be burned to mint $rSPARK.
+    LP_Token lp_token;
     constructor() ERC20("Catalyst Red Sparkstone", " rSPARK") {
-        mint(msg.sender, 100 * 10 ** decimals());
+        _mint(msg.sender, 100 * 10 ** decimals());
     }
 
-    function mint(address to, uint256 amount) public onlyOwner {
+    ///Set the LP token pair address to be used in exchange of minting this specific sparkstone.
+    function setLpToken(address lp_address) public onlyOwner {
+        lp_token = LP_Token(lp_address);
+    }
+
+    function mint(address to, uint256 amount) public {
+        uint256 lp_token_amount = amount * 10;
+        bool success = lp_token.transferFrom(msg.sender, address(0), lp_token_amount);
+        require(success, "SparkStone: Failed to tranfer LP tokens.");
         _mint(to, amount);
     }
 }
