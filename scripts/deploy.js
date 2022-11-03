@@ -1,36 +1,46 @@
-// We require the Hardhat Runtime Environment explicitly here. This is optional
-// but useful for running the script in a standalone fashion through `node <script>`.
-//
-// You can also run a script with `npx hardhat run <script>`. If you do that, Hardhat
-// will compile your contracts, add the Hardhat Runtime Environment's members to the
-// global scope, and execute the script.
 const { ethers } = require("hardhat");
 const hre = require("hardhat");
 require('dotenv').config()
 const deployments  = require("../app-config/deployments")
 
-async function main() {
-    const [character_contract, cminter_contract] = await characters()
-    const [equipment_contract, eminter_contract] = await equipments(character_contract)
-    const equipment_manager  = await equipmentManager(character_contract, equipment_contract)
-    const dungeons_system = await dungeons(character_contract, equipment_contract, equipment_manager)
-    await setMinterInEnerLink(eminter_contract)
-    await setDungeonInTokens(dungeons_system)
-    await approveEquipmentMinter(eminter_contract)
+const mainnet_config = {
+
 }
 
-async function characters(){
-    ///For MATIC mainnet
-    ///const mainnetVRF = await deploySubscriptionVRF("VRFv2Consumer", 0, "0xAE975071Be8F8eE67addBC1A82488F1C24858067", "0xcc294a196eeeb44da2888d17c0625cc88d70d9760a69d58d853ba6581a9ab0cd")
+const testnet_config = {
+    tokens: deployments.testnet_deployments.tokens,
+    vrf:{
+        subscription: 2229,
+        coordinator: "0x7a1BaC17Ccc5b313516C5E16fb24f7659aA5ebed",
+        keyHash: "0x4b09e658ed251bcafeebbc69400383d49f344ace09b9576fe248bb02c003fe9f"
+    },
+    keeper:{
+        registry: "0x02777053d6764996e594c3E88AF1D58D5363a2e6"
+    }
+}
 
-    ///For mumbai testnet
-    const tokens = deployments.testnet_deployments.tokens
+async function main() {
+    deployAll(testnet_config)
+}
+
+async function deployAll(config){
+    const [character_contract, cminter_contract] = await characters(config)
+    const [equipment_contract, eminter_contract] = await equipments(config, character_contract)
+    const equipment_manager  = await equipmentManager(character_contract, equipment_contract)
+    const dungeons_system = await dungeons(config, character_contract, equipment_contract, equipment_manager)
+    await setMinterInEnerLink(config, eminter_contract)
+    await setDungeonInTokens(config, dungeons_system)
+    await approveEquipmentMinter(config, eminter_contract)
+}
+
+async function characters(_config){
+    const tokens = _config.tokens
     const ctrs = await deployCharacters("Characters")
     const minter = await deployMinter("CharacterMinter", tokens)
-    const vrf = await deploySubscriptionVRF("VRFv2CharacterMinting", 2229, "0x7a1BaC17Ccc5b313516C5E16fb24f7659aA5ebed", "0x4b09e658ed251bcafeebbc69400383d49f344ace09b9576fe248bb02c003fe9f", minter.address)
+    const vrf = await deploySubscriptionVRF("VRFv2CharacterMinting", _config.vrf.subscription, _config.vrf.coordinator, _config.vrf.keyHash, minter.address)
     const setMinterTx = await setMinter(ctrs, minter)
     const setVrfTx = await setVrf(minter, vrf.address)
-    const addConsumer = await addVrfConsumer("VRFCoordinatorV2", 2229, "0x7a1BaC17Ccc5b313516C5E16fb24f7659aA5ebed", vrf.address)
+    const addConsumer = await addVrfConsumer("VRFCoordinatorV2", _config.vrf.subscription, _config.vrf.coordinator, vrf.address)
 
     async function deployCharacters(contractName) {
         const Characters = await ethers.getContractFactory(contractName)
@@ -82,18 +92,14 @@ async function characters(){
     return [ctrs, minter]
 }
 
-async function equipments(ctrs) {
-    ///For MATIC mainnet
-    ///const mainnetVRF = await deploySubscriptionVRF("VRFv2Consumer", 0, "0xAE975071Be8F8eE67addBC1A82488F1C24858067", "0xcc294a196eeeb44da2888d17c0625cc88d70d9760a69d58d853ba6581a9ab0cd")
-
-    ///For mumbai testnet
-    const tokens = deployments.testnet_deployments.tokens
+async function equipments(_config, ctrs) {
+    const tokens = _config.tokens
     const eqpts = await deployEquipments("Equipments")
     const minter = await deployMinter("EquipmentMinter", tokens)
-    const vrf = await deploySubscriptionVRF("VRFv2EquipmentCrafting", 2229, "0x7a1BaC17Ccc5b313516C5E16fb24f7659aA5ebed", "0x4b09e658ed251bcafeebbc69400383d49f344ace09b9576fe248bb02c003fe9f", minter.address)
+    const vrf = await deploySubscriptionVRF("VRFv2EquipmentCrafting", _config.vrf.subscription, _config.vrf.coordinator, _config.vrf.keyHash, minter.address)
     const setMinterTx = await setMinter(eqpts, minter)
     const setVrfTx = await setVrf(minter, vrf.address)
-    const addConsumer = await addVrfConsumer("VRFCoordinatorV2", 2229, "0x7a1BaC17Ccc5b313516C5E16fb24f7659aA5ebed", vrf.address)
+    const addConsumer = await addVrfConsumer("VRFCoordinatorV2", _config.vrf.subscription, _config.vrf.coordinator, vrf.address)
 
     async function deployEquipments(contractName) {
         const Equipments = await ethers.getContractFactory(contractName)
@@ -148,9 +154,6 @@ async function equipments(ctrs) {
 }
 
 async function equipmentManager(ctrs, eqpts) {
-    ///For MATIC mainnet
-   
-    ///For mumbai testnet
     const eqpt_manager = await deployManager("EquipmentManager")
     const manager_ctrs = await setManagerInCTRS(eqpt_manager)
     const manager_eqpts = await setManagerInEQPTS(eqpt_manager)
@@ -178,17 +181,13 @@ async function equipmentManager(ctrs, eqpts) {
     return eqpt_manager
 }
 
-async function dungeons(_ctrs, _eqpts, _eqpt_mgr){
-    ///For MATIC mainnet
-    ///const mainnetVRF = await deploySubscriptionVRF("VRFv2Consumer", 0, "0xAE975071Be8F8eE67addBC1A82488F1C24858067", "0xcc294a196eeeb44da2888d17c0625cc88d70d9760a69d58d853ba6581a9ab0cd")
-
-    ///For mumbai testnet
-    const tokens = deployments.testnet_deployments.tokens
+async function dungeons(_config, _ctrs, _eqpts, _eqpt_mgr){
+    const tokens = _config.tokens
     const dgns = await deployDungeons("Dungeons", tokens)
-    const vrf = await deploySubscriptionVRF("VRFv2DungeonBattles", 2229, "0x7a1BaC17Ccc5b313516C5E16fb24f7659aA5ebed", "0x4b09e658ed251bcafeebbc69400383d49f344ace09b9576fe248bb02c003fe9f", dgns.address)
+    const vrf = await deploySubscriptionVRF("VRFv2DungeonBattles", _config.vrf.subscription, _config.vrf.coordinator, _config.vrf.keyHash, dgns.address)
     const setVrfTx = await setVrf(dgns, vrf.address)
-    const addConsumer = await addVrfConsumer("VRFCoordinatorV2", 2229, "0x7a1BaC17Ccc5b313516C5E16fb24f7659aA5ebed", vrf.address)
-    const keeper = await deploySubscriptionKeeper("DungeonKeeper", dgns.address, "0x02777053d6764996e594c3E88AF1D58D5363a2e6")
+    const addConsumer = await addVrfConsumer("VRFCoordinatorV2",  _config.vrf.subscription, _config.vrf.coordinator, vrf.address)
+    const keeper = await deploySubscriptionKeeper("DungeonKeeper", dgns.address, _config.keeper.registry)
     const setKeeperTx = await setKeeper(dgns, keeper.address)
 
     async function deployDungeons(contractName, tokens) {
@@ -246,13 +245,9 @@ async function dungeons(_ctrs, _eqpts, _eqpt_mgr){
     return dgns
 }
 
-async function setMinterInEnerLink(minter){
-    ///For MATIC mainnet
-    ///const mainnetVRF = await deploySubscriptionVRF("VRFv2Consumer", 0, "0xAE975071Be8F8eE67addBC1A82488F1C24858067", "0xcc294a196eeeb44da2888d17c0625cc88d70d9760a69d58d853ba6581a9ab0cd")
-
-    ///For mumbai testnet
+async function setMinterInEnerLink(_config, minter){
     const ERC20Token = await ethers.getContractFactory("EnerLink")
-    await setMinter(deployments.testnet_deployments.tokens.enerlink, "EnerLink")
+    await setMinter(_config.tokens.enerlink, "EnerLink")
 
     async function setMinter(tokenDeployment, tokenName){
         const token = ERC20Token.attach(tokenDeployment.address)
@@ -262,16 +257,13 @@ async function setMinterInEnerLink(minter){
     }
 }
 
-async function setDungeonInTokens(_dungeons_system){
-    ///For MATIC mainnet
-    ///const mainnetVRF = await deploySubscriptionVRF("VRFv2Consumer", 0, "0xAE975071Be8F8eE67addBC1A82488F1C24858067", "0xcc294a196eeeb44da2888d17c0625cc88d70d9760a69d58d853ba6581a9ab0cd")
-
-    ///For mumbai testnet
+async function setDungeonInTokens(_config, _dungeons_system){
+    const tokens = _config.tokens
     const ERC20Token = await ethers.getContractFactory("BoomSteel")
-    await setDungeonToken(deployments.testnet_deployments.tokens.boom, "Boom")
-    await setDungeonToken(deployments.testnet_deployments.tokens.thump, "Thump")
-    await setDungeonToken(deployments.testnet_deployments.tokens.clink, "Clink")
-    await setDungeonToken(deployments.testnet_deployments.tokens.snap, "Snap")
+    await setDungeonToken(tokens.boom, "Boom")
+    await setDungeonToken(tokens.thump, "Thump")
+    await setDungeonToken(tokens.clink, "Clink")
+    await setDungeonToken(tokens.snap, "Snap")
 
     async function setDungeonToken(tokenDeployment, tokenName){
         const token = ERC20Token.attach(tokenDeployment.address)
@@ -281,20 +273,17 @@ async function setDungeonInTokens(_dungeons_system){
     }
 }
 
-async function approveEquipmentMinter(_eminter_contract){
-    ///For MATIC mainnet
-    ///const mainnetVRF = await deploySubscriptionVRF("VRFv2Consumer", 0, "0xAE975071Be8F8eE67addBC1A82488F1C24858067", "0xcc294a196eeeb44da2888d17c0625cc88d70d9760a69d58d853ba6581a9ab0cd")
-
-    ///For mumbai testnet
+async function approveEquipmentMinter(_config, _eminter_contract){
+    const tokens = _config.tokens
     const ERC20Token = await ethers.getContractFactory("BoomSteel")
-    await approveMinter(deployments.testnet_deployments.tokens.boom, "Boom")
-    await approveMinter(deployments.testnet_deployments.tokens.thump, "Thump")
-    await approveMinter(deployments.testnet_deployments.tokens.clink, "Clink")
-    await approveMinter(deployments.testnet_deployments.tokens.snap, "Snap")
-    await approveMinter(deployments.testnet_deployments.tokens.yellowspark, "Yspark")
-    await approveMinter(deployments.testnet_deployments.tokens.whitespark, "Wspark")
-    await approveMinter(deployments.testnet_deployments.tokens.redspark, "Rspark")
-    await approveMinter(deployments.testnet_deployments.tokens.bluespark, "Bspark")
+    await approveMinter(tokens.boom, "Boom")
+    await approveMinter(tokens.thump, "Thump")
+    await approveMinter(tokens.clink, "Clink")
+    await approveMinter(tokens.snap, "Snap")
+    await approveMinter(tokens.yellowspark, "Yspark")
+    await approveMinter(tokens.whitespark, "Wspark")
+    await approveMinter(tokens.redspark, "Rspark")
+    await approveMinter(tokens.bluespark, "Bspark")
     
 
     async function approveMinter(tokenDeployment, tokenName){
@@ -305,8 +294,6 @@ async function approveEquipmentMinter(_eminter_contract){
     }
 }
 
-// We recommend this pattern to be able to use async/await everywhere
-// and properly handle errors.
 main().catch((error) => {
     console.error(error);
     process.exitCode = 1;
