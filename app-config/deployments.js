@@ -58,42 +58,45 @@ module.exports = {
         },
         equipments: {
             nftContract: {
-                address: "0x7Ce46246C52ade9E52F2Ddc723bd5121741ffBa2",
+                address: "0xF485F73DDbdE278DEeA39958D6a4fa0b7D1275f8",
                 abi: ''
             },
             minter: {
-                address: "0xc1dA840075277b0D0b6D84A131821f8c7A121371",
+                address: "0xedDDc002dbCDE35ff2DAa65bc9305B6FF0eE13aE",
                 abi: ''
             },
             vrf: {
-                address: "0x89646796D63d1F93D97B4353f96bA3D9Ab094572",
+                address: "0xd3F3881Bd2969eB70A07213DAE3b5fECf9fEf0A7",
                 abi: ''
             },
             manager: {
-                address: "0x2e9c1b64a8a4266A449050C7dF56858a9485553d",
+                address: "0xebFEc9288AB43A28862d8b2605D85B40608c4D97",
                 abi: ''
             }
         },
         characters: {
             nftContract: {
-                address: "0x82e9d60307605c07ac03e4E16196241AB581804A",
+                address: "0xcB03375a28Bbf70A0BB524536322b7d01aef1641",
                 abi: ''
             },
             minter: {
-                address: "0x04261dE3F1CBb4c8C5Fe5784288d5d5c11e95Fe8",
+                address: "0xa47D5cd366a9960dB0f15E6fE4c7FD43Cf775034",
                 abi: ''
             },
             vrf: {
-                address: "0xb569E9263B2C51e0F01bc97A319111F2af9Dee84",
+                address: "0x6BE3f510452Cd7fb19E57103f086dAa43c7011C8",
                 abi: ''
             }
         },
         dungeons: {
             dungeon: {
-                address: "0x558DB7e93Ab420a7Fc4186Be76A9d9c4764a9739",
+                address: "0x368d9221E41019fDaBf6c20b0293fF89589A9C8a",
             },
             vrf: {
-                address: "0x8bB6dB3F8031A092265584F3207ebA40ACb5eCe0"
+                address: "0x0617fB9d6f85959C7D323a2e538192889a8A543B"
+            },
+            keeper: {
+                address: "0x9291A8323Df80728cA82081c0fA075356408B013"
             }
         }
     }
