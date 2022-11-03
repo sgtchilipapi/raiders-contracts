@@ -188,6 +188,8 @@ async function dungeons(_ctrs, _eqpts, _eqpt_mgr){
     const vrf = await deploySubscriptionVRF("VRFv2DungeonBattles", 2229, "0x7a1BaC17Ccc5b313516C5E16fb24f7659aA5ebed", "0x4b09e658ed251bcafeebbc69400383d49f344ace09b9576fe248bb02c003fe9f", dgns.address)
     const setVrfTx = await setVrf(dgns, vrf.address)
     const addConsumer = await addVrfConsumer("VRFCoordinatorV2", 2229, "0x7a1BaC17Ccc5b313516C5E16fb24f7659aA5ebed", vrf.address)
+    const keeper = await deploySubscriptionKeeper("DungeonKeeper", dgns.address, "0x02777053d6764996e594c3E88AF1D58D5363a2e6")
+    const setKeeperTx = await setKeeper(dgns, keeper.address)
 
     async function deployDungeons(contractName, tokens) {
         const materials = [tokens.boom.address, tokens.thump.address, tokens.clink.address, tokens.snap.address]
@@ -220,6 +222,21 @@ async function dungeons(_ctrs, _eqpts, _eqpt_mgr){
         await addTx.wait()
         console.log(`VRF Consumer has been successfuly added!`)
         return addTx
+    }
+
+    async function deploySubscriptionKeeper(contractName, dungeonAddress, keeperRegistry) {
+        const Keeper = await ethers.getContractFactory(contractName)
+        const keeper = await Keeper.deploy(dungeonAddress, keeperRegistry)
+        await keeper.deployed()
+        console.log(`DungeonKeeper deployed at: ${keeper.address}`)
+        return keeper
+    }
+
+    async function setKeeper(dungeonContract, keeperAddress){
+        const set = await dungeonContract.setDungeonKeeper(keeperAddress)
+        await set.wait()
+        console.log(`Keeper contract has been successfuly set!`)
+        return set
     }
 
     const setDungeonInCharacters = await _ctrs.setDungeon(dgns.address)

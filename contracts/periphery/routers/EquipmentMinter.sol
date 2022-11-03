@@ -418,11 +418,11 @@ contract EquipmentMinter is Ownable, Pausable{
         }
         if(_equipment_type == 1){
             stat_index = 1;
-            stat_value = ((300 * (stat_sum + 50)) / 150) / 2;
+            stat_value = ((225 * (stat_sum + 50)) / 150) / 2;
         }
         if(_equipment_type == 2){
             stat_index = 1;
-            stat_value = ((300 * (stat_sum + 50)) / 150) / 2;
+            stat_value = ((75 * (stat_sum + 50)) / 150) / 2;
         }
         if(_equipment_type == 3){
             stat_index = 2;

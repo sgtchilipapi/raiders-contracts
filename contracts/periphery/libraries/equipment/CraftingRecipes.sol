@@ -30,24 +30,24 @@ library CraftingRecipes {
 
     function getMainMaterial(uint256 item_type) internal pure returns (uint256 material, uint256 amount){
         if(item_type == 0){material = 0; amount = 12 ether;} //WEAPONS: BOOMSTEEL
-        if(item_type == 1){material = 1; amount = 12 ether;} //ARMORS: THUMPIRON
-        if(item_type == 2){material = 1; amount = 6 ether;} //HELMS: THUMPIRON
-        if(item_type == 3){material = 2; amount = 3 ether;} //ACCESSORIES: CLINKGLASS
+        if(item_type == 1){material = 1; amount = 9 ether;} //ARMORS: THUMPIRON
+        if(item_type == 2){material = 1; amount = 3 ether;} //HELMS: THUMPIRON
+        if(item_type == 3){material = 2; amount = 12 ether;} //ACCESSORIES: CLINKGLASS
         if(item_type == 4){material = 3; amount = 1 ether;} //CONSUMABLES: SNAPLINK
     }
 
     function getIndirectMaterial(uint256 item_type) internal pure returns (uint256 material, uint256 amount){
         if(item_type == 0){material = 1; amount = 4 ether;} //WEAPONS: THUMPIRON
-        if(item_type == 1){material = 0; amount = 4 ether;} //ARMORS: BOOMSTEEL
-        if(item_type == 2){material = 0; amount = 2 ether;} //HELMS: BOOMSTEEL
-        if(item_type == 3){material = 0; amount = 1 ether;} //ACCESSORIES: BOOMSTEEL
+        if(item_type == 1){material = 0; amount = 3 ether;} //ARMORS: BOOMSTEEL
+        if(item_type == 2){material = 0; amount = 1 ether;} //HELMS: BOOMSTEEL
+        if(item_type == 3){material = 0; amount = 4 ether;} //ACCESSORIES: BOOMSTEEL
         if(item_type == 4){material = 2; amount = 1 ether;} //CONSUMABLES: CLINKGLASS
     }
 
     function getCatalyst(uint256 item_type) internal pure returns (uint256 catalyst, uint256 amount){
-        if(item_type == 0){catalyst = 0; amount = 4 ether;} //WEAPONS: YELLOW SPARKSTONE
-        if(item_type == 1){catalyst = 1; amount = 4 ether;} //ARMORS: WHITE SPARKSTONE
-        if(item_type == 2){catalyst = 1; amount = 2 ether;} //HELMS: WHITE SPARKSTONE
+        if(item_type == 0){catalyst = 0; amount = 1 ether;} //WEAPONS: YELLOW SPARKSTONE
+        if(item_type == 1){catalyst = 1; amount = 1 ether;} //ARMORS: WHITE SPARKSTONE
+        if(item_type == 2){catalyst = 1; amount = 1 ether;} //HELMS: WHITE SPARKSTONE
         if(item_type == 3){catalyst = 2; amount = 1 ether;} //ACCESSORIES: RED SPARKSTONE
         if(item_type == 4){catalyst = 3; amount = 250000000000000000 wei;} //CONSUMABLES: BLUE SPARKSTONE (1/4 bSPARK)
     }

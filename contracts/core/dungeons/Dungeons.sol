@@ -83,7 +83,7 @@ contract Dungeons is Ownable{
     mapping(uint256 => uint256) public dungeon_loot_cap;
 
     ///The keepers compatible contract that replenishes the dungeon loot supply
-    address dungeonLootReplenisher;
+    address dungeonKeeper;
 
     event BattleRequested(address indexed user, battle_request request);
     event BattleStarted(battle_request indexed request, battle_stats character, battle_stats enemy);
@@ -103,11 +103,11 @@ contract Dungeons is Ownable{
         materials_addresses = materials;
         vrf_refunder = msg.sender;
         dungeon_loot_remaining[0] = 844;
-        dungeon_loot_remaining[1] = 900;
-        dungeon_loot_remaining[2] = 144;
+        dungeon_loot_remaining[1] = 844;
+        dungeon_loot_remaining[2] = 844;
         dungeon_loot_cap[0] = 844;
-        dungeon_loot_cap[1] = 900;
-        dungeon_loot_cap[2] = 144;
+        dungeon_loot_cap[1] = 844;
+        dungeon_loot_cap[2] = 844;
     }
 
     ///@notice This function initiates a battle by requesting random numbers from the VRF and setting the battle parameters:
@@ -493,19 +493,19 @@ contract Dungeons is Ownable{
         battle_fee = amount * 1 gwei;
     }
 
-    function replenishDungeonLoot() public onlyReplenisher {
+    function replenishDungeonLoot() public onlyDungeonKeeper {
         dungeon_loot_remaining[0] = dungeon_loot_cap[0];
         dungeon_loot_remaining[1] = dungeon_loot_cap[1];
         dungeon_loot_remaining[2] = dungeon_loot_cap[2];
         emit DungeonsReplenished(dungeon_loot_remaining[0], dungeon_loot_remaining[1], dungeon_loot_remaining[2]);
     }
 
-    function setDungeonReplenisher(address replenisherAddress) public onlyOwner {
-        dungeonLootReplenisher = replenisherAddress;
+    function setDungeonKeeper(address keeperAddress) public onlyOwner {
+        dungeonKeeper = keeperAddress;
     }
 
-    modifier onlyReplenisher(){
-        require(msg.sender == dungeonLootReplenisher, "Dungeons: only replenisher contract");
+    modifier onlyDungeonKeeper(){
+        require(msg.sender == dungeonKeeper, "Dungeons: only replenisher contract");
         _;
     }
 
