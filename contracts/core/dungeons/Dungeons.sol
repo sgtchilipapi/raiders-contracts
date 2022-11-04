@@ -43,6 +43,10 @@ interface _MaterialToken{
     function mint(address to, uint256 amount) external;
 }
 
+interface _EnerLink{
+    function burnFrom(address account, uint256 amount) external;
+}
+
 ///@notice This contract keeps track of pending PVE battles and provides logic for completing them.
 ///A battle consists of two (2) steps/transactions from the player:
 ///1. Request a battle using `findBattle()` - Its main function is to request random numbers from the VRF.
@@ -54,6 +58,7 @@ contract Dungeons is Ownable{
     _Characters private characters;
     _Equipments private equipments;
     _EquipmentManager private equipment_manager;
+    _EnerLink private enerlink;
 
     ///The beneficiary of the msg.value being sent to the contract for every battle request.
     address private vrf_refunder;
@@ -95,12 +100,14 @@ contract Dungeons is Ownable{
         address charactersNftAddress, 
         address equipmentNftAddress, 
         address equipmentManagerAddress,
-        address[4] memory materials
+        address[4] memory materials,
+        address enerlinkAddress
     ){
         characters = _Characters(charactersNftAddress);
         equipments = _Equipments(equipmentNftAddress);
         equipment_manager = _EquipmentManager(equipmentManagerAddress);
         materials_addresses = materials;
+        enerlink = _EnerLink(enerlinkAddress);
         vrf_refunder = msg.sender;
         dungeon_loot_remaining[0] = 844;
         dungeon_loot_remaining[1] = 844;
@@ -156,7 +163,7 @@ contract Dungeons is Ownable{
     }
 
     ///@notice This function calculates for the character's energy balance
-    function getCharacterEnergy(uint256 character_id) internal view returns (uint256 character_energy){
+    function getCharacterEnergy(uint256 character_id) public view returns (uint256 character_energy){
         uint256 time_elapsed = (BattleMath.safeMinusUint256(block.timestamp, energy_balances[character_id].time_last_updated)) / 60;
         character_energy = BattleMath.safeAddUint256(energy_balances[character_id].energy, (time_elapsed * ENERGY_RES_RATE), 1000);
     }
@@ -481,6 +488,17 @@ contract Dungeons is Ownable{
     function rollSnapLink(uint256 random_num_snap) internal pure returns (bool isSnap){
         uint256 roll_snap = random_num_snap % 1000;
         if(roll_snap <= 250){isSnap = true;}
+    }
+
+    ///@notice Consume enerlink to restore character's energy to full. Costs 1 $eLINK
+    function consumeEnerLink(uint256 character_id) public returns (bool restored){
+        require(getCharacterEnergy(character_id) < 1000, "Dungeons: character already at full hp");
+        enerlink.burnFrom(msg.sender, 1 ether);
+        energy_balances[character_id] = last_energy_update({
+            energy: 1000,
+            time_last_updated: block.timestamp
+        });
+        restored = true;
     }
 
     ///@notice The following are ADMIN functions.
