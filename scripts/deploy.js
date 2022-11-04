@@ -193,7 +193,7 @@ async function dungeons(_config, _ctrs, _eqpts, _eqpt_mgr){
     async function deployDungeons(contractName, tokens) {
         const materials = [tokens.boom.address, tokens.thump.address, tokens.clink.address, tokens.snap.address]
         const Contract = await ethers.getContractFactory(contractName)
-        const deployment = await Contract.deploy(_ctrs.address, _eqpts.address, _eqpt_mgr.address, materials)
+        const deployment = await Contract.deploy(_ctrs.address, _eqpts.address, _eqpt_mgr.address, materials, tokens.enerlink.address)
         await deployment.deployed()
         console.log(`Dungeons deployed at: ${deployment.address}`)
         return deployment
