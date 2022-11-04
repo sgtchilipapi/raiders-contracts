@@ -16,11 +16,11 @@ module.exports = {
       allowUnlimitedContractSize: true
     },
     polygon: {
-      url: "https://polygon-rpc.com/",
+      url: _networks.endpoint.http,
       accounts: [`0x${process.env.DEPLOYER_KEY}`]
     },
     mumbai: {
-      url: _networks.endpoint.testnet.http,
+      url: _networks.endpoint.http,
       accounts: [`0x${process.env.DEPLOYER_KEY}`]
     }
   },

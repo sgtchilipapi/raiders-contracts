@@ -14,7 +14,10 @@ import "@openzeppelin/contracts/utils/Base64.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
 import "../../periphery/utils/Counters.sol";
 import "../../periphery/libraries/characters/CharacterLibrary.sol";
-// import "../../periphery/libraries/characters/CharacterStatsCalculator.sol";
+
+/// temporarily commenting stats calculator due to exceeding contract size.
+/// workaround might be deploying an on-chain library for the sake of constructing the tokenURI.
+/// import "../../periphery/libraries/characters/CharacterStatsCalculator.sol";
 
 interface _EquipmentManager {
     function unEquipAllFromTransfer(uint256 _character_id) external;
@@ -142,7 +145,7 @@ contract Characters is ERC721, ERC721Enumerable, Ownable {
     }
 
     ///@notice Removing the stats section in the URI due to the code size exceeding 24,576 bytes.
-    ///I might deploy a contract specifically for constructing the URI if I still have time.
+    ///might deploy a contract specifically for constructing the URI if I still have time.
     // function encodeStats(character_stats memory _stats) internal pure returns (string memory stats_part){
     //     stats_part = string.concat(
                             // ', {"trait_type": "ATK", "value": ', Strings.toString(_stats.atk),
