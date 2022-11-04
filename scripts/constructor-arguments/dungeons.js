@@ -1,14 +1,14 @@
 const deployments  = require("../../app-config/deployments")
 
 module.exports = [
-    deployments.testnet_deployments.characters.nftContract.address, ///characters nft address
-    deployments.testnet_deployments.equipments.nftContract.address, ///equipments nft address
-    deployments.testnet_deployments.equipments.manager.address, ///equipment manager address
+    deployments.contracts.characters.nftContract.address, ///characters nft address
+    deployments.contracts.equipments.nftContract.address, ///equipments nft address
+    deployments.contracts.equipments.manager.address, ///equipment manager address
     [
-        deployments.testnet_deployments.tokens.boom.address, ///materials tokens addresses
-        deployments.testnet_deployments.tokens.thump.address,
-        deployments.testnet_deployments.tokens.clink.address,
-        deployments.testnet_deployments.tokens.snap.address
+        deployments.contracts.tokens.boom.address, ///materials tokens addresses
+        deployments.contracts.tokens.thump.address,
+        deployments.contracts.tokens.clink.address,
+        deployments.contracts.tokens.snap.address
     ]
 ];
 

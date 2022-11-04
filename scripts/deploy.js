@@ -8,7 +8,7 @@ const mainnet_config = {
 }
 
 const testnet_config = {
-    tokens: deployments.testnet_deployments.tokens,
+    tokens: deployments.contracts.tokens,
     vrf:{
         subscription: 2229,
         coordinator: "0x7a1BaC17Ccc5b313516C5E16fb24f7659aA5ebed",

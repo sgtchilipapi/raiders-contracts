@@ -5,8 +5,8 @@ import * as connection from "../../utils/connection"
 import {ethers} from 'ethers'
 
 ///contract config
-const network = networks.endpoint.testnet.http
-const tokens = deployments.testnet_deployments.tokens
+const network = networks.endpoint.http
+const tokens = deployments.contracts.tokens
 
 function getTokenAddress(token_name){
     if(token_name == "boom"){return tokens.boom.address}

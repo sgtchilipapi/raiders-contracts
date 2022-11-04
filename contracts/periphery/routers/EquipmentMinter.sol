@@ -51,14 +51,14 @@ contract EquipmentMinter is Ownable, Pausable{
     _Equipments equipmentsNft;
 
     ///The beneficiary of the msg.value being sent to the contract for every mint request.
-    address vrf_refunder;
+    address private vrf_refunder;
 
     ///Map out a user's address to its equipment crafting request (if any) {request_id, equipment_type, number_of_items}. If none, the request_id == 0.
     mapping (address => equipment_request) public request;
 
     ///The msg.value required to mint to prevent spam and deplete VRF funds.
     ///Currently unset (0) for judging purposes as stated in the hackathon rules.
-    uint256 mint_fee;
+    uint256 public mint_fee;
 
     ///mapping to restrict free mints to players/characters
     mapping(uint256 => bool) public character_minted_free;
@@ -458,6 +458,39 @@ contract EquipmentMinter is Ownable, Pausable{
         if(stat_value > 30 && stat_value <= 45){extremity = 5;} //ethereal
         if(stat_value > 45 && stat_value <= 65){extremity = 6;} //astronomical
         if(stat_value > 65){extremity = 7;} //divine
+    }
+
+    ///@notice This is just a view function to show if the user has enough balance of the materials required.
+    function userMaterialsEnough(uint256 equipment_type, uint256 item_count) public view returns (bool enough){
+        ///We will assume at first that the user has enough balances for the materials required. Then we will check each materials
+        ///one by one. If we determine that the user in fact DOES NOT have enough balance in any one of the materials, then we will
+        ///set this to false and the transaction will revert.
+        enough = true;
+
+        ///We determine the recipe by equipment type.
+        item_recipe memory recipe = CraftingRecipes.getRecipe(equipment_type);
+
+        ///Determine the total amounts required. The `getRecipe()` from the library CraftingRecipes returns the amount required for
+        ///only one piece of equipment to be crafted. So we multiply the respective amounts by the number of equipment the user has
+        ///chosen to mint.
+        recipe.main_material_amount = recipe.main_material_amount * item_count;
+        recipe.indirect_material_amount = recipe.indirect_material_amount * item_count;
+        recipe.catalyst_amount = recipe.catalyst_amount * item_count;
+
+        ///We fetch the balances of the user for the required materials and also the corresponding contract instance.
+        (uint256 main_material_balance, ) = checkMaterialBalance(recipe.main_material);
+        (uint256 indirect_material_balance, ) = checkMaterialBalance(recipe.indirect_material);
+        (uint256 catalyst_balance, ) = checkCatalystBalance(recipe.catalyst);
+
+        ///We compare the user's token balances with the required amounts.
+        if(main_material_balance < recipe.main_material_amount){enough = false;}
+        if(indirect_material_balance < recipe.indirect_material_amount){enough = false;}
+        if(catalyst_balance < recipe.catalyst_amount){enough = false;}
+    }
+
+    ///@notice This function is just an easy way to get the recipe of a certain equipment
+    function getEquipmentRecipe(uint256 equipment_type) public pure returns (item_recipe memory recipe){
+        recipe = CraftingRecipes.getRecipe(equipment_type);
     }
 
     ///@notice Admin Functions

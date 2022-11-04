@@ -1,103 +1,97 @@
-module.exports = {
-    mainnet_deployments: {
-        tokens: {},
-        farms: {},
-        equipments: {},
-        characters: {}
-
+const testnet_deployments = {
+    tokens: {
+        clank: {
+            address: "0x7C4026E0FEA9b0777a3d6Ee5EeC04dC9E1df64f7",
+            abi: ""
+        },
+        boom: {
+            address: "0x90Deea1f5F013F8942E69C067AD670375bADE800",
+            abi: ""
+        },
+        thump: {
+            address: "0xacF03970BcC1033855BaBf70820535D5061eFa03",
+            abi: ""
+        },
+        clink: {
+            address: "0x80E3007742D97a3571870Fd0Db1CA2BA80c10f53",
+            abi: ""
+        },
+        snap: {
+            address: "0xb6A1A7ec64fF8Cb53eD870a10365746515A0dCF4",
+            abi: ""
+        },
+        yellowspark: {
+            address: "0x8AdCb3b89955ed40BB35Cd07471e345fbED8682e",
+            abi: ""
+        },
+        whitespark: {
+            address: "0x1a728825800B8fbc16447a9B86778dD3e2a41e86",
+            abi: ""
+        },
+        redspark: {
+            address: "0xBb58987C2Ef8f1e73622cE8B77f1159eaF4fBc97",
+            abi: ""
+        },
+        bluespark: {
+            address: "0x2AC719EF20E7dc7858FB2Fe79E25D843d1Ed2AbB",
+            abi: ""
+        },
+        enerlink: {
+            address: "0xC018D71542a0f392fb3d4a10c8476C9A81082405",
+            abi: ""
+        },
     },
-
-    testnet_deployments: {
-        tokens: {
-            clank: {
-                address: "0x7C4026E0FEA9b0777a3d6Ee5EeC04dC9E1df64f7",
-                abi: ""
-            },
-            boom: {
-                address: "0x90Deea1f5F013F8942E69C067AD670375bADE800",
-                abi: ""
-            },
-            thump: {
-                address: "0xacF03970BcC1033855BaBf70820535D5061eFa03",
-                abi: ""
-            },
-            clink: {
-                address: "0x80E3007742D97a3571870Fd0Db1CA2BA80c10f53",
-                abi: ""
-            },
-            snap: {
-                address: "0xb6A1A7ec64fF8Cb53eD870a10365746515A0dCF4",
-                abi: ""
-            },
-            yellowspark: {
-                address: "0x8AdCb3b89955ed40BB35Cd07471e345fbED8682e",
-                abi: ""
-            },
-            whitespark: {
-                address: "0x1a728825800B8fbc16447a9B86778dD3e2a41e86",
-                abi: ""
-            },
-            redspark: {
-                address: "0xBb58987C2Ef8f1e73622cE8B77f1159eaF4fBc97",
-                abi: ""
-            },
-            bluespark: {
-                address: "0x2AC719EF20E7dc7858FB2Fe79E25D843d1Ed2AbB",
-                abi: ""
-            },
-            enerlink:{
-                address: "0xC018D71542a0f392fb3d4a10c8476C9A81082405",
-                abi: ""
-            },
+    farms: {
+        minichefv2: {
+            address: "0xEf1dBD14Cf0D1baB9F43cbe9f1b8553875fFaD4C",
+            abi: ""
         },
-        farms: {
-            minichefv2: {
-                address: "0xEf1dBD14Cf0D1baB9F43cbe9f1b8553875fFaD4C",
-                abi: ""
-            },
+    },
+    equipments: {
+        nftContract: {
+            address: "0xF485F73DDbdE278DEeA39958D6a4fa0b7D1275f8",
+            abi: ''
         },
-        equipments: {
-            nftContract: {
-                address: "0xF485F73DDbdE278DEeA39958D6a4fa0b7D1275f8",
-                abi: ''
-            },
-            minter: {
-                address: "0xedDDc002dbCDE35ff2DAa65bc9305B6FF0eE13aE",
-                abi: ''
-            },
-            vrf: {
-                address: "0xd3F3881Bd2969eB70A07213DAE3b5fECf9fEf0A7",
-                abi: ''
-            },
-            manager: {
-                address: "0xebFEc9288AB43A28862d8b2605D85B40608c4D97",
-                abi: ''
-            }
+        minter: {
+            address: "0xedDDc002dbCDE35ff2DAa65bc9305B6FF0eE13aE",
+            abi: ''
         },
-        characters: {
-            nftContract: {
-                address: "0xcB03375a28Bbf70A0BB524536322b7d01aef1641",
-                abi: ''
-            },
-            minter: {
-                address: "0xa47D5cd366a9960dB0f15E6fE4c7FD43Cf775034",
-                abi: ''
-            },
-            vrf: {
-                address: "0x6BE3f510452Cd7fb19E57103f086dAa43c7011C8",
-                abi: ''
-            }
+        vrf: {
+            address: "0xd3F3881Bd2969eB70A07213DAE3b5fECf9fEf0A7",
+            abi: ''
         },
-        dungeons: {
-            dungeon: {
-                address: "0x368d9221E41019fDaBf6c20b0293fF89589A9C8a",
-            },
-            vrf: {
-                address: "0x0617fB9d6f85959C7D323a2e538192889a8A543B"
-            },
-            keeper: {
-                address: "0x9291A8323Df80728cA82081c0fA075356408B013"
-            }
+        manager: {
+            address: "0xebFEc9288AB43A28862d8b2605D85B40608c4D97",
+            abi: ''
+        }
+    },
+    characters: {
+        nftContract: {
+            address: "0xcB03375a28Bbf70A0BB524536322b7d01aef1641",
+            abi: ''
+        },
+        minter: {
+            address: "0xa47D5cd366a9960dB0f15E6fE4c7FD43Cf775034",
+            abi: ''
+        },
+        vrf: {
+            address: "0x6BE3f510452Cd7fb19E57103f086dAa43c7011C8",
+            abi: ''
+        }
+    },
+    dungeons: {
+        dungeon: {
+            address: "0x368d9221E41019fDaBf6c20b0293fF89589A9C8a",
+        },
+        vrf: {
+            address: "0x0617fB9d6f85959C7D323a2e538192889a8A543B"
+        },
+        keeper: {
+            address: "0x9291A8323Df80728cA82081c0fA075356408B013"
         }
     }
+}
+
+module.exports = {
+    contracts: testnet_deployments
 }

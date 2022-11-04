@@ -4,8 +4,8 @@ const abis = require("../../../../app-config/contract-abis")
 import * as connection from "../../utils/connection"
 
 ///contract config
-const network = networks.endpoint.testnet.http
-const address = deployments.testnet_deployments.dungeons.dungeon.address
+const network = networks.endpoint.http
+const address = deployments.contracts.dungeons.dungeon.address
 const abi = abis.core.dungeons
 
 ///contract connections
