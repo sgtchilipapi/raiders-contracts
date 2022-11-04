@@ -40,12 +40,19 @@ const testnet_deployments = {
             address: "0xC018D71542a0f392fb3d4a10c8476C9A81082405",
             abi: ""
         },
+        wmatic: {
+            address: "0x9c3C9283D3e44854697Cd22D3Faa240Cfb032889"
+        }
     },
-    farms: {
+    defi: {
         minichefv2: {
             address: "0xEf1dBD14Cf0D1baB9F43cbe9f1b8553875fFaD4C",
             abi: ""
         },
+        factory: {
+            address: "0xc35DADB65012eC5796536bD9864eD8773aBc74C4",
+            abi: ""
+        }
     },
     equipments: {
         nftContract: {

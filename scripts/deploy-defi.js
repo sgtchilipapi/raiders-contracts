@@ -7,6 +7,7 @@
 const { ethers } = require("hardhat");
 const hre = require("hardhat");
 require('dotenv').config()
+const deployments = require("../app-config/deployments")
 
 async function main() {
   const clank = await deployERC20("ClankToken")
@@ -14,20 +15,20 @@ async function main() {
   const thump = await deployERC20("ThumpIron")
   const clink = await deployERC20("ClinkGlass")
   const snap = await deployERC20("SnapLink")
-  const black = await deployERC20("YellowSparkstone")
+  const yellow = await deployERC20("YellowSparkstone")
   const white = await deployERC20("WhiteSparkstone")
   const red = await deployERC20("RedSparkstone")
   const blue = await deployERC20("BlueSparkstone")
   const enerlink = await deployERC20("EnerLink")
-  const _chef = await deployChef(clank)
-  
+  // const _chef = await deployChef(clank.address)
+  await setPairAddress(clank, [boom, thump, clink, snap], [yellow, white, red, blue])
 
   async function deployERC20(ContractName){
     const ERC20Token = await ethers.getContractFactory(ContractName)
     const token = await ERC20Token.deploy()
     await token.deployed()
     console.log(`${ContractName} token deployed at: ${token.address}`)
-    return token.address
+    return token
   }
 
   async function deployChef(tokenAddress){
@@ -35,7 +36,20 @@ async function main() {
     const chef = await Chef.deploy(tokenAddress)
     await chef.deployed()
     console.log(`MiniChefV2 Fork deployed at: ${chef.address}`)
-    return chef.address
+    return chef
+  }
+
+  async function setPairAddress(clank, materials, catalysts){
+    const Factory = await ethers.getContractFactory("UniswapV2Factory")
+    const factory = Factory.attach(deployments.contracts.defi.factory.address)
+    for(let i = 0; i < 4; i++){
+      const createPair = await factory.createPair(clank.address, materials[i].address)
+      await createPair.wait()
+      const pairAddress = await factory.getPair(clank.address, materials[i].address)
+      const setPairInToken = await catalysts[i].setLpToken(pairAddress)
+      await setPairInToken.wait()
+      console.log(`LP set in catalyst ${i}`)
+    }
   }
 }
 
