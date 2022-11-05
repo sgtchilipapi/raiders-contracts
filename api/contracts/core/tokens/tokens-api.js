@@ -19,6 +19,11 @@ function getTokenAddress(token_name){
     if(token_name == "bluespark"){return tokens.bluespark.address}
     if(token_name == "enerlink"){return tokens.enerlink.address}
     if(token_name == "clank"){return tokens.clank.address}
+    if(token_name == "clankmatic"){return tokens.clankmatic.address}
+    if(token_name == "clankboom"){return tokens.clankboom.address}
+    if(token_name == "clankthump"){return tokens.clankthump.address}
+    if(token_name == "clankclink"){return tokens.clankclink.address}
+    if(token_name == "clanksnap"){return tokens.clanksnap.address}
 }
 
 function getAbi(token_name){
@@ -31,7 +36,7 @@ function getAbi(token_name){
     if(token_name == "enerlink"){
         return abis.core.tokens.consumables
     }
-    if(token_name == "clank"){
+    if(token_name == "clank" || token_name == "clankmatic" || token_name == "clankboom" || token_name == "clankthump" || token_name == "clankclink" || token_name == "clanksnap"){
         return abis.core.tokens.currency
     }
 }
@@ -70,6 +75,14 @@ export async function transfer(token_name, to, amount){
     const contract = await getSignedContract(token_name)
     const transfer_tx = await contract.transfer(to, amount)
     const receipt = transfer_tx.wait()
+    return receipt
+}
+
+///Only for catalysts
+export async function mint(token_name, addressTo, amount){
+    const contract = await getSignedContract(token_name)
+    const mint_tx = await contract.mint(addressTo, amount)
+    const receipt = mint_tx.wait()
     return receipt
 }
 

@@ -62,7 +62,7 @@ async function main() {
       const pairAddress = await factory.getPair(clank.address, materials[i].address)
       const setPairInToken = await catalysts[i].setLpToken(pairAddress)
       await setPairInToken.wait()
-      console.log(`LP set in catalyst ${i}`)
+      console.log(`LP: ${pairAddress} set in catalyst ${i}`)
     }
   }
 
@@ -72,6 +72,7 @@ async function main() {
     const createPair = await factory.createPair(clank.address, deployments.contracts.tokens.wmatic.address)
     await createPair.wait()
     const pairAddress = await factory.getPair(clank.address, deployments.contracts.tokens.wmatic.address)
+    console.log(`LP CLANK-wMATIC pair set with address: ${pairAddress}`)
     return pairAddress
   }
 }

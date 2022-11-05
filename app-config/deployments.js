@@ -1,5 +1,8 @@
 const testnet_deployments = {
     tokens: {
+        wmatic: {
+            address: "0x9c3C9283D3e44854697Cd22D3Faa240Cfb032889"
+        },
         clank: {
             address: "0x7C4026E0FEA9b0777a3d6Ee5EeC04dC9E1df64f7",
             abi: ""
@@ -40,9 +43,22 @@ const testnet_deployments = {
             address: "0xC018D71542a0f392fb3d4a10c8476C9A81082405",
             abi: ""
         },
-        wmatic: {
-            address: "0x9c3C9283D3e44854697Cd22D3Faa240Cfb032889"
+        clankmatic: {
+            address: ""
+        },
+        clankboom: {
+            address: ""
+        },
+        clankthump: {
+            address: ""
+        },
+        clankclink: {
+            address: ""
+        },
+        clanksnap: {
+            address: ""
         }
+        
     },
     defi: {
         minichefv2: {
