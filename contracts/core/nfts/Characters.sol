@@ -14,19 +14,21 @@ import "@openzeppelin/contracts/utils/Base64.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
 import "../../periphery/utils/Counters.sol";
 import "../../periphery/libraries/characters/CharacterLibrary.sol";
-
-/// temporarily commenting stats calculator due to exceeding contract size.
-/// workaround might be deploying an on-chain library for the sake of constructing the tokenURI.
-/// import "../../periphery/libraries/characters/CharacterStatsCalculator.sol";
+import "../../periphery/libraries/characters/CharacterStatsCalculator.sol";
 
 interface _EquipmentManager {
     function unEquipAllFromTransfer(uint256 _character_id) external;
+}
+
+interface _CharacterUriConstructor {
+    function encodeStrings(character_properties memory character_props, character_uri_details memory uri_details, string memory _character_name) external pure returns (string memory uriJSON);
 }
 
 contract Characters is ERC721, ERC721Enumerable, Ownable {
     using Counters for Counters.Counter;
     Counters.Counter private character_ids;
     _EquipmentManager equipmentManager;
+    _CharacterUriConstructor characterUriConstructor;
 
     ///Map out a specific character NFT id to its properties {character_class, element, str, vit, dex, mood, exp}
     mapping (uint256 => character_properties) public character;
@@ -50,6 +52,12 @@ contract Characters is ERC721, ERC721Enumerable, Ownable {
         character_name[character_ids.current()] = _character_name;
         _mint(user, character_ids.current());
         emit CharacterMinted(character_ids.current(), character[character_ids.current()]);
+    }
+
+    ///@notice An easy way of fetching real-time character data. No need to create a subgraph for this.
+    function getCharacter(uint256 character_id) public view returns (character_properties memory char_props, battle_stats memory char_stats){
+        char_props = character[character_id];
+        char_stats = CharacterStatsCalculator.getCharacter(char_props);
     }
 
     ///@notice This function can only be called by the updater contract which shall be responsible for doing the necessary checks.
@@ -85,6 +93,11 @@ contract Characters is ERC721, ERC721Enumerable, Ownable {
         equipmentManager = _EquipmentManager(managerAddress);
     }
 
+    ///@notice This function sets the uri constructor contract.
+    function setUriConstructor(address uriConstructorAddress) public onlyOwner{
+        characterUriConstructor = _CharacterUriConstructor(uriConstructorAddress);
+    }
+
     ///@notice This function sets the character properties updater contract.
     function setDungeon(address dungeonAddress) public onlyOwner{
         dungeon = dungeonAddress;
@@ -104,45 +117,45 @@ contract Characters is ERC721, ERC721Enumerable, Ownable {
         );
         character_properties memory character_props = character[tokenId];
         character_uri_details memory uri_details = CharacterLibrary.getCharacter(character_props.character_class, character_props.mood);
-        tokenURIString = encodeStrings(character_props, uri_details, character_name[tokenId]);
+        tokenURIString = characterUriConstructor.encodeStrings(character_props, uri_details, character_name[tokenId]);
     }
 
-    ///@notice Encodes the strings into a JSON string
-    function encodeStrings(character_properties memory character_props, character_uri_details memory uri_details, string memory _character_name) internal pure returns (string memory uriJSON){
-        uriJSON =
-            string.concat(
-            "data:application/json;base64,",
-                Base64.encode(
-                    abi.encodePacked(
-                                encodeDetails(uri_details, _character_name),
-                                encodeProps(character_props)
-                                ///encodeStats(CharacterStatsCalculator.getCharacterStats(character_props))
-                    )
-                )
-            );
-    }
+    // ///@notice Encodes the strings into a JSON string
+    // function encodeStrings(character_properties memory character_props, character_uri_details memory uri_details, string memory _character_name) internal pure returns (string memory uriJSON){
+    //     uriJSON =
+    //         string.concat(
+    //         "data:application/json;base64,",
+    //             Base64.encode(
+    //                 abi.encodePacked(
+    //                             encodeDetails(uri_details, _character_name),
+    //                             encodeProps(character_props)
+    //                             ///encodeStats(CharacterStatsCalculator.getCharacterStats(character_props))
+    //                 )
+    //             )
+    //         );
+    // }
 
-    function encodeDetails(character_uri_details memory uri_details, string memory _character_name) internal pure returns (string memory details_part){
-        details_part = string.concat(
-                            '{"description": "RandomClash Character", "image": "',uri_details.image,'", "name": "', _character_name,
-                            '", "attributes": [',
-                                '{"trait_type": "character_class", "value": "', uri_details.name,
-                                '"}, {"display_type": "boost_percentage", "trait_type": "', uri_details.bonus,'", "value": ',uri_details.bonus_value,'}, ',
-                                '{"trait_type": "mood", "value": "',uri_details.mood,'"}'
-        );
-    }
+    // function encodeDetails(character_uri_details memory uri_details, string memory _character_name) internal pure returns (string memory details_part){
+    //     details_part = string.concat(
+    //                         '{"description": "Characters", "image": "',uri_details.image,'", "name": "', _character_name,
+    //                         '", "attributes": [',
+    //                             '{"trait_type": "character_class", "value": "', uri_details.name,
+    //                             '"}, {"display_type": "boost_percentage", "trait_type": "', uri_details.bonus,'", "value": ',uri_details.bonus_value,'}, ',
+    //                             '{"trait_type": "mood", "value": "',uri_details.mood,'"}'
+    //     );
+    // }
 
-    function encodeProps(character_properties memory character_props) internal pure returns (string memory props_part){
-        props_part = string.concat(
-                                ', {"display_type": "number", "trait_type": "STR", "value": ', Strings.toString(character_props.str),
-                                '}, {"display_type": "number", "trait_type": "VIT", "value": ', Strings.toString(character_props.vit),
-                                '}, {"display_type": "number", "trait_type": "DEX", "value": ', Strings.toString(character_props.dex),
-                                '}, {"trait_type": "LVL", "value": ', Strings.toString((character_props.exp / 100) + 1),
-                                '}, {"trait_type": "element", "value": "', CharacterLibrary.getElement(character_props.element),
-                                '"}, {"display_type": "boost_percentage", "trait_type": "', CharacterLibrary.getTalent(character_props.talent),
-                                '", "value": 10}]}' /// <<< attributes array and JSON uri closes here
-        );
-    }
+    // function encodeProps(character_properties memory character_props) internal pure returns (string memory props_part){
+    //     props_part = string.concat(
+    //                             ', {"display_type": "number", "trait_type": "STR", "value": ', Strings.toString(character_props.str),
+    //                             '}, {"display_type": "number", "trait_type": "VIT", "value": ', Strings.toString(character_props.vit),
+    //                             '}, {"display_type": "number", "trait_type": "DEX", "value": ', Strings.toString(character_props.dex),
+    //                             '}, {"trait_type": "LVL", "value": ', Strings.toString((character_props.exp / 100) + 1),
+    //                             '}, {"trait_type": "element", "value": "', CharacterLibrary.getElement(character_props.element),
+    //                             '"}, {"display_type": "boost_percentage", "trait_type": "', CharacterLibrary.getTalent(character_props.talent),
+    //                             '", "value": 10}]}' /// <<< attributes array and JSON uri closes here
+    //     );
+    // }
 
     ///@notice Removing the stats section in the URI due to the code size exceeding 24,576 bytes.
     ///might deploy a contract specifically for constructing the URI if I still have time.
