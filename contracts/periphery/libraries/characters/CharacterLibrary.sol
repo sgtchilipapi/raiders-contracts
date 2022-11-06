@@ -23,12 +23,12 @@ library CharacterLibrary {
     }
 
     function getClass(uint32 character_class, uint32 mood) internal pure returns (string memory _class, string memory image_prefix, string memory mood_tag, string memory bonus_tag, string memory bonus_value){
-        if(character_class == 0){_class = "Viking"; image_prefix = "0%20"; bonus_tag = "Attack"; bonus_value = "5";}
-        if(character_class == 1){_class = "Woodcutter"; image_prefix = "1%20"; bonus_tag = "Penetration Chance"; bonus_value = "10";}
-        if(character_class == 2){_class = "Troll"; image_prefix = "4%20"; bonus_tag = "HP"; bonus_value = "5";}
-        if(character_class == 3){_class = "Mechanic"; image_prefix = "5%20"; bonus_tag = "Defense"; bonus_value = "10";}
-        if(character_class == 4){_class = "Amphibian"; image_prefix = "2%20"; bonus_tag = "Critical Chance"; bonus_value = "10";}
-        if(character_class == 5){_class = "GraveRobber"; image_prefix = "3%20"; bonus_tag = "Evasion Chance"; bonus_value = "10";}
+        if(character_class == 0){_class = "Viking"; image_prefix = "0%20"; bonus_tag = "Viking (ATK)"; bonus_value = "5";}
+        if(character_class == 1){_class = "Woodcutter"; image_prefix = "1%20"; bonus_tag = "Woodcutter (PEN)"; bonus_value = "10";}
+        if(character_class == 2){_class = "Troll"; image_prefix = "4%20"; bonus_tag = "Troll (HP)"; bonus_value = "5";}
+        if(character_class == 3){_class = "Mechanic"; image_prefix = "5%20"; bonus_tag = "Mechanic (DEF)"; bonus_value = "10";}
+        if(character_class == 4){_class = "Amphibian"; image_prefix = "2%20"; bonus_tag = "Amphibian (CRIT)"; bonus_value = "10";}
+        if(character_class == 5){_class = "GraveRobber"; image_prefix = "3%20"; bonus_tag = "Graverobber (EVA)"; bonus_value = "10";}
         mood_tag = getMood(mood);
     }
 
@@ -53,11 +53,11 @@ library CharacterLibrary {
     }
 
     function getTalent(uint32 talent) internal pure returns (string memory talent_tag){
-        if(talent == 0){talent_tag = "ATK";}
-        if(talent == 1){talent_tag = "DEF";}
-        if(talent == 2){talent_tag = "EVA";}
-        if(talent == 3){talent_tag = "HP";}
-        if(talent == 4){talent_tag = "PEN";}
-        if(talent == 5){talent_tag = "CRIT";}
+        if(talent == 0){talent_tag = "Combat Psycho (ATK)";}
+        if(talent == 1){talent_tag = "Iron Skin (DEF)";}
+        if(talent == 2){talent_tag = "Ninja (EVA)";}
+        if(talent == 3){talent_tag = "Body Builder (HP)";}
+        if(talent == 4){talent_tag = "Weapon Specialist (PEN)";}
+        if(talent == 5){talent_tag = "Sniper (CRIT)";}
     }
 }

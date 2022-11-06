@@ -25,22 +25,33 @@ async function main() {
 
 async function deployAll(config){
     const [character_contract, cminter_contract] = await characters(config)
-    const [equipment_contract, eminter_contract] = await equipments(config, character_contract)
-    const equipment_manager  = await equipmentManager(character_contract, equipment_contract)
-    const dungeons_system = await dungeons(config, character_contract, equipment_contract, equipment_manager)
-    await setMinterInEnerLink(config, eminter_contract)
-    await setDungeonInTokens(config, dungeons_system)
-    await approveEquipmentMinter(config, eminter_contract)
+    // const [equipment_contract, eminter_contract] = await equipments(config, character_contract)
+    // const equipment_manager  = await equipmentManager(character_contract, equipment_contract)
+    // const dungeons_system = await dungeons(config, character_contract, equipment_contract, equipment_manager)
+    // await setMinterInEnerLink(config, eminter_contract)
+    // await setDungeonInTokens(config, dungeons_system)
+    // await approveEquipmentMinter(config, eminter_contract)
 }
 
 async function characters(_config){
     const tokens = _config.tokens
+    const uriConstructor = await deployUriConstructor("CharacterUriConstructor")
     const ctrs = await deployCharacters("Characters")
+    const setUriConstructorTx = await setUriConstructor(ctrs, uriConstructor)
+
     const minter = await deployMinter("CharacterMinter", tokens)
     const vrf = await deploySubscriptionVRF("VRFv2CharacterMinting", _config.vrf.subscription, _config.vrf.coordinator, _config.vrf.keyHash, minter.address)
     const setMinterTx = await setMinter(ctrs, minter)
     const setVrfTx = await setVrf(minter, vrf.address)
     const addConsumer = await addVrfConsumer("VRFCoordinatorV2", _config.vrf.subscription, _config.vrf.coordinator, vrf.address)
+
+    async function deployUriConstructor(contractName) {
+        const UriConstructor = await ethers.getContractFactory(contractName)
+        const uriConstructor = await UriConstructor.deploy()
+        await uriConstructor.deployed()
+        console.log(`Character Uri Constructor deployed at: ${uriConstructor.address}`)
+        return uriConstructor
+    }
 
     async function deployCharacters(contractName) {
         const Characters = await ethers.getContractFactory(contractName)
@@ -48,6 +59,13 @@ async function characters(_config){
         await characters.deployed()
         console.log(`Characters NFT deployed at: ${characters.address}`)
         return characters
+    }
+
+    async function setUriConstructor(ctrs, uriConstructor){
+        const set = await ctrs.setUriConstructor(uriConstructor.address)
+        await set.wait()
+        console.log(`CharacterUriConstructor contract has been successfuly set!`)
+        return set
     }
 
     async function deployMinter(contractName){

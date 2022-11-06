@@ -90,16 +90,19 @@ const testnet_deployments = {
     },
     characters: {
         nftContract: {
-            address: "0xcB03375a28Bbf70A0BB524536322b7d01aef1641",
+            address: "0x3aAF23189f4A62c7e491597f8e4E9cb4044A5028",
             abi: ''
         },
         minter: {
-            address: "0xa47D5cd366a9960dB0f15E6fE4c7FD43Cf775034",
+            address: "0x3872b2732297D55cB69014C8ffd48618464F1fA5",
             abi: ''
         },
         vrf: {
-            address: "0x6BE3f510452Cd7fb19E57103f086dAa43c7011C8",
+            address: "0xC5D6c7BdfA330E75e2161f7FB91E58C7ce286E12",
             abi: ''
+        },
+        uriConstructor: {
+            address: "0xB17D93CA68abe14401079b2B645CD76e2b2DEA0D"
         }
     },
     dungeons: {
