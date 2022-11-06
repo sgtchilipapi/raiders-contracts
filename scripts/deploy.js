@@ -25,12 +25,12 @@ async function main() {
 
 async function deployAll(config){
     const [character_contract, cminter_contract] = await characters(config)
-    // const [equipment_contract, eminter_contract] = await equipments(config, character_contract)
-    // const equipment_manager  = await equipmentManager(character_contract, equipment_contract)
-    // const dungeons_system = await dungeons(config, character_contract, equipment_contract, equipment_manager)
-    // await setMinterInEnerLink(config, eminter_contract)
-    // await setDungeonInTokens(config, dungeons_system)
-    // await approveEquipmentMinter(config, eminter_contract)
+    const [equipment_contract, eminter_contract] = await equipments(config, character_contract)
+    const equipment_manager  = await equipmentManager(character_contract, equipment_contract)
+    const dungeons_system = await dungeons(config, character_contract, equipment_contract, equipment_manager)
+    await setMinterInEnerLink(config, eminter_contract)
+    await setDungeonInTokens(config, dungeons_system)
+    await approveEquipmentMinter(config, eminter_contract)
 }
 
 async function characters(_config){
