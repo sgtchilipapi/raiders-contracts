@@ -1,11 +1,9 @@
-const networks = require("../../../../app-config/networks")
 const deployments = require("../../../../app-config/deployments")
 const abis = require("../../../../app-config/contract-abis")
 import * as connection from "../../utils/connection"
 import {ethers} from 'ethers'
 
 ///contract config
-const network = networks.endpoint.http
 const tokens = deployments.contracts.tokens
 
 function getTokenAddress(token_name){
@@ -45,14 +43,14 @@ function getAbi(token_name){
 async function getContract(token_name){
     const address = getTokenAddress(token_name)
     const abi = getAbi(token_name)
-    const contract = await connection.getContractInstance(network, address, abi)
+    const contract = await connection.getContractInstance(address, abi)
     return contract
 }
 
 async function getSignedContract(token_name){
     const address = getTokenAddress(token_name)
     const abi = getAbi(token_name)
-    const contract = await connection.getSignedContractInstance(network, address, abi)
+    const contract = await connection.getSignedContractInstance(address, abi)
     return contract
 }
 

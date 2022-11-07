@@ -1,21 +1,19 @@
-const networks = require("../../../../app-config/networks")
 const deployments = require("../../../../app-config/deployments")
 const abis = require("../../../../app-config/contract-abis")
 import * as connection from "../../utils/connection"
 
 ///contract config
-const network = networks.endpoint.http
 const address = deployments.contracts.characters.nftContract.address
 const abi = abis.core.characters
 
 ///contract connections
 async function getContract(){
-    const contract = await connection.getContractInstance(network, address, abi)
+    const contract = await connection.getContractInstance(address, abi)
     return contract
 }
 
 async function getSignedContract(){
-    const contract = await connection.getSignedContractInstance(network, address, abi)
+    const contract = await connection.getSignedContractInstance(address, abi)
     return contract
 }
 

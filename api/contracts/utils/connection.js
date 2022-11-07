@@ -1,14 +1,16 @@
 import {ethers} from 'ethers'
 import Web3Modal from 'web3modal'
+const networks = require("../../../app-config/networks")
+const rpcUrl = networks.endpoint.http
 
-export async function getProvider(network){
-    const provider = new ethers.providers.JsonRpcProvider(network)
+export async function getProvider(){
+    const provider = new ethers.providers.JsonRpcProvider(rpcUrl)
     return provider
 }
 
-export async function getSigner(network){
+export async function getSigner(){
     if(typeof window !== undefined){
-        const web3Modal = new Web3Modal(network)
+        const web3Modal = new Web3Modal(rpcUrl)
         const connection = await web3Modal.connect()
         const provider = new ethers.providers.Web3Provider(connection)
         const signer = provider.getSigner()
@@ -16,14 +18,14 @@ export async function getSigner(network){
     }
 }
 
-export async function getContractInstance(network, address, abi){
-    const provider = await getProvider(network)
+export async function getContractInstance(address, abi){
+    const provider = await getProvider(rpcUrl)
     const contract = new ethers.Contract(address, abi, provider)
     return contract
 }
 
-export async function getSignedContractInstance(network, address, abi){
-    const signer = await getSigner(network)
+export async function getSignedContractInstance(address, abi){
+    const signer = await getSigner(rpcUrl)
     const contract = new ethers.Contract(address, abi, signer)
     return contract
 }
