@@ -1,3 +1,4 @@
+const connection_api = require("./utils/connection")
 const characters_api = require("./core/nfts/characters-api")
 const equipments_api = require("./core/nfts/equipments-api")
 const equipment_manager_api = require("./periphery/equipments/equipment-manager-api")
@@ -19,6 +20,9 @@ module.exports = {
         routers: {
             ctr_minter: character_minter_api,
             eqpt_minter: equipment_minter_api
+        },
+        utils: {
+            connection: connection_api
         }
         
 

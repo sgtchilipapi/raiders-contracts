@@ -8,12 +8,12 @@ const address = deployments.contracts.characters.minter.address
 const abi = abis.periphery.character_minter
 
 ///contract connections
-async function getContract(){
+export async function getContract(){
     const contract = await connection.getContractInstance(address, abi)
     return contract
 }
 
-async function getSignedContract(){
+export async function getSignedContract(){
     const contract = await connection.getSignedContractInstance(address, abi)
     return contract
 }

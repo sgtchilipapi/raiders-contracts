@@ -7,12 +7,12 @@ const address = deployments.contracts.characters.nftContract.address
 const abi = abis.core.characters
 
 ///contract connections
-async function getContract(){
+export async function getContract(){
     const contract = await connection.getContractInstance(address, abi)
     return contract
 }
 
-async function getSignedContract(){
+export async function getSignedContract(){
     const contract = await connection.getSignedContractInstance(address, abi)
     return contract
 }
