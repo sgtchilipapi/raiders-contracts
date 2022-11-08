@@ -6,6 +6,7 @@ const character_minter_api = require("./periphery/routers/character-minter-api")
 const equipment_minter_api = require("./periphery/routers/equipment-minter-api")
 const dungeons_api = require("./core/dungeons/dungeons-api")
 const tokens_api = require("./core/tokens/tokens-api")
+const character_vrf = require("./periphery/chainlink/vrf/character-vrf")
 
 module.exports = {
     core:{
@@ -14,6 +15,9 @@ module.exports = {
         tokens: tokens_api
     },
     periphery:{
+        chainlink:{
+            ctrs_vrf: character_vrf,
+        },
         equipments: {
             eqpt_mngr: equipment_manager_api
         },

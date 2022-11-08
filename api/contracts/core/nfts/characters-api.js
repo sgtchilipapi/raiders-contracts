@@ -17,6 +17,11 @@ export async function getSignedContract(){
     return contract
 }
 
+export async function getListener(){
+    const contract = await connection.getListenerInstance(address, abi)
+    return contract
+}
+
 ///view functions
 export async function getCharacterProperties(character_id){
     const contract = await getContract()

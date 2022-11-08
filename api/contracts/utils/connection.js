@@ -29,3 +29,10 @@ export async function getSignedContractInstance(address, abi){
     const contract = new ethers.Contract(address, abi, signer)
     return contract
 }
+
+export async function getListenerInstance(address, abi){
+    const provider = await getProvider(rpcUrl)
+    provider.pollingInterval = 1000;
+    const contract = new ethers.Contract(address, abi, provider)
+    return contract
+}
