@@ -70,50 +70,50 @@ const testnet_deployments = {
             abi: ""
         }
     },
-    equipments: {
-        nftContract: {
-            address: "0xbd81474EAf303aaD7b68C1a81Ad80D10e7722297",
-            abi: ''
-        },
-        minter: {
-            address: "0x27ad3E9a23095b9d68142411fa46ccCc1c559650",
-            abi: ''
-        },
-        vrf: {
-            address: "0xe0CE2F5521a45B185AD5619b8b2aFD55e40E71c2",
-            abi: ''
-        },
-        manager: {
-            address: "0xAbf887734Ad9b5CAC7B5e66c6940F66b4b160119",
-            abi: ''
-        }
-    },
     characters: {
         nftContract: {
-            address: "0x933d54A8e613b1ACb8D16CF47aF5d921f8EF8b37",
+            address: "0xD458b05052A64A01Ec4cbe251F1EEc4FD144737E",
             abi: ''
         },
         minter: {
-            address: "0x090BB382Fc6eeC090F13F521B928d1A0e969A515",
+            address: "0x75B68DE2b7024fE3877E9f5fe46EA704c36Dfb5a",
             abi: ''
         },
         vrf: {
-            address: "0x3a6808C30537e6d1f9881c4b63BF7489c29c9fBC",
+            address: "0x16927Bb1C7d8972AAb642731b6F447A02f39afBf",
             abi: ''
         },
         uriConstructor: {
-            address: "0x06A81b46eD4aE70B22B9579532de1C6db9AF77E5"
+            address: "0x1D5f8A622DCF5f0fC6B70e8978DDDa31DEfBfFF8"
+        }
+    },
+    equipments: {
+        nftContract: {
+            address: "0xCb6db41952238ec5f81e878D1dA4BC1B1c285283",
+            abi: ''
+        },
+        minter: {
+            address: "0x32a4f480167b269773313678Aa6a14dE15238074",
+            abi: ''
+        },
+        vrf: {
+            address: "0xDF4F4324b0df51abB5EEa6D09956CfcB16F6c958",
+            abi: ''
+        },
+        manager: {
+            address: "0x45e34C818c231b8B5d6099b849aeEaD1A318e7c1",
+            abi: ''
         }
     },
     dungeons: {
         dungeon: {
-            address: "0x28f56aE97E3aeEFbe4404EcD5a59A5Ca3bD73731",
+            address: "0xe8E9ED98B4808092f9C5a52c81DDF3687666B849",
         },
         vrf: {
-            address: "0x44f0AB2fDc1AB4313DAECE494c44e8be6F19C911"
+            address: "0x903b393d273408BC480e0718A3463b448B25dc8B"
         },
         keeper: {
-            address: "0xe9b50Bc9F3D185d890d605dEEaCd4a4E8f7d78C6"
+            address: "0xE3f1FE9FE8f626c7C94a2620a3Dc10f8780c11Ed"
             ///Register new upkeep in https://automation.chain.link
         }
     }

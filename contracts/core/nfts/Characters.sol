@@ -17,7 +17,7 @@ import "../../periphery/libraries/characters/CharacterLibrary.sol";
 import "../../periphery/libraries/characters/CharacterStatsCalculator.sol";
 
 interface _EquipmentManager {
-    function unEquipAllFromTransfer(uint256 _character_id) external;
+    function unequipAllFromTransfer(uint256 _character_id) external;
 }
 
 interface _CharacterUriConstructor {
@@ -40,8 +40,8 @@ contract Characters is ERC721, ERC721Enumerable, Ownable {
     ///The address for the character updater
     address private dungeon;
 
-    event CharacterMinted(uint256 indexed character_id, character_properties character_props);
-    event CharacterUpdated(uint256 indexed character_id, character_properties character_props);
+    event CharacterMinted(uint256 indexed character_id, address user, string char_name, character_properties character_props);
+    event CharacterUpdated(uint256 indexed character_id, string char_name, character_properties character_props);
 
     constructor() ERC721("Characters", "CTRS") {
     }
@@ -51,7 +51,7 @@ contract Characters is ERC721, ERC721Enumerable, Ownable {
         character[character_ids.current()] = character_props;
         character_name[character_ids.current()] = _character_name;
         _mint(user, character_ids.current());
-        emit CharacterMinted(character_ids.current(), character[character_ids.current()]);
+        emit CharacterMinted(character_ids.current(), user, character_name[character_ids.current()], character[character_ids.current()]);
     }
 
     ///@notice An easy way of fetching real-time character data. No need to create a subgraph for this.
@@ -61,9 +61,9 @@ contract Characters is ERC721, ERC721Enumerable, Ownable {
     }
 
     ///@notice This function can only be called by the updater contract which shall be responsible for doing the necessary checks.
-    function updateCharacter(uint256 tokenId, character_properties memory updated_props) public onlyDungeon{
+    function updateCharacter(uint256 tokenId, string memory char_name, character_properties memory updated_props) public onlyDungeon{
         character[tokenId] = updated_props;
-        emit CharacterUpdated(tokenId, updated_props);
+        emit CharacterUpdated(tokenId, char_name, updated_props);
     }    
 
     ///@notice This function sets the minter contract.
@@ -181,7 +181,7 @@ contract Characters is ERC721, ERC721Enumerable, Ownable {
     {   
         ///@notice The unequip function in the managere would only fire from subsequent transfers after the initial transfer from mint.
         if(from != address(0)){
-            equipmentManager.unEquipAllFromTransfer(tokenId);
+            equipmentManager.unequipAllFromTransfer(tokenId);
         }
         super._beforeTokenTransfer(from, to, tokenId);
     }

@@ -1,0 +1,29 @@
+type Owner @entity {
+  id: ID!
+  characters: [Character!]! @derivedFrom(field: "owner")
+}
+
+type Minter @entity {
+  id: ID!
+  characters: [Character!]! @derivedFrom(field: "minter")
+}
+
+type Character @entity {
+  id: ID!
+  idNum: Int
+  owner: Owner
+  minter: Minter
+  character_name: String
+  character_class: Int
+  element: Int
+  str: Int
+  vit: Int
+  dex: Int
+  talent: Int
+  mood: Int
+  exp: Int
+}
+
+
+
+

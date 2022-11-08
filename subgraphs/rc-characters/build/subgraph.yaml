@@ -1,0 +1,41 @@
+specVersion: 0.0.4
+schema:
+  file: schema.graphql
+dataSources:
+  - kind: ethereum
+    name: Characters
+    network: mumbai
+    source:
+      address: "0xD458b05052A64A01Ec4cbe251F1EEc4FD144737E"
+      abi: Characters
+      startBlock: 29035351
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.6
+      language: wasm/assemblyscript
+      entities:
+        - Approval
+        - ApprovalForAll
+        - CharacterMinted
+        - CharacterUpdated
+        - OwnershipTransferred
+        - Transfer
+      abis:
+        - name: Characters
+          file: Characters\abis\Characters.json
+      eventHandlers:
+        - event: Approval(indexed address,indexed address,indexed uint256)
+          handler: handleApproval
+        - event: ApprovalForAll(indexed address,indexed address,bool)
+          handler: handleApprovalForAll
+        - event: CharacterMinted(indexed
+            uint256,address,string,(uint32,uint32,uint32,uint32,uint32,uint32,uint32,uint32))
+          handler: handleCharacterMinted
+        - event: CharacterUpdated(indexed
+            uint256,string,(uint32,uint32,uint32,uint32,uint32,uint32,uint32,uint32))
+          handler: handleCharacterUpdated
+        - event: OwnershipTransferred(indexed address,indexed address)
+          handler: handleOwnershipTransferred
+        - event: Transfer(indexed address,indexed address,indexed uint256)
+          handler: handleTransfer
+      file: Characters\Characters.wasm

@@ -16,7 +16,7 @@ import "../../periphery/libraries/equipment/EquipmentLibrary.sol";
 import "../../periphery/libraries/structs/GlobalStructs.sol";
 
 interface _EquipmentManager {
-    function unEquipItemFromTransfer(uint256 _equipment_id) external;
+    function unequipItemFromTransfer(uint256 _equipment_id) external;
 }
 
 contract Equipments is ERC721, ERC721Enumerable, Ownable {
@@ -33,7 +33,7 @@ contract Equipments is ERC721, ERC721Enumerable, Ownable {
     ///The address for the minter router
     address private equipment_minter;
 
-    event EquipmentMinted(uint256 indexed equipment_id, equipment_properties equipment_props, battle_stats equipment_stats);
+    event EquipmentMinted(uint256 indexed equipment_id, address user, equipment_properties equipment_props, battle_stats equipment_stats);
 
     constructor() ERC721("Equipments", "EQPTS") {
     }
@@ -45,7 +45,7 @@ contract Equipments is ERC721, ERC721Enumerable, Ownable {
         equipment[equipment_ids.current()] = equipment_props;
         stats[equipment_ids.current()] = _equipment_stats;
         _mint(user, equipment_ids.current());
-        emit EquipmentMinted(equipment_ids.current(), equipment[equipment_ids.current()], stats[equipment_ids.current()]);
+        emit EquipmentMinted(equipment_ids.current(), user, equipment[equipment_ids.current()], stats[equipment_ids.current()]);
     }
 
     ///@notice This function sets the minter contract.
@@ -129,7 +129,7 @@ contract Equipments is ERC721, ERC721Enumerable, Ownable {
     {   
         ///@notice The unequip function in the managere would only fire from subsequent transfers after the initial transfer from mint.
         if(from != address(0)){
-            equipmentManager.unEquipItemFromTransfer(tokenId);
+            equipmentManager.unequipItemFromTransfer(tokenId);
         }
         super._beforeTokenTransfer(from, to, tokenId);
     }
