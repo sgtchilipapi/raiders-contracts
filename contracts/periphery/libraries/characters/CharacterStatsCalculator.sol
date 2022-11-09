@@ -27,6 +27,7 @@ library CharacterStatsCalculator{
         attack_power = (((properties.str * 6) + (properties.dex * 4)) / 10) / 4;
         uint256 attack_bonus;
         if(properties.character_class == 0){attack_bonus = 5;} //Viking
+        if(properties.talent == 0){attack_bonus += 5;} //Combat Psycho
         attack_power += (attack_power * attack_bonus) / 100;
     }
 
@@ -34,6 +35,7 @@ library CharacterStatsCalculator{
         penetration_chance = (properties.str / 2);
         uint256 penetration_bonus;
         if(properties.character_class == 1){penetration_bonus = 10;} //Woodcutter
+        if(properties.talent == 1){penetration_bonus += 10;} //Woodcutter
         penetration_chance += (penetration_chance * penetration_bonus) / 100;
     }
 
@@ -41,6 +43,7 @@ library CharacterStatsCalculator{
         hp = (properties.vit * 5);
         uint256 hp_bonus;
         if(properties.character_class == 2){hp_bonus = 3;} //Troll
+        if(properties.talent == 2){hp_bonus += 3;} //Body Builder
         hp += (hp * hp_bonus) / 100;
     }
 
@@ -48,6 +51,7 @@ library CharacterStatsCalculator{
         defense = (((properties.vit * 6) + (properties.str * 4)) / 10) / 2;
         uint256 defense_bonus;
         if(properties.character_class == 3){defense_bonus = 10;} //Troll
+        if(properties.talent == 3){defense_bonus += 10;} //Iron Skin
         defense += (defense * defense_bonus) / 100;
     }
 
@@ -55,12 +59,14 @@ library CharacterStatsCalculator{
         critical_chance = (properties.dex / 2);
         uint256 critical_bonus;
         if(properties.character_class == 4){critical_bonus = 10;} //Zooka
+        if(properties.talent == 4){critical_bonus += 10;} //Sniper
         critical_chance += (critical_chance * critical_bonus) / 100;
     }
     function getEvasionChance(character_properties memory properties) internal pure returns (uint256 evasion_chance){
         evasion_chance = (((properties.dex * 6) + (properties.vit * 4)) / 10) / 2;
         uint256 evasion_bonus;
         if(properties.character_class == 5){evasion_bonus = 10;} //Graverobber
+        if(properties.talent == 5){evasion_bonus += 10;} //Ninja
         evasion_chance += (evasion_chance * evasion_bonus) / 100;
     }
 

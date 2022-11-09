@@ -19,6 +19,7 @@ struct character_uri_details {
     string mood;
     string bonus;
     string bonus_value;
+    string talent_value;
 }
 
 struct character_request { //SSTORED

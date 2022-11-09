@@ -72,19 +72,19 @@ const testnet_deployments = {
     },
     characters: {
         nftContract: {
-            address: "0x0F1fFfD038752e9f1A8FBDBc976CdB4ef7434C33",
+            address: "0xCB0293C2c3ABd2adBe25905a0f566A7C31b738a3",
             abi: ''
         },
         minter: {
-            address: "0xA75ab2C87eD694bE760Eb05857bDbB141A272385",
+            address: "0xa6cD2193aEb159c17eF92A24190a0b4F8f86b8d5",
             abi: ''
         },
         vrf: {
-            address: "0x7A671D5Fb45108582996bDC079AfDDDC7D08d439",
+            address: "0x5ED11F3ac56104B9f9D1Ea6bA54631254C3839Cd",
             abi: ''
         },
         uriConstructor: {
-            address: "0xb60d4a04122903Def494AFC6BF7F14AACa192052"
+            address: "0xd3e201128110CFaDd4A2f82c3A689763E22B76D9"
         }
     },
     equipments: {

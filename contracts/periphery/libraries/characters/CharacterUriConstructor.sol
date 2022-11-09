@@ -16,7 +16,7 @@ contract CharacterUriConstructor {
                 Base64.encode(
                     abi.encodePacked(
                                 encodeDetails(uri_details, _character_name),
-                                encodeProps(character_props),
+                                encodeProps(character_props, uri_details),
                                 encodeStats(CharacterStatsCalculator.getCharacter(character_props))
                     )
                 )
@@ -33,7 +33,7 @@ contract CharacterUriConstructor {
         );
     }
 
-    function encodeProps(character_properties memory character_props) internal pure returns (string memory props_part){
+    function encodeProps(character_properties memory character_props, character_uri_details memory uri_details) internal pure returns (string memory props_part){
         props_part = string.concat(
                                 ', {"trait_type": "STR", "max_value": 1000, "value": ', Strings.toString(character_props.str),
                                 '}, {"trait_type": "VIT", "max_value": 1000, "value": ', Strings.toString(character_props.vit),
@@ -41,7 +41,7 @@ contract CharacterUriConstructor {
                                 '}, {"trait_type": "Character Level", "max_value": 100, "value": ', Strings.toString((character_props.exp / 100) + 1),
                                 '}, {"trait_type": "element", "value": "', CharacterLibrary.getElement(character_props.element),
                                 '"}, {"display_type": "boost_percentage", "trait_type": "', CharacterLibrary.getTalent(character_props.talent),
-                                '", "value": 10}'
+                                '", "value": ', uri_details.talent_value,'}'
         );
     }
 
