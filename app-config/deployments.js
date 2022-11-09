@@ -119,6 +119,13 @@ const testnet_deployments = {
     }
 }
 
+const subgraph_deployments = {
+    core: {
+        characters: 'https://api.thegraph.com/subgraphs/name/sgtchilipapi/rc-characters'
+    }
+}
+
 module.exports = {
-    contracts: testnet_deployments
+    contracts: testnet_deployments,
+    subgraphs: subgraph_deployments
 }
