@@ -1,6 +1,7 @@
 const deployments = require("../../../../app-config/deployments")
 const abis = require("../../../../app-config/contract-abis")
 import * as connection from "../../utils/connection"
+import { useAccount, useContract, useContractWrite, usePrepareContractWrite } from "wagmi"
 
 ///contract config
 const address = deployments.contracts.characters.nftContract.address
@@ -23,6 +24,12 @@ export async function getListener(){
 }
 
 ///view functions
+export async function getCharacter(character_id){
+    const contract = await getContract()
+    const char = await contract.getCharacter(character_id)
+    return char
+}
+
 export async function getCharacterProperties(character_id){
     const contract = await getContract()
     const char_props = await contract.character(character_id)

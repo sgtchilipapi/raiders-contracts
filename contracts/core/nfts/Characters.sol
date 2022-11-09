@@ -55,7 +55,8 @@ contract Characters is ERC721, ERC721Enumerable, Ownable {
     }
 
     ///@notice An easy way of fetching real-time character data. No need to create a subgraph for this.
-    function getCharacter(uint256 character_id) public view returns (character_properties memory char_props, battle_stats memory char_stats){
+    function getCharacter(uint256 character_id) public view returns (string memory char_name, character_properties memory char_props, battle_stats memory char_stats){
+        char_name = character_name[character_id];
         char_props = character[character_id];
         char_stats = CharacterStatsCalculator.getCharacter(char_props);
     }

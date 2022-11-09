@@ -12,7 +12,8 @@ module.exports = {
     core:{
         ctrs: characters_api,
         eqpts: equipments_api,
-        tokens: tokens_api
+        tokens: tokens_api,
+        dungeons: dungeons_api
     },
     periphery:{
         chainlink:{
