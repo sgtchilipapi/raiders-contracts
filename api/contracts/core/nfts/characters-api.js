@@ -48,6 +48,18 @@ export async function getTokenUri(character_id){
     return char_uri
 }
 
+export async function getCharacterCount(address){
+    const contract = await getContract()
+    const total = await contract.balanceOf(address)
+    return total
+}
+
+export async function getCharacterByIndex(address, index){
+    const contract = await getContract()
+    const char = await contract.tokenOfOwnerByIndex(address, index)
+    return char
+}
+
 ///transaction functions
 export async function transfer(from, to, character_id){
     const contract = await getSignedContract()

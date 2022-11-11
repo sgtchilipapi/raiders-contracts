@@ -383,30 +383,38 @@ export class Characters__getCharacterResultChar_statsStruct extends ethereum.Tup
 }
 
 export class Characters__getCharacterResult {
-  value0: Characters__getCharacterResultChar_propsStruct;
-  value1: Characters__getCharacterResultChar_statsStruct;
+  value0: string;
+  value1: Characters__getCharacterResultChar_propsStruct;
+  value2: Characters__getCharacterResultChar_statsStruct;
 
   constructor(
-    value0: Characters__getCharacterResultChar_propsStruct,
-    value1: Characters__getCharacterResultChar_statsStruct
+    value0: string,
+    value1: Characters__getCharacterResultChar_propsStruct,
+    value2: Characters__getCharacterResultChar_statsStruct
   ) {
     this.value0 = value0;
     this.value1 = value1;
+    this.value2 = value2;
   }
 
   toMap(): TypedMap<string, ethereum.Value> {
     let map = new TypedMap<string, ethereum.Value>();
-    map.set("value0", ethereum.Value.fromTuple(this.value0));
+    map.set("value0", ethereum.Value.fromString(this.value0));
     map.set("value1", ethereum.Value.fromTuple(this.value1));
+    map.set("value2", ethereum.Value.fromTuple(this.value2));
     return map;
   }
 
-  getChar_props(): Characters__getCharacterResultChar_propsStruct {
+  getChar_name(): string {
     return this.value0;
   }
 
-  getChar_stats(): Characters__getCharacterResultChar_statsStruct {
+  getChar_props(): Characters__getCharacterResultChar_propsStruct {
     return this.value1;
+  }
+
+  getChar_stats(): Characters__getCharacterResultChar_statsStruct {
+    return this.value2;
   }
 }
 
@@ -526,18 +534,17 @@ export class Characters extends ethereum.SmartContract {
   getCharacter(character_id: BigInt): Characters__getCharacterResult {
     let result = super.call(
       "getCharacter",
-      "getCharacter(uint256):((uint32,uint32,uint32,uint32,uint32,uint32,uint32,uint32),(uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256))",
+      "getCharacter(uint256):(string,(uint32,uint32,uint32,uint32,uint32,uint32,uint32,uint32),(uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256))",
       [ethereum.Value.fromUnsignedBigInt(character_id)]
     );
 
-    return changetype<Characters__getCharacterResult>(
-      new Characters__getCharacterResult(
-        changetype<Characters__getCharacterResultChar_propsStruct>(
-          result[0].toTuple()
-        ),
-        changetype<Characters__getCharacterResultChar_statsStruct>(
-          result[1].toTuple()
-        )
+    return new Characters__getCharacterResult(
+      result[0].toString(),
+      changetype<Characters__getCharacterResultChar_propsStruct>(
+        result[1].toTuple()
+      ),
+      changetype<Characters__getCharacterResultChar_statsStruct>(
+        result[2].toTuple()
       )
     );
   }
@@ -547,7 +554,7 @@ export class Characters extends ethereum.SmartContract {
   ): ethereum.CallResult<Characters__getCharacterResult> {
     let result = super.tryCall(
       "getCharacter",
-      "getCharacter(uint256):((uint32,uint32,uint32,uint32,uint32,uint32,uint32,uint32),(uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256))",
+      "getCharacter(uint256):(string,(uint32,uint32,uint32,uint32,uint32,uint32,uint32,uint32),(uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256))",
       [ethereum.Value.fromUnsignedBigInt(character_id)]
     );
     if (result.reverted) {
@@ -555,14 +562,13 @@ export class Characters extends ethereum.SmartContract {
     }
     let value = result.value;
     return ethereum.CallResult.fromValue(
-      changetype<Characters__getCharacterResult>(
-        new Characters__getCharacterResult(
-          changetype<Characters__getCharacterResultChar_propsStruct>(
-            value[0].toTuple()
-          ),
-          changetype<Characters__getCharacterResultChar_statsStruct>(
-            value[1].toTuple()
-          )
+      new Characters__getCharacterResult(
+        value[0].toString(),
+        changetype<Characters__getCharacterResultChar_propsStruct>(
+          value[1].toTuple()
+        ),
+        changetype<Characters__getCharacterResultChar_statsStruct>(
+          value[2].toTuple()
         )
       )
     );

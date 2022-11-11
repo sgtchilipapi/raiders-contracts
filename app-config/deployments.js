@@ -89,15 +89,15 @@ const testnet_deployments = {
     },
     equipments: {
         nftContract: {
-            address: "0x7901A9408D5fD819355cd5Fb48973BdF003573de",
+            address: "0x27113760a72a3C8596BDac81c1aB76fe7858fAb3",
             abi: ''
         },
         minter: {
-            address: "0x5B173fF6aF29c4C53C05Ca67EF326C58AE99de71",
+            address: "0x3F2BFc4300e22Be4A626D84eF16522fA79f28fe2",
             abi: ''
         },
         vrf: {
-            address: "0x020DBfdCD5Dfd0d868072D1F7FC1dD6d12738226",
+            address: "0x2fE9A4DF71aAC8767BbdD850c2ceB52160AcB4f3",
             abi: ''
         },
         manager: {
@@ -107,13 +107,13 @@ const testnet_deployments = {
     },
     dungeons: {
         dungeon: {
-            address: "0xdce5db5D520c9F717920eAf142E7096132d9f74D",
+            address: "0xDf92C475470b3FeBFA50b7c4cC90cABE9fc24143",
         },
         vrf: {
-            address: "0x120E0f86412913a7D9123D82E6A1eDF5FA40a6F6"
+            address: "0xdfab1fDdCF21cC42f7079e57DE389693B100f31e"
         },
         keeper: {
-            address: "0xb482f6e2A4979aEB4F53FE19E0aaB51A0214391E"
+            address: "0xD4B5A75E7Cb2bBc70e5B3799d49E5f6510f4e48b"
             ///Register new upkeep in https://automation.chain.link
         }
     }

@@ -80,6 +80,6 @@ export function handleTransfer(event: Transfer): void {
   let character = Character.load(event.params.tokenId.toHexString())
   if (character) {
     character.owner = event.params.to.toHexString()
-    character!.save()
+    character.save()
   }
 }

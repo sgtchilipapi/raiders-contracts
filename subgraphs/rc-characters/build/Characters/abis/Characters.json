@@ -443,6 +443,11 @@
     "name": "getCharacter",
     "outputs": [
       {
+        "internalType": "string",
+        "name": "char_name",
+        "type": "string"
+      },
+      {
         "components": [
           {
             "internalType": "uint32",
