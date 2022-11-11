@@ -56,8 +56,8 @@ contract EquipmentManager {
 
         //Reference the equipment's _type prop to update the appropriate equipment slot (helm, armor, weapon, accessory) of the character.
         if(equipment.equipment_type == 0){equipWeapon(_character_id, _equipment_id);}
-        if(equipment.equipment_type == 1){equipHelm(_character_id, _equipment_id);}
-        if(equipment.equipment_type == 2){equipArmor(_character_id, _equipment_id);}
+        if(equipment.equipment_type == 1){equipArmor(_character_id, _equipment_id);}
+        if(equipment.equipment_type == 2){equipHelm(_character_id, _equipment_id);}
         if(equipment.equipment_type == 3){equipAccessory(_character_id, _equipment_id);}
     }
 
@@ -134,17 +134,17 @@ contract EquipmentManager {
     function unequipType(uint256 _character_id, uint256 equipment_type) public{
         require(character_contract.isOwner(msg.sender, _character_id), "EQPD: Cannot unequip from character not owned.");
         if(equipment_type == 0){unequipWeapon(_character_id);}
-        if(equipment_type == 1){unequipHelm(_character_id);}
-        if(equipment_type == 2){unequipArmor(_character_id);}
+        if(equipment_type == 1){unequipArmor(_character_id);}
+        if(equipment_type == 2){unequipHelm(_character_id);}
         if(equipment_type == 3){unequipAccessory(_character_id);}
     }
 
     ///@notice The owner can unequip everything from his character
     function unequipAll(uint256 _character_id) public{
         require(character_contract.isOwner(msg.sender, _character_id), "EQPD: Cannot unequip from character not owned.");
-        unequipHelm(_character_id);
-        unequipArmor(_character_id);
         unequipWeapon(_character_id);
+        unequipArmor(_character_id);
+        unequipHelm(_character_id);
         unequipAccessory(_character_id);
     }
 
@@ -153,8 +153,8 @@ contract EquipmentManager {
         if(equippedTo[_equipment_id] != 0){
             equipment_properties memory equipment =  equipment_contract.equipment(_equipment_id);
             if(equipment.equipment_type == 0){unequipWeapon(equippedTo[_equipment_id]);}
-            if(equipment.equipment_type == 1){unequipHelm(equippedTo[_equipment_id]);}
-            if(equipment.equipment_type == 2){unequipArmor(equippedTo[_equipment_id]);}
+            if(equipment.equipment_type == 1){unequipArmor(equippedTo[_equipment_id]);}
+            if(equipment.equipment_type == 2){unequipHelm(equippedTo[_equipment_id]);}
             if(equipment.equipment_type == 3){unequipAccessory(equippedTo[_equipment_id]);}
         }
         success = true;
@@ -162,9 +162,9 @@ contract EquipmentManager {
 
     ///@notice This is triggered everytime a character is transferred
     function unequipAllFromTransfer(uint256 _character_id) external onlyCharacterContract returns (bool success){
-        unequipHelm(_character_id);
-        unequipArmor(_character_id);
         unequipWeapon(_character_id);
+        unequipArmor(_character_id);
+        unequipHelm(_character_id);
         unequipAccessory(_character_id);
         success = true;
     }
