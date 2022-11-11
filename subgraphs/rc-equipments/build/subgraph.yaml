@@ -1,0 +1,37 @@
+specVersion: 0.0.4
+schema:
+  file: schema.graphql
+dataSources:
+  - kind: ethereum
+    name: Equipments
+    network: mumbai
+    source:
+      address: "0xAb06384e60B0b0ebBD603e023f32C39499BccB82"
+      abi: Equipments
+      startBlock: 29090007
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.6
+      language: wasm/assemblyscript
+      entities:
+        - Approval
+        - ApprovalForAll
+        - EquipmentMinted
+        - OwnershipTransferred
+        - Transfer
+      abis:
+        - name: Equipments
+          file: Equipments\abis\Equipments.json
+      eventHandlers:
+        - event: Approval(indexed address,indexed address,indexed uint256)
+          handler: handleApproval
+        - event: ApprovalForAll(indexed address,indexed address,bool)
+          handler: handleApprovalForAll
+        - event: EquipmentMinted(indexed
+            uint256,address,(uint64,uint64,uint64,uint64),(uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256))
+          handler: handleEquipmentMinted
+        - event: OwnershipTransferred(indexed address,indexed address)
+          handler: handleOwnershipTransferred
+        - event: Transfer(indexed address,indexed address,indexed uint256)
+          handler: handleTransfer
+      file: Equipments\Equipments.wasm

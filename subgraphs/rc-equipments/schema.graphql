@@ -1,0 +1,32 @@
+type Owner @entity {
+  id: ID!
+  equipments: [Equipment!]! @derivedFrom(field: "owner")
+}
+
+type Minter @entity {
+  id: ID!
+  equipments: [Equipment!]! @derivedFrom(field: "minter")
+}
+
+type Equipment @entity {
+  id: ID!
+  idNum: Int
+  owner: Owner
+  minter: Minter
+  equipment_type: Int
+  rarity: Int
+  dominant_stat: Int
+  extremity: Int
+  atk: Int
+  def: Int
+  eva: Int
+  hp: Int
+  pen: Int
+  crit: Int
+  luk: Int
+  res: Int
+}
+
+
+
+

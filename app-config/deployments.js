@@ -121,7 +121,8 @@ const testnet_deployments = {
 
 const subgraph_deployments = {
     core: {
-        characters: 'https://api.thegraph.com/subgraphs/name/sgtchilipapi/rc-characters'
+        characters: 'https://api.thegraph.com/subgraphs/name/sgtchilipapi/rc-characters',
+        equipments: 'https://api.thegraph.com/subgraphs/name/sgtchilipapi/rc-equipments'
     }
 }
 

@@ -18,31 +18,6 @@ const QueryCharactersOwned = `
   }
 `
 
-// const QueryCharacter = `
-//   query($raiderID: String) {
-//     raiderNFT(id: $raiderID){
-//         id
-//         idNum
-//         owner{
-//         id
-//         }
-//         faction{
-//         id
-//         }
-//         rClass{
-//         id
-//         }
-//         rName
-//         exp
-//         tokenURI
-//         combination
-//         edition{
-//         id
-//         }
-//     }
-//   }
-// `
-
 export async function getCharactersOwned(address) {
     const client = new ApolloClient({
         uri: characters_sg_deployment,
@@ -77,27 +52,3 @@ export async function getCharactersOwned(address) {
         })
     return (mappedItems)
 }
-
-// export async function getCharacter(id) {
-//     const client = new ApolloClient({
-//         uri: nftSubgraph,
-//         cache: new InMemoryCache(),
-//     })
-
-//     let raiderDetails
-//     await client
-//         .query({
-//             query: gql(QueryRaider),
-//             variables: {
-//                 raiderID: id
-//             },
-//         })
-//         .then((data) => {
-//             raiderDetails = data.data.raiderNFT
-//         })
-//         .catch((err) => {
-//             console.log('Error fetching raider details: ', err)
-//             raiderDetails = ""
-//         })
-//     return (raiderDetails)
-// }
