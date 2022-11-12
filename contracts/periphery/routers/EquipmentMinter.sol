@@ -61,7 +61,8 @@ contract EquipmentMinter is Ownable, Pausable{
     uint256 public mint_fee;
 
     ///mapping to restrict free mints to players/characters
-    mapping(uint256 => bool) public character_minted_free;
+    //character => equipment_type => bool
+    mapping(uint256 => mapping(uint256 => bool)) public character_minted_free;
 
     ///Arrays of addresses for the materials and catalyst tokens
     address[4] private materials_addresses;
@@ -149,7 +150,7 @@ contract EquipmentMinter is Ownable, Pausable{
 
     ///@notice This is to mint equipments for free to give out starting characters a minting experience. The free mint will always
     ///give out common equipment.
-    function requestEquipmentExperimentalFree(uint256 character_id, uint64 _equipment_type /**, uint32 item_count */) public payable whenNotPaused{
+    function requestEquipmentFree(uint256 character_id, uint64 _equipment_type /**, uint32 item_count */) public payable whenNotPaused{
         ///We can only allow one request per address at a time. A request shall be completed (minted the equipment) to be able request another one.
         equipment_request memory _request = request[msg.sender];
         require(_request.request_id == 0, "eMNTR: There is a request pending mint.");
@@ -160,8 +161,8 @@ contract EquipmentMinter is Ownable, Pausable{
         ///Require 0.01 msg.value
         require(msg.value >= (/**item_count */ 1 * mint_fee), "eMNTR: send 0.01 matic");
 
-        ///Allow only one free mint per character
-        require(!character_minted_free[character_id], "eMNTR: character already minted.");
+        ///Allow only one free mint per character per equipment
+        require(!character_minted_free[character_id][_equipment_type], "eMNTR: character already minted.");
 
         ///Allow only characters with exp greater than 200
         require(characters.character(character_id).exp > 200, "eMNTR: insuf char exp.");
@@ -170,13 +171,13 @@ contract EquipmentMinter is Ownable, Pausable{
         require(characters.isOwner(msg.sender, character_id), "eMNTR: character not owned.");
 
         ///Update the character and user mapping to free mints immediately after checking
-        character_minted_free[character_id] = true;
+        character_minted_free[character_id][_equipment_type] = true;
 
         ///@notice EXTCALL to VRF contract. Set the caller's current equipment_request to the returned request_id by the VRF contract.
         ///Using a constant 1. See above reason on line 57 (unwrapped).
         ///The first bool argument here notifies the vrf contract that the request being sent is experimental.
         request[msg.sender] = equipment_request({
-            request_id: randomizer.requestRandomWords(/**item_count */ msg.sender, 1, true),
+            request_id: randomizer.requestRandomWords(/**item_count */ msg.sender, 1, false),
             equipment_type: _equipment_type,
             number_of_items: 1,
             time_requested: block.timestamp,

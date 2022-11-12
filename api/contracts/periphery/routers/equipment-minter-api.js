@@ -25,9 +25,9 @@ export async function getRequest(address){
     return request
 }
 
-export async function characterMintedFree(character_id){
+export async function characterMintedFree(character_id, equipment_type){
     const contract = await getContract()
-    const minted_free = await contract.character_minted_free(character_id)
+    const minted_free = await contract.character_minted_free(character_id, equipment_type)
     return minted_free
 }
 
@@ -71,12 +71,12 @@ export async function requestEquipmentExperimental(type, value){
     return receipt
 }
 
-export async function requestEquipmentExperimentalFree(character_id, type, value){
+export async function requestEquipmentFree(character_id, type, value){
     const msgvalue = ethers.utils.parseEther(value)
     const contract = await getSignedContract()
-    const gas = parseInt(await contract.estimateGas.requestEquipmentExperimentalFree(character_id, type, {value: msgvalue}) * 1.15) ///Add 15% to heighten tx confirm chance
+    const gas = parseInt(await contract.estimateGas.requestEquipmentFree(character_id, type, {value: msgvalue}) * 1.15) ///Add 15% to heighten tx confirm chance
     const parsedGas = ethers.utils.parseUnits(gas.toString(), "wei")
-    const requestTx = await contract.requestEquipmentExperimentalFree(character_id, type, {value: msgvalue, gasLimit: parsedGas})
+    const requestTx = await contract.requestEquipmentFree(character_id, type, {value: msgvalue, gasLimit: parsedGas})
     const receipt = await requestTx.wait()
     return receipt
 }

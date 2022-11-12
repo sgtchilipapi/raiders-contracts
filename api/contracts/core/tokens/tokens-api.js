@@ -73,9 +73,11 @@ export async function allowance(token_name, address, spender_name){
 }
 
 ///transaction functions
-export async function approve(token_name, spender, amount){
+export async function approve(token_name, spender_name, amount){
+    const amt = ethers.utils.parseEther(amount)
     const contract = await getSignedContract(token_name)
-    const approve_tx = await contract.approve(spender, amount)
+    const spender_address = getSpender(spender_name)
+    const approve_tx = await contract.approve(spender_address, amt)
     const receipt = approve_tx.wait()
     return receipt
 }
