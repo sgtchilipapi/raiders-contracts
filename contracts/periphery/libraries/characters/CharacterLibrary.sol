@@ -42,7 +42,7 @@ library CharacterLibrary {
         if(mood == 4){mood_tag = "Mocking";}
         if(mood == 5){mood_tag = "Sad";}
         if(mood == 6){mood_tag = "Scared";}
-        if(mood == 7){mood_tag = "Stunning";}
+        if(mood == 7){mood_tag = "Stunned";}
         if(mood == 8){mood_tag = "Thoughtful";}
         if(mood == 9){mood_tag = "Upset";}
     }

@@ -6,9 +6,9 @@ dataSources:
     name: Characters
     network: mumbai
     source:
-      address: "0xC771b4b58A0D41C7cf561CCE3AAb3E00FDC08ac6"
+      address: "0x72C2f48FCc08A863e71258E665A395e2a5D407bc"
       abi: Characters
-      startBlock: 29105229
+      startBlock: 29116690
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
