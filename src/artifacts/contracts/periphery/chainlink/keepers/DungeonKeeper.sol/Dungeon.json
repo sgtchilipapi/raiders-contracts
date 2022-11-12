@@ -1,0 +1,18 @@
+{
+  "_format": "hh-sol-artifact-1",
+  "contractName": "Dungeon",
+  "sourceName": "contracts/periphery/chainlink/keepers/DungeonKeeper.sol",
+  "abi": [
+    {
+      "inputs": [],
+      "name": "replenishDungeonLoot",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    }
+  ],
+  "bytecode": "0x",
+  "deployedBytecode": "0x",
+  "linkReferences": {},
+  "deployedLinkReferences": {}
+}

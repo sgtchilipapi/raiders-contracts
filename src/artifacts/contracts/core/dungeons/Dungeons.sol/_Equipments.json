@@ -1,0 +1,72 @@
+{
+  "_format": "hh-sol-artifact-1",
+  "contractName": "_Equipments",
+  "sourceName": "contracts/core/dungeons/Dungeons.sol",
+  "abi": [
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_equipment_id",
+          "type": "uint256"
+        }
+      ],
+      "name": "stats",
+      "outputs": [
+        {
+          "components": [
+            {
+              "internalType": "uint256",
+              "name": "atk",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "def",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "eva",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "hp",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "pen",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "crit",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "luck",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "energy_restoration",
+              "type": "uint256"
+            }
+          ],
+          "internalType": "struct battle_stats",
+          "name": "",
+          "type": "tuple"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    }
+  ],
+  "bytecode": "0x",
+  "deployedBytecode": "0x",
+  "linkReferences": {},
+  "deployedLinkReferences": {}
+}

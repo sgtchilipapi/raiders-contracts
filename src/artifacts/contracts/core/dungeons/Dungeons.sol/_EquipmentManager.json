@@ -1,0 +1,52 @@
+{
+  "_format": "hh-sol-artifact-1",
+  "contractName": "_EquipmentManager",
+  "sourceName": "contracts/core/dungeons/Dungeons.sol",
+  "abi": [
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "character_id",
+          "type": "uint256"
+        }
+      ],
+      "name": "equippedWith",
+      "outputs": [
+        {
+          "components": [
+            {
+              "internalType": "uint64",
+              "name": "headgear",
+              "type": "uint64"
+            },
+            {
+              "internalType": "uint64",
+              "name": "armor",
+              "type": "uint64"
+            },
+            {
+              "internalType": "uint64",
+              "name": "weapon",
+              "type": "uint64"
+            },
+            {
+              "internalType": "uint64",
+              "name": "accessory",
+              "type": "uint64"
+            }
+          ],
+          "internalType": "struct character_equipments",
+          "name": "",
+          "type": "tuple"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    }
+  ],
+  "bytecode": "0x",
+  "deployedBytecode": "0x",
+  "linkReferences": {},
+  "deployedLinkReferences": {}
+}

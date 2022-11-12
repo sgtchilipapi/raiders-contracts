@@ -1,0 +1,76 @@
+{
+  "_format": "hh-sol-artifact-1",
+  "contractName": "IEquipment",
+  "sourceName": "contracts/periphery/equipments/EquipmentManager.sol",
+  "abi": [
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_equipment_id",
+          "type": "uint256"
+        }
+      ],
+      "name": "equipment",
+      "outputs": [
+        {
+          "components": [
+            {
+              "internalType": "uint64",
+              "name": "equipment_type",
+              "type": "uint64"
+            },
+            {
+              "internalType": "uint64",
+              "name": "rarity",
+              "type": "uint64"
+            },
+            {
+              "internalType": "uint64",
+              "name": "dominant_stat",
+              "type": "uint64"
+            },
+            {
+              "internalType": "uint64",
+              "name": "extremity",
+              "type": "uint64"
+            }
+          ],
+          "internalType": "struct equipment_properties",
+          "name": "",
+          "type": "tuple"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_owner",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_equipment",
+          "type": "uint256"
+        }
+      ],
+      "name": "isOwner",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    }
+  ],
+  "bytecode": "0x",
+  "deployedBytecode": "0x",
+  "linkReferences": {},
+  "deployedLinkReferences": {}
+}

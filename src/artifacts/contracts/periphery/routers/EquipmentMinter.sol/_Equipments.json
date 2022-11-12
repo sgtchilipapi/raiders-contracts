@@ -1,0 +1,98 @@
+{
+  "_format": "hh-sol-artifact-1",
+  "contractName": "_Equipments",
+  "sourceName": "contracts/periphery/routers/EquipmentMinter.sol",
+  "abi": [
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "user",
+          "type": "address"
+        },
+        {
+          "components": [
+            {
+              "internalType": "uint64",
+              "name": "equipment_type",
+              "type": "uint64"
+            },
+            {
+              "internalType": "uint64",
+              "name": "rarity",
+              "type": "uint64"
+            },
+            {
+              "internalType": "uint64",
+              "name": "dominant_stat",
+              "type": "uint64"
+            },
+            {
+              "internalType": "uint64",
+              "name": "extremity",
+              "type": "uint64"
+            }
+          ],
+          "internalType": "struct equipment_properties",
+          "name": "equipment_props",
+          "type": "tuple"
+        },
+        {
+          "components": [
+            {
+              "internalType": "uint256",
+              "name": "atk",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "def",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "eva",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "hp",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "pen",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "crit",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "luck",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "energy_restoration",
+              "type": "uint256"
+            }
+          ],
+          "internalType": "struct battle_stats",
+          "name": "_equipment_stats",
+          "type": "tuple"
+        }
+      ],
+      "name": "_mintEquipment",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    }
+  ],
+  "bytecode": "0x",
+  "deployedBytecode": "0x",
+  "linkReferences": {},
+  "deployedLinkReferences": {}
+}

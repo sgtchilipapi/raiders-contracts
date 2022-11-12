@@ -1,0 +1,76 @@
+{
+  "_format": "hh-sol-artifact-1",
+  "contractName": "_Characters",
+  "sourceName": "contracts/periphery/routers/CharacterMinter.sol",
+  "abi": [
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "user",
+          "type": "address"
+        },
+        {
+          "components": [
+            {
+              "internalType": "uint32",
+              "name": "character_class",
+              "type": "uint32"
+            },
+            {
+              "internalType": "uint32",
+              "name": "element",
+              "type": "uint32"
+            },
+            {
+              "internalType": "uint32",
+              "name": "str",
+              "type": "uint32"
+            },
+            {
+              "internalType": "uint32",
+              "name": "vit",
+              "type": "uint32"
+            },
+            {
+              "internalType": "uint32",
+              "name": "dex",
+              "type": "uint32"
+            },
+            {
+              "internalType": "uint32",
+              "name": "talent",
+              "type": "uint32"
+            },
+            {
+              "internalType": "uint32",
+              "name": "mood",
+              "type": "uint32"
+            },
+            {
+              "internalType": "uint32",
+              "name": "exp",
+              "type": "uint32"
+            }
+          ],
+          "internalType": "struct character_properties",
+          "name": "character_props",
+          "type": "tuple"
+        },
+        {
+          "internalType": "string",
+          "name": "_character_name",
+          "type": "string"
+        }
+      ],
+      "name": "_mintCharacter",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    }
+  ],
+  "bytecode": "0x",
+  "deployedBytecode": "0x",
+  "linkReferences": {},
+  "deployedLinkReferences": {}
+}

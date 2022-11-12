@@ -1,0 +1,77 @@
+{
+  "_format": "hh-sol-artifact-1",
+  "contractName": "_EquipmentLibrary",
+  "sourceName": "contracts/periphery/routers/EquipmentMinter.sol",
+  "abi": [
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_type",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_rarity",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_dominant_stat",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "extremity",
+          "type": "uint256"
+        }
+      ],
+      "name": "getEquipmentDetails",
+      "outputs": [
+        {
+          "components": [
+            {
+              "internalType": "bytes",
+              "name": "name",
+              "type": "bytes"
+            },
+            {
+              "internalType": "bytes",
+              "name": "image",
+              "type": "bytes"
+            },
+            {
+              "internalType": "bytes",
+              "name": "type_tag",
+              "type": "bytes"
+            },
+            {
+              "internalType": "bytes",
+              "name": "rarity_tag",
+              "type": "bytes"
+            },
+            {
+              "internalType": "bytes",
+              "name": "dominant_stat_tag",
+              "type": "bytes"
+            },
+            {
+              "internalType": "bytes",
+              "name": "extremity_tag",
+              "type": "bytes"
+            }
+          ],
+          "internalType": "struct equipment_details",
+          "name": "",
+          "type": "tuple"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    }
+  ],
+  "bytecode": "0x",
+  "deployedBytecode": "0x",
+  "linkReferences": {},
+  "deployedLinkReferences": {}
+}
