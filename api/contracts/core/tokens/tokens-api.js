@@ -39,6 +39,10 @@ function getAbi(token_name){
     }
 }
 
+function getSpender(spender_name){
+    if(spender_name == 'equipment_minter')return deployments.contracts.equipments.minter.address
+}
+
 ///contract connections
 async function getContract(token_name){
     const address = getTokenAddress(token_name)
@@ -58,6 +62,13 @@ async function getSignedContract(token_name){
 export async function balanceOf(token_name, address){
     const contract = await getContract(token_name)
     const balance = ethers.utils.formatUnits(await contract.balanceOf(address),18)
+    return balance
+}
+
+export async function allowance(token_name, address, spender_name){
+    const contract = await getContract(token_name)
+    const spender_address = getSpender(spender_name)
+    const balance = ethers.utils.formatUnits(await contract.allowance(address, spender_address),18)
     return balance
 }
 

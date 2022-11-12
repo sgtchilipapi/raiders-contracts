@@ -1,9 +1,5 @@
 [
-  {
-    "inputs": [],
-    "stateMutability": "nonpayable",
-    "type": "constructor"
-  },
+  { "inputs": [], "stateMutability": "nonpayable", "type": "constructor" },
   {
     "anonymous": false,
     "inputs": [
@@ -82,41 +78,13 @@
             "name": "character_class",
             "type": "uint32"
           },
-          {
-            "internalType": "uint32",
-            "name": "element",
-            "type": "uint32"
-          },
-          {
-            "internalType": "uint32",
-            "name": "str",
-            "type": "uint32"
-          },
-          {
-            "internalType": "uint32",
-            "name": "vit",
-            "type": "uint32"
-          },
-          {
-            "internalType": "uint32",
-            "name": "dex",
-            "type": "uint32"
-          },
-          {
-            "internalType": "uint32",
-            "name": "talent",
-            "type": "uint32"
-          },
-          {
-            "internalType": "uint32",
-            "name": "mood",
-            "type": "uint32"
-          },
-          {
-            "internalType": "uint32",
-            "name": "exp",
-            "type": "uint32"
-          }
+          { "internalType": "uint32", "name": "element", "type": "uint32" },
+          { "internalType": "uint32", "name": "str", "type": "uint32" },
+          { "internalType": "uint32", "name": "vit", "type": "uint32" },
+          { "internalType": "uint32", "name": "dex", "type": "uint32" },
+          { "internalType": "uint32", "name": "talent", "type": "uint32" },
+          { "internalType": "uint32", "name": "mood", "type": "uint32" },
+          { "internalType": "uint32", "name": "exp", "type": "uint32" }
         ],
         "indexed": false,
         "internalType": "struct character_properties",
@@ -149,41 +117,13 @@
             "name": "character_class",
             "type": "uint32"
           },
-          {
-            "internalType": "uint32",
-            "name": "element",
-            "type": "uint32"
-          },
-          {
-            "internalType": "uint32",
-            "name": "str",
-            "type": "uint32"
-          },
-          {
-            "internalType": "uint32",
-            "name": "vit",
-            "type": "uint32"
-          },
-          {
-            "internalType": "uint32",
-            "name": "dex",
-            "type": "uint32"
-          },
-          {
-            "internalType": "uint32",
-            "name": "talent",
-            "type": "uint32"
-          },
-          {
-            "internalType": "uint32",
-            "name": "mood",
-            "type": "uint32"
-          },
-          {
-            "internalType": "uint32",
-            "name": "exp",
-            "type": "uint32"
-          }
+          { "internalType": "uint32", "name": "element", "type": "uint32" },
+          { "internalType": "uint32", "name": "str", "type": "uint32" },
+          { "internalType": "uint32", "name": "vit", "type": "uint32" },
+          { "internalType": "uint32", "name": "dex", "type": "uint32" },
+          { "internalType": "uint32", "name": "talent", "type": "uint32" },
+          { "internalType": "uint32", "name": "mood", "type": "uint32" },
+          { "internalType": "uint32", "name": "exp", "type": "uint32" }
         ],
         "indexed": false,
         "internalType": "struct character_properties",
@@ -240,11 +180,7 @@
   },
   {
     "inputs": [
-      {
-        "internalType": "address",
-        "name": "user",
-        "type": "address"
-      },
+      { "internalType": "address", "name": "user", "type": "address" },
       {
         "components": [
           {
@@ -252,51 +188,19 @@
             "name": "character_class",
             "type": "uint32"
           },
-          {
-            "internalType": "uint32",
-            "name": "element",
-            "type": "uint32"
-          },
-          {
-            "internalType": "uint32",
-            "name": "str",
-            "type": "uint32"
-          },
-          {
-            "internalType": "uint32",
-            "name": "vit",
-            "type": "uint32"
-          },
-          {
-            "internalType": "uint32",
-            "name": "dex",
-            "type": "uint32"
-          },
-          {
-            "internalType": "uint32",
-            "name": "talent",
-            "type": "uint32"
-          },
-          {
-            "internalType": "uint32",
-            "name": "mood",
-            "type": "uint32"
-          },
-          {
-            "internalType": "uint32",
-            "name": "exp",
-            "type": "uint32"
-          }
+          { "internalType": "uint32", "name": "element", "type": "uint32" },
+          { "internalType": "uint32", "name": "str", "type": "uint32" },
+          { "internalType": "uint32", "name": "vit", "type": "uint32" },
+          { "internalType": "uint32", "name": "dex", "type": "uint32" },
+          { "internalType": "uint32", "name": "talent", "type": "uint32" },
+          { "internalType": "uint32", "name": "mood", "type": "uint32" },
+          { "internalType": "uint32", "name": "exp", "type": "uint32" }
         ],
         "internalType": "struct character_properties",
         "name": "character_props",
         "type": "tuple"
       },
-      {
-        "internalType": "string",
-        "name": "_character_name",
-        "type": "string"
-      }
+      { "internalType": "string", "name": "_character_name", "type": "string" }
     ],
     "name": "_mintCharacter",
     "outputs": [],
@@ -305,16 +209,8 @@
   },
   {
     "inputs": [
-      {
-        "internalType": "address",
-        "name": "to",
-        "type": "address"
-      },
-      {
-        "internalType": "uint256",
-        "name": "tokenId",
-        "type": "uint256"
-      }
+      { "internalType": "address", "name": "to", "type": "address" },
+      { "internalType": "uint256", "name": "tokenId", "type": "uint256" }
     ],
     "name": "approve",
     "outputs": [],
@@ -323,130 +219,52 @@
   },
   {
     "inputs": [
-      {
-        "internalType": "address",
-        "name": "owner",
-        "type": "address"
-      }
+      { "internalType": "address", "name": "owner", "type": "address" }
     ],
     "name": "balanceOf",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
+    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
     "stateMutability": "view",
     "type": "function"
   },
   {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
+    "inputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
     "name": "character",
     "outputs": [
-      {
-        "internalType": "uint32",
-        "name": "character_class",
-        "type": "uint32"
-      },
-      {
-        "internalType": "uint32",
-        "name": "element",
-        "type": "uint32"
-      },
-      {
-        "internalType": "uint32",
-        "name": "str",
-        "type": "uint32"
-      },
-      {
-        "internalType": "uint32",
-        "name": "vit",
-        "type": "uint32"
-      },
-      {
-        "internalType": "uint32",
-        "name": "dex",
-        "type": "uint32"
-      },
-      {
-        "internalType": "uint32",
-        "name": "talent",
-        "type": "uint32"
-      },
-      {
-        "internalType": "uint32",
-        "name": "mood",
-        "type": "uint32"
-      },
-      {
-        "internalType": "uint32",
-        "name": "exp",
-        "type": "uint32"
-      }
+      { "internalType": "uint32", "name": "character_class", "type": "uint32" },
+      { "internalType": "uint32", "name": "element", "type": "uint32" },
+      { "internalType": "uint32", "name": "str", "type": "uint32" },
+      { "internalType": "uint32", "name": "vit", "type": "uint32" },
+      { "internalType": "uint32", "name": "dex", "type": "uint32" },
+      { "internalType": "uint32", "name": "talent", "type": "uint32" },
+      { "internalType": "uint32", "name": "mood", "type": "uint32" },
+      { "internalType": "uint32", "name": "exp", "type": "uint32" }
     ],
     "stateMutability": "view",
     "type": "function"
   },
   {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
+    "inputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
     "name": "character_name",
-    "outputs": [
-      {
-        "internalType": "string",
-        "name": "",
-        "type": "string"
-      }
-    ],
+    "outputs": [{ "internalType": "string", "name": "", "type": "string" }],
     "stateMutability": "view",
     "type": "function"
   },
   {
     "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "tokenId",
-        "type": "uint256"
-      }
+      { "internalType": "uint256", "name": "tokenId", "type": "uint256" }
     ],
     "name": "getApproved",
-    "outputs": [
-      {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
-      }
-    ],
+    "outputs": [{ "internalType": "address", "name": "", "type": "address" }],
     "stateMutability": "view",
     "type": "function"
   },
   {
     "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "character_id",
-        "type": "uint256"
-      }
+      { "internalType": "uint256", "name": "character_id", "type": "uint256" }
     ],
     "name": "getCharacter",
     "outputs": [
-      {
-        "internalType": "string",
-        "name": "char_name",
-        "type": "string"
-      },
+      { "internalType": "string", "name": "char_name", "type": "string" },
       {
         "components": [
           {
@@ -454,41 +272,13 @@
             "name": "character_class",
             "type": "uint32"
           },
-          {
-            "internalType": "uint32",
-            "name": "element",
-            "type": "uint32"
-          },
-          {
-            "internalType": "uint32",
-            "name": "str",
-            "type": "uint32"
-          },
-          {
-            "internalType": "uint32",
-            "name": "vit",
-            "type": "uint32"
-          },
-          {
-            "internalType": "uint32",
-            "name": "dex",
-            "type": "uint32"
-          },
-          {
-            "internalType": "uint32",
-            "name": "talent",
-            "type": "uint32"
-          },
-          {
-            "internalType": "uint32",
-            "name": "mood",
-            "type": "uint32"
-          },
-          {
-            "internalType": "uint32",
-            "name": "exp",
-            "type": "uint32"
-          }
+          { "internalType": "uint32", "name": "element", "type": "uint32" },
+          { "internalType": "uint32", "name": "str", "type": "uint32" },
+          { "internalType": "uint32", "name": "vit", "type": "uint32" },
+          { "internalType": "uint32", "name": "dex", "type": "uint32" },
+          { "internalType": "uint32", "name": "talent", "type": "uint32" },
+          { "internalType": "uint32", "name": "mood", "type": "uint32" },
+          { "internalType": "uint32", "name": "exp", "type": "uint32" }
         ],
         "internalType": "struct character_properties",
         "name": "char_props",
@@ -496,41 +286,13 @@
       },
       {
         "components": [
-          {
-            "internalType": "uint256",
-            "name": "atk",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint256",
-            "name": "def",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint256",
-            "name": "eva",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint256",
-            "name": "hp",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint256",
-            "name": "pen",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint256",
-            "name": "crit",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint256",
-            "name": "luck",
-            "type": "uint256"
-          },
+          { "internalType": "uint256", "name": "atk", "type": "uint256" },
+          { "internalType": "uint256", "name": "def", "type": "uint256" },
+          { "internalType": "uint256", "name": "eva", "type": "uint256" },
+          { "internalType": "uint256", "name": "hp", "type": "uint256" },
+          { "internalType": "uint256", "name": "pen", "type": "uint256" },
+          { "internalType": "uint256", "name": "crit", "type": "uint256" },
+          { "internalType": "uint256", "name": "luck", "type": "uint256" },
           {
             "internalType": "uint256",
             "name": "energy_restoration",
@@ -547,94 +309,44 @@
   },
   {
     "inputs": [
-      {
-        "internalType": "address",
-        "name": "owner",
-        "type": "address"
-      },
-      {
-        "internalType": "address",
-        "name": "operator",
-        "type": "address"
-      }
+      { "internalType": "address", "name": "owner", "type": "address" },
+      { "internalType": "address", "name": "operator", "type": "address" }
     ],
     "name": "isApprovedForAll",
-    "outputs": [
-      {
-        "internalType": "bool",
-        "name": "",
-        "type": "bool"
-      }
-    ],
+    "outputs": [{ "internalType": "bool", "name": "", "type": "bool" }],
     "stateMutability": "view",
     "type": "function"
   },
   {
     "inputs": [
-      {
-        "internalType": "address",
-        "name": "_owner",
-        "type": "address"
-      },
-      {
-        "internalType": "uint256",
-        "name": "_character",
-        "type": "uint256"
-      }
+      { "internalType": "address", "name": "_owner", "type": "address" },
+      { "internalType": "uint256", "name": "_character", "type": "uint256" }
     ],
     "name": "isOwner",
-    "outputs": [
-      {
-        "internalType": "bool",
-        "name": "",
-        "type": "bool"
-      }
-    ],
+    "outputs": [{ "internalType": "bool", "name": "", "type": "bool" }],
     "stateMutability": "view",
     "type": "function"
   },
   {
     "inputs": [],
     "name": "name",
-    "outputs": [
-      {
-        "internalType": "string",
-        "name": "",
-        "type": "string"
-      }
-    ],
+    "outputs": [{ "internalType": "string", "name": "", "type": "string" }],
     "stateMutability": "view",
     "type": "function"
   },
   {
     "inputs": [],
     "name": "owner",
-    "outputs": [
-      {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
-      }
-    ],
+    "outputs": [{ "internalType": "address", "name": "", "type": "address" }],
     "stateMutability": "view",
     "type": "function"
   },
   {
     "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "tokenId",
-        "type": "uint256"
-      }
+      { "internalType": "uint256", "name": "tokenId", "type": "uint256" }
     ],
     "name": "ownerOf",
-    "outputs": [
-      {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
-      }
-    ],
+    "outputs": [{ "internalType": "address", "name": "", "type": "address" }],
     "stateMutability": "view",
     "type": "function"
   },
@@ -647,21 +359,9 @@
   },
   {
     "inputs": [
-      {
-        "internalType": "address",
-        "name": "from",
-        "type": "address"
-      },
-      {
-        "internalType": "address",
-        "name": "to",
-        "type": "address"
-      },
-      {
-        "internalType": "uint256",
-        "name": "tokenId",
-        "type": "uint256"
-      }
+      { "internalType": "address", "name": "from", "type": "address" },
+      { "internalType": "address", "name": "to", "type": "address" },
+      { "internalType": "uint256", "name": "tokenId", "type": "uint256" }
     ],
     "name": "safeTransferFrom",
     "outputs": [],
@@ -670,26 +370,10 @@
   },
   {
     "inputs": [
-      {
-        "internalType": "address",
-        "name": "from",
-        "type": "address"
-      },
-      {
-        "internalType": "address",
-        "name": "to",
-        "type": "address"
-      },
-      {
-        "internalType": "uint256",
-        "name": "tokenId",
-        "type": "uint256"
-      },
-      {
-        "internalType": "bytes",
-        "name": "data",
-        "type": "bytes"
-      }
+      { "internalType": "address", "name": "from", "type": "address" },
+      { "internalType": "address", "name": "to", "type": "address" },
+      { "internalType": "uint256", "name": "tokenId", "type": "uint256" },
+      { "internalType": "bytes", "name": "data", "type": "bytes" }
     ],
     "name": "safeTransferFrom",
     "outputs": [],
@@ -698,16 +382,8 @@
   },
   {
     "inputs": [
-      {
-        "internalType": "address",
-        "name": "operator",
-        "type": "address"
-      },
-      {
-        "internalType": "bool",
-        "name": "approved",
-        "type": "bool"
-      }
+      { "internalType": "address", "name": "operator", "type": "address" },
+      { "internalType": "bool", "name": "approved", "type": "bool" }
     ],
     "name": "setApprovalForAll",
     "outputs": [],
@@ -716,11 +392,7 @@
   },
   {
     "inputs": [
-      {
-        "internalType": "address",
-        "name": "dungeonAddress",
-        "type": "address"
-      }
+      { "internalType": "address", "name": "dungeonAddress", "type": "address" }
     ],
     "name": "setDungeon",
     "outputs": [],
@@ -729,11 +401,7 @@
   },
   {
     "inputs": [
-      {
-        "internalType": "address",
-        "name": "managerAddress",
-        "type": "address"
-      }
+      { "internalType": "address", "name": "managerAddress", "type": "address" }
     ],
     "name": "setEquipmentManager",
     "outputs": [],
@@ -742,11 +410,7 @@
   },
   {
     "inputs": [
-      {
-        "internalType": "address",
-        "name": "minterAddress",
-        "type": "address"
-      }
+      { "internalType": "address", "name": "minterAddress", "type": "address" }
     ],
     "name": "setMinter",
     "outputs": [],
@@ -768,94 +432,46 @@
   },
   {
     "inputs": [
-      {
-        "internalType": "bytes4",
-        "name": "interfaceId",
-        "type": "bytes4"
-      }
+      { "internalType": "bytes4", "name": "interfaceId", "type": "bytes4" }
     ],
     "name": "supportsInterface",
-    "outputs": [
-      {
-        "internalType": "bool",
-        "name": "",
-        "type": "bool"
-      }
-    ],
+    "outputs": [{ "internalType": "bool", "name": "", "type": "bool" }],
     "stateMutability": "view",
     "type": "function"
   },
   {
     "inputs": [],
     "name": "symbol",
-    "outputs": [
-      {
-        "internalType": "string",
-        "name": "",
-        "type": "string"
-      }
-    ],
+    "outputs": [{ "internalType": "string", "name": "", "type": "string" }],
     "stateMutability": "view",
     "type": "function"
   },
   {
     "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "index",
-        "type": "uint256"
-      }
+      { "internalType": "uint256", "name": "index", "type": "uint256" }
     ],
     "name": "tokenByIndex",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
+    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
     "stateMutability": "view",
     "type": "function"
   },
   {
     "inputs": [
-      {
-        "internalType": "address",
-        "name": "owner",
-        "type": "address"
-      },
-      {
-        "internalType": "uint256",
-        "name": "index",
-        "type": "uint256"
-      }
+      { "internalType": "address", "name": "owner", "type": "address" },
+      { "internalType": "uint256", "name": "index", "type": "uint256" }
     ],
     "name": "tokenOfOwnerByIndex",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
+    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
     "stateMutability": "view",
     "type": "function"
   },
   {
     "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "tokenId",
-        "type": "uint256"
-      }
+      { "internalType": "uint256", "name": "tokenId", "type": "uint256" }
     ],
     "name": "tokenURI",
     "outputs": [
-      {
-        "internalType": "string",
-        "name": "tokenURIString",
-        "type": "string"
-      }
+      { "internalType": "string", "name": "tokenURIString", "type": "string" }
     ],
     "stateMutability": "view",
     "type": "function"
@@ -863,33 +479,15 @@
   {
     "inputs": [],
     "name": "totalSupply",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
+    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
     "stateMutability": "view",
     "type": "function"
   },
   {
     "inputs": [
-      {
-        "internalType": "address",
-        "name": "from",
-        "type": "address"
-      },
-      {
-        "internalType": "address",
-        "name": "to",
-        "type": "address"
-      },
-      {
-        "internalType": "uint256",
-        "name": "tokenId",
-        "type": "uint256"
-      }
+      { "internalType": "address", "name": "from", "type": "address" },
+      { "internalType": "address", "name": "to", "type": "address" },
+      { "internalType": "uint256", "name": "tokenId", "type": "uint256" }
     ],
     "name": "transferFrom",
     "outputs": [],
@@ -898,11 +496,7 @@
   },
   {
     "inputs": [
-      {
-        "internalType": "address",
-        "name": "newOwner",
-        "type": "address"
-      }
+      { "internalType": "address", "name": "newOwner", "type": "address" }
     ],
     "name": "transferOwnership",
     "outputs": [],
@@ -911,16 +505,8 @@
   },
   {
     "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "tokenId",
-        "type": "uint256"
-      },
-      {
-        "internalType": "string",
-        "name": "char_name",
-        "type": "string"
-      },
+      { "internalType": "uint256", "name": "tokenId", "type": "uint256" },
+      { "internalType": "string", "name": "char_name", "type": "string" },
       {
         "components": [
           {
@@ -928,41 +514,13 @@
             "name": "character_class",
             "type": "uint32"
           },
-          {
-            "internalType": "uint32",
-            "name": "element",
-            "type": "uint32"
-          },
-          {
-            "internalType": "uint32",
-            "name": "str",
-            "type": "uint32"
-          },
-          {
-            "internalType": "uint32",
-            "name": "vit",
-            "type": "uint32"
-          },
-          {
-            "internalType": "uint32",
-            "name": "dex",
-            "type": "uint32"
-          },
-          {
-            "internalType": "uint32",
-            "name": "talent",
-            "type": "uint32"
-          },
-          {
-            "internalType": "uint32",
-            "name": "mood",
-            "type": "uint32"
-          },
-          {
-            "internalType": "uint32",
-            "name": "exp",
-            "type": "uint32"
-          }
+          { "internalType": "uint32", "name": "element", "type": "uint32" },
+          { "internalType": "uint32", "name": "str", "type": "uint32" },
+          { "internalType": "uint32", "name": "vit", "type": "uint32" },
+          { "internalType": "uint32", "name": "dex", "type": "uint32" },
+          { "internalType": "uint32", "name": "talent", "type": "uint32" },
+          { "internalType": "uint32", "name": "mood", "type": "uint32" },
+          { "internalType": "uint32", "name": "exp", "type": "uint32" }
         ],
         "internalType": "struct character_properties",
         "name": "updated_props",

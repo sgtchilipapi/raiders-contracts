@@ -26,6 +26,27 @@ const QueryEquipmentOwned = `
   }
 `
 
+const QueryEquipment = `
+  query($idNum: Int) {
+    equipments(where:{idNum: $idNum}) {
+        id
+        idNum
+        equipment_type
+        rarity
+        dominant_stat
+        extremity
+        atk
+        def
+        eva
+        hp
+        pen
+        crit
+        luk
+        res
+    }
+  }
+`
+
 export async function getEquipmentsOwned(address) {
     const client = new ApolloClient({
         uri: equipments_sg_deployment,
@@ -49,4 +70,27 @@ export async function getEquipmentsOwned(address) {
             equipments_arr = []
         })
     return (equipments_arr)
+}
+
+export async function getEquipment(equipment_id) {
+    const client = new ApolloClient({
+        uri: equipments_sg_deployment,
+        cache: new InMemoryCache(),
+    })
+
+    let equipment
+    await client
+        .query({
+            query: gql(QueryEquipment),
+            variables: {
+                idNum: equipment_id
+            },
+        })
+        .then((data) => {
+            equipment = data.data.equipments[0]
+        })
+        .catch((err) => {
+            console.log('Error fetching data: ', err)
+        })
+    return (equipment)
 }

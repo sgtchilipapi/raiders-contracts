@@ -18,6 +18,29 @@ const QueryCharactersOwned = `
   }
 `
 
+const QueryCharacter = `
+  query($idNum: Int) {
+    characters(where: {idNum: $idNum}) {
+      id
+      idNum
+      minter {
+        id
+      }
+      owner {
+        id
+      }
+      character_name
+      character_class
+      str
+      vit
+      dex
+      mood
+      talent
+      exp
+    }
+  }
+`
+
 export async function getCharactersOwned(address) {
     const client = new ApolloClient({
         uri: characters_sg_deployment,
@@ -51,4 +74,27 @@ export async function getCharactersOwned(address) {
             mappedItems = []
         })
     return (mappedItems)
+}
+
+export async function getCharacter(character_id) {
+    const client = new ApolloClient({
+        uri: characters_sg_deployment,
+        cache: new InMemoryCache(),
+    })
+
+    let character
+    await client
+        .query({
+            query: gql(QueryCharacter),
+            variables: {
+                idNum: character_id
+            },
+        })
+        .then((data) => {
+            character = data.data.characters[0]
+        })
+        .catch((err) => {
+            console.log('Error fetching data: ', err)
+        })
+    return (character)
 }

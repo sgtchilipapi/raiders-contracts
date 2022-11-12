@@ -45,6 +45,13 @@ export async function equipMany(character_id, equipment_id_arr){
     return receipt
 }
 
+export async function unequipItem(equipment_id){
+    const contract = await getSignedContract()
+    const unequipTx = await contract.unequipItem(equipment_id)
+    const receipt = await unequipTx.wait()
+    return receipt
+}
+
 export async function unequipByType(character_id, equipment_type){
     const contract = await getSignedContract()
     const unequipTx = await contract.unequipType(character_id, equipment_type)

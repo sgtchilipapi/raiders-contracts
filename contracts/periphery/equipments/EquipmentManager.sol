@@ -130,6 +130,19 @@ contract EquipmentManager {
         emit ItemEquipped(_character_id, _equipment_id, 3); //3 => headgear
     }
 
+    ///@notice This function can only be called by the owner of the equipment
+    function unequipItem(uint256 _equipment_id) public returns (bool success){
+        require(equipment_contract.isOwner(msg.sender, _equipment_id), "EQPD: Equipment not owned.");
+        if(equippedTo[_equipment_id] != 0){
+            equipment_properties memory equipment =  equipment_contract.equipment(_equipment_id);
+            if(equipment.equipment_type == 0){unequipWeapon(equippedTo[_equipment_id]);}
+            if(equipment.equipment_type == 1){unequipArmor(equippedTo[_equipment_id]);}
+            if(equipment.equipment_type == 2){unequipHelm(equippedTo[_equipment_id]);}
+            if(equipment.equipment_type == 3){unequipAccessory(equippedTo[_equipment_id]);}
+        }
+        success = true;
+    }
+
     ///@notice The owner of the character can unequip items by type (headgear, armor, weapon, accessory)
     function unequipType(uint256 _character_id, uint256 equipment_type) public{
         require(character_contract.isOwner(msg.sender, _character_id), "EQPD: Cannot unequip from character not owned.");

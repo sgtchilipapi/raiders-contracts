@@ -58,6 +58,8 @@ export function createApprovalForAllEvent(
 
 export function createCharacterMintedEvent(
   character_id: BigInt,
+  user: Address,
+  char_name: string,
   character_props: ethereum.Tuple
 ): CharacterMinted {
   let characterMintedEvent = changetype<CharacterMinted>(newMockEvent())
@@ -71,6 +73,12 @@ export function createCharacterMintedEvent(
     )
   )
   characterMintedEvent.parameters.push(
+    new ethereum.EventParam("user", ethereum.Value.fromAddress(user))
+  )
+  characterMintedEvent.parameters.push(
+    new ethereum.EventParam("char_name", ethereum.Value.fromString(char_name))
+  )
+  characterMintedEvent.parameters.push(
     new ethereum.EventParam(
       "character_props",
       ethereum.Value.fromTuple(character_props)
@@ -82,6 +90,7 @@ export function createCharacterMintedEvent(
 
 export function createCharacterUpdatedEvent(
   character_id: BigInt,
+  char_name: string,
   character_props: ethereum.Tuple
 ): CharacterUpdated {
   let characterUpdatedEvent = changetype<CharacterUpdated>(newMockEvent())
@@ -93,6 +102,9 @@ export function createCharacterUpdatedEvent(
       "character_id",
       ethereum.Value.fromUnsignedBigInt(character_id)
     )
+  )
+  characterUpdatedEvent.parameters.push(
+    new ethereum.EventParam("char_name", ethereum.Value.fromString(char_name))
   )
   characterUpdatedEvent.parameters.push(
     new ethereum.EventParam(
