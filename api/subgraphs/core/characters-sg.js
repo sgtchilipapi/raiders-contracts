@@ -47,8 +47,13 @@ export async function getCharactersOwned(address) {
         cache: new InMemoryCache(),
     })
 
+    let mappedItems = []
+    if(!address) {
+        console.log('Wallet is not connected.')
+        return mappedItems
+    }
+
     const wallet = address.toLowerCase()
-    let mappedItems
     await client
         .query({
             query: gql(QueryCharactersOwned),

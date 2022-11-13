@@ -53,8 +53,14 @@ export async function getEquipmentsOwned(address) {
         cache: new InMemoryCache(),
     })
 
-    const wallet = address.toLowerCase()
+    
     let equipments_arr = []
+    if(!address) {
+        console.log('Wallet is not connected.')
+        return equipments_arr
+    }
+    const wallet = address.toLowerCase()
+    
     await client
         .query({
             query: gql(QueryEquipmentOwned),
