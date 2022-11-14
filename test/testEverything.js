@@ -4,8 +4,8 @@ const { doesNotMatch } = require("assert");
 describe("Characters, Minter and VRF test.", function () {
     it("Test Everything", async function() {
         const [characters, c_minter] = await characterSystem()
-        const [equipments, e_minter, materials, catalysts, equipment_manager] = await equipmentSystem(characters)
-        const [dungeons] = await battleSystem(characters, equipments, equipment_manager, [materials[0],materials[1],materials[2],materials[3]])
+        const [equipments, e_minter, materials, catalysts, consumables, equipment_manager] = await equipmentSystem(characters)
+        const [dungeons] = await battleSystem(characters, equipments, equipment_manager, [materials[0],materials[1],materials[2],materials[3]], consumables)
         
     }).timeout(5000000);
 
@@ -53,9 +53,10 @@ describe("Characters, Minter and VRF test.", function () {
         const [owner] = await ethers.getSigners()
 
         //Deploy the tokens
-        const [materials, catalysts] = await deployTokens()
+        const [materials, catalysts, consumables] = await deployTokens()
         const materials_addresses = [materials[0].address, materials[1].address, materials[2].address, materials[3].address]
         const catalysts_addresses = [catalysts[0].address, catalysts[1].address, catalysts[2].address, catalysts[3].address]
+        const consumables_addresses = [consumables[0].address]
 
         const Equipments = await ethers.getContractFactory("Equipments")
         const equipments = await Equipments.deploy()
@@ -63,7 +64,7 @@ describe("Characters, Minter and VRF test.", function () {
         console.log(`Equipments deployed at: ${equipments.address}`)
 
         const Minter = await ethers.getContractFactory("EquipmentMinter")
-        const minter = await Minter.deploy(equipments.address, _characters.address, materials_addresses, catalysts_addresses)
+        const minter = await Minter.deploy(equipments.address, _characters.address, consumables_addresses[0], materials_addresses, catalysts_addresses)
         await minter.deployed()
         console.log(`EquipmentMinter deployed at ${minter.address}`)
 
@@ -120,7 +121,7 @@ describe("Characters, Minter and VRF test.", function () {
         console.log(await equipment_manager.equippedWith(1))
 
 
-        return[equipments, minter, materials, catalysts, equipment_manager]
+        return[equipments, minter, materials, catalysts, consumables, equipment_manager]
 
     }
 
@@ -134,6 +135,7 @@ describe("Characters, Minter and VRF test.", function () {
         const whitespark = await deployERC20("WhiteSparkstone")
         const redspark = await deployERC20("RedSparkstone")
         const bluespark = await deployERC20("BlueSparkstone")
+        const enerlink = await deployERC20("EnerLink")
 
         async function deployERC20(ContractName){
             const ERC20Token = await ethers.getContractFactory(ContractName)
@@ -145,7 +147,8 @@ describe("Characters, Minter and VRF test.", function () {
 
         const materials = [boom, thump, clink, snap]
         const catalysts = [yellowspark, whitespark, redspark, bluespark]
-        return [materials, catalysts]
+        const consumables = [enerlink]
+        return [materials, catalysts, consumables]
     }
 
     async function approveEquipmentMinter(minter_address, materials, catalysts){
@@ -166,10 +169,10 @@ describe("Characters, Minter and VRF test.", function () {
         }
     }
 
-    async function battleSystem(_characters, _equipments, _equipment_manager, _materials){
+    async function battleSystem(_characters, _equipments, _equipment_manager, _materials, _consumables){
         const [owner] = await ethers.getSigners()
         const Dungeons = await ethers.getContractFactory("Dungeons")
-        const dungeons = await Dungeons.deploy(_characters.address, _equipments.address, _equipment_manager.address, [_materials[0].address, _materials[1].address, _materials[2].address, _materials[3].address])
+        const dungeons = await Dungeons.deploy(_characters.address, _equipments.address, _equipment_manager.address, [_materials[0].address, _materials[1].address, _materials[2].address, _materials[3].address], _consumables[0].address)
         await dungeons.deployed()
         console.log(`Dungeons deployed at ${dungeons.address}`)
 
@@ -202,7 +205,7 @@ describe("Characters, Minter and VRF test.", function () {
 
         const startBattle = await dungeons.startBattle()
         const battleTx = await startBattle.wait()
-        console.log(`Battle Completed!`)
+        console.log(battleTx)
         
         const ownerAddress = await owner.getAddress()
         const battleRequestProps = await dungeons.battle_requests(ownerAddress)

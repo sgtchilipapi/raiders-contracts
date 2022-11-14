@@ -3,16 +3,24 @@ const hre = require("hardhat");
 require('dotenv').config()
 const deployments  = require("../app-config/deployments")
 
-const mainnet_config = {
-
-}
-
 const testnet_config = {
     tokens: deployments.contracts.tokens,
     vrf:{
         subscription: 2229,
         coordinator: "0x7a1BaC17Ccc5b313516C5E16fb24f7659aA5ebed",
         keyHash: "0x4b09e658ed251bcafeebbc69400383d49f344ace09b9576fe248bb02c003fe9f"
+    },
+    keeper:{
+        registry: "0x02777053d6764996e594c3E88AF1D58D5363a2e6"
+    }
+}
+
+const mainnet_config = {
+    tokens: deployments.contracts.tokens,
+    vrf:{
+        subscription: 0,
+        coordinator: "0xae975071be8f8ee67addbc1a82488f1c24858067",
+        keyHash: "0xd729dc84e21ae57ffb6be0053bf2b0668aa2aaf300a2a7b2ddf7dc0bb6e875a8"
     },
     keeper:{
         registry: "0x02777053d6764996e594c3E88AF1D58D5363a2e6"

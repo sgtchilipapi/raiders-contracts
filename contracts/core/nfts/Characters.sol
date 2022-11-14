@@ -41,7 +41,8 @@ contract Characters is ERC721, ERC721Enumerable, Ownable {
     address private dungeon;
 
     event CharacterMinted(uint256 indexed character_id, address user, string char_name, character_properties character_props);
-    event CharacterUpdated(uint256 indexed character_id, string char_name, character_properties character_props);
+    event CharacterUpdated(uint256 indexed character_id, character_properties character_props);
+    event CharacterRenamed(uint256 indexed character_id, string char_name);
 
     constructor() ERC721("Characters", "CTRS") {
     }
@@ -62,9 +63,16 @@ contract Characters is ERC721, ERC721Enumerable, Ownable {
     }
 
     ///@notice This function can only be called by the updater contract which shall be responsible for doing the necessary checks.
-    function updateCharacter(uint256 tokenId, string memory char_name, character_properties memory updated_props) public onlyDungeon{
+    function updateCharacter(uint256 tokenId, character_properties memory updated_props) public onlyDungeon{
         character[tokenId] = updated_props;
-        emit CharacterUpdated(tokenId, char_name, updated_props);
+        emit CharacterUpdated(tokenId, updated_props);
+    }
+
+    ///@notice This function renames the character chosen which can only be called by the owner of such character.
+    function renameCharacter(uint256 tokenId, string memory new_name) public {
+        require(isOwner(msg.sender, tokenId), 'Cannot rename character not owned.');
+        character_name[tokenId] = new_name;
+        emit CharacterRenamed(tokenId, new_name);
     }    
 
     ///@notice This function sets the minter contract.
