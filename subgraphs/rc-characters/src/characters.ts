@@ -55,7 +55,6 @@ export function handleCharacterUpdated(event: CharacterUpdated): void {
   ///Load character
   let character = Character.load(event.params.character_id.toHexString())
   if (character) {
-    character.character_name = event.params.char_name.toString()
     character.str = event.params.character_props.str.toU32()
     character.vit = event.params.character_props.vit.toU32()
     character.dex = event.params.character_props.dex.toU32()

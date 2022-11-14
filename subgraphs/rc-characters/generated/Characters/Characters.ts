@@ -128,6 +128,28 @@ export class CharacterMintedCharacter_propsStruct extends ethereum.Tuple {
   }
 }
 
+export class CharacterRenamed extends ethereum.Event {
+  get params(): CharacterRenamed__Params {
+    return new CharacterRenamed__Params(this);
+  }
+}
+
+export class CharacterRenamed__Params {
+  _event: CharacterRenamed;
+
+  constructor(event: CharacterRenamed) {
+    this._event = event;
+  }
+
+  get character_id(): BigInt {
+    return this._event.parameters[0].value.toBigInt();
+  }
+
+  get char_name(): string {
+    return this._event.parameters[1].value.toString();
+  }
+}
+
 export class CharacterUpdated extends ethereum.Event {
   get params(): CharacterUpdated__Params {
     return new CharacterUpdated__Params(this);
@@ -145,13 +167,9 @@ export class CharacterUpdated__Params {
     return this._event.parameters[0].value.toBigInt();
   }
 
-  get char_name(): string {
-    return this._event.parameters[1].value.toString();
-  }
-
   get character_props(): CharacterUpdatedCharacter_propsStruct {
     return changetype<CharacterUpdatedCharacter_propsStruct>(
-      this._event.parameters[2].value.toTuple()
+      this._event.parameters[1].value.toTuple()
     );
   }
 }
@@ -933,6 +951,40 @@ export class ApproveCall__Outputs {
   }
 }
 
+export class RenameCharacterCall extends ethereum.Call {
+  get inputs(): RenameCharacterCall__Inputs {
+    return new RenameCharacterCall__Inputs(this);
+  }
+
+  get outputs(): RenameCharacterCall__Outputs {
+    return new RenameCharacterCall__Outputs(this);
+  }
+}
+
+export class RenameCharacterCall__Inputs {
+  _call: RenameCharacterCall;
+
+  constructor(call: RenameCharacterCall) {
+    this._call = call;
+  }
+
+  get tokenId(): BigInt {
+    return this._call.inputValues[0].value.toBigInt();
+  }
+
+  get new_name(): string {
+    return this._call.inputValues[1].value.toString();
+  }
+}
+
+export class RenameCharacterCall__Outputs {
+  _call: RenameCharacterCall;
+
+  constructor(call: RenameCharacterCall) {
+    this._call = call;
+  }
+}
+
 export class RenounceOwnershipCall extends ethereum.Call {
   get inputs(): RenounceOwnershipCall__Inputs {
     return new RenounceOwnershipCall__Inputs(this);
@@ -1282,13 +1334,9 @@ export class UpdateCharacterCall__Inputs {
     return this._call.inputValues[0].value.toBigInt();
   }
 
-  get char_name(): string {
-    return this._call.inputValues[1].value.toString();
-  }
-
   get updated_props(): UpdateCharacterCallUpdated_propsStruct {
     return changetype<UpdateCharacterCallUpdated_propsStruct>(
-      this._call.inputValues[2].value.toTuple()
+      this._call.inputValues[1].value.toTuple()
     );
   }
 }

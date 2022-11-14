@@ -141,6 +141,19 @@
         "internalType": "string",
         "name": "char_name",
         "type": "string"
+      }
+    ],
+    "name": "CharacterRenamed",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "uint256",
+        "name": "character_id",
+        "type": "uint256"
       },
       {
         "components": [
@@ -639,6 +652,24 @@
     "type": "function"
   },
   {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "tokenId",
+        "type": "uint256"
+      },
+      {
+        "internalType": "string",
+        "name": "new_name",
+        "type": "string"
+      }
+    ],
+    "name": "renameCharacter",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
     "inputs": [],
     "name": "renounceOwnership",
     "outputs": [],
@@ -915,11 +946,6 @@
         "internalType": "uint256",
         "name": "tokenId",
         "type": "uint256"
-      },
-      {
-        "internalType": "string",
-        "name": "char_name",
-        "type": "string"
       },
       {
         "components": [

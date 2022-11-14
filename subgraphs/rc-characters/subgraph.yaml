@@ -6,9 +6,9 @@ dataSources:
     name: Characters
     network: mumbai
     source:
-      address: "0xB1db12d8DF8750a09F9E21128C956E99E1285b05"
+      address: "0x55d3c5C131656CBD730Bc3d8E0Aa25dC73835e1C"
       abi: Characters
-      startBlock: 29140866
+      startBlock: 29155693
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -30,7 +30,7 @@ dataSources:
           handler: handleApprovalForAll
         - event: CharacterMinted(indexed uint256,address,string,(uint32,uint32,uint32,uint32,uint32,uint32,uint32,uint32))
           handler: handleCharacterMinted
-        - event: CharacterUpdated(indexed uint256,string,(uint32,uint32,uint32,uint32,uint32,uint32,uint32,uint32))
+        - event: CharacterUpdated(indexed uint256,(uint32,uint32,uint32,uint32,uint32,uint32,uint32,uint32))
           handler: handleCharacterUpdated
         - event: OwnershipTransferred(indexed address,indexed address)
           handler: handleOwnershipTransferred
