@@ -19,9 +19,9 @@ library CharacterExperience {
     }
 
     function getAttributeAffected(uint256 dungeon) internal pure returns (uint32 stat){
-        if(dungeon == 0){stat = 0;}
-        if(dungeon == 1){stat = 1;}
-        if(dungeon == 2){stat = 2;}
+        if(dungeon == 0){stat = 2;}
+        if(dungeon == 1){stat = 0;}
+        if(dungeon == 2){stat = 1;}
     }
 }
 

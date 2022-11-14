@@ -8,6 +8,7 @@ const dungeons_api = require("./core/dungeons/dungeons-api")
 const tokens_api = require("./core/tokens/tokens-api")
 const character_vrf = require("./periphery/chainlink/vrf/character-vrf")
 const equipment_vrf = require("./periphery/chainlink/vrf/equipment-vrf")
+const dungeon_vrf = require("./periphery/chainlink/vrf/dungeon-vrf")
 
 module.exports = {
     core:{
@@ -19,7 +20,8 @@ module.exports = {
     periphery:{
         chainlink:{
             ctrs_vrf: character_vrf,
-            eqpts_vrf: equipment_vrf
+            eqpts_vrf: equipment_vrf,
+            dgns_vrf: dungeon_vrf
         },
         equipments: {
             eqpt_mngr: equipment_manager_api

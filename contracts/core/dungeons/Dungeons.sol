@@ -91,7 +91,7 @@ contract Dungeons is Ownable{
     address dungeonKeeper;
 
     event BattleRequested(address indexed user, battle_request request);
-    event BattleStarted(battle_request indexed request, battle_stats character, battle_stats enemy);
+    event BattleStarted(battle_request indexed request, character_properties char_pros, battle_stats character, enemy_properties enemy_props, battle_stats enemy);
     event Clashed(uint256 indexed battle_id, clash_event clash);
     event BattleEnded(uint256 indexed battle_id, uint256 battle_result);
     event DungeonsReplenished(uint256 dungeon1, uint256 dungeon2, uint256 dungeon3);
@@ -190,7 +190,7 @@ contract Dungeons is Ownable{
         ///Set the enemy's handicap to only 25% for players/characters that are just starting out (exp with less than 220)
         if(char_props.exp < 220 && request.tier == 0){enem_stats.hp = (enem_stats.hp * 25) / 100;}
 
-        emit BattleStarted(request, char_stats, enem_stats);
+        emit BattleStarted(request, char_props, char_stats, enem_props, enem_stats);
 
         ///Check if the battle has been completed
         require(!request.completed, "Dungeons: Battle already completed.");
