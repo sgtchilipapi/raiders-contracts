@@ -193,48 +193,48 @@ const testnet_deployments = {
     },
     characters: {
         nftContract: {
-            address: "0x55d3c5C131656CBD730Bc3d8E0Aa25dC73835e1C",
+            address: "0x8F400Fe058EA13e80c4bd61dEb4AA72b887cb596",
             abi: ''
         },
         minter: {
-            address: "0xff6c983929a06804D2Ba9564a8F696fA084B7358",
+            address: "0x8F5c09Af472A519aA94f87b67d13Ad88D3A7F7F2",
             abi: ''
         },
         vrf: {
-            address: "0xDE3b66FBa9A0281f6875BAD8ab072FBb387c5b55",
+            address: "0x2C79ccB5B2fdD7c4b98264D12B3826555591cB63",
             abi: ''
         },
         uriConstructor: {
-            address: "0xB6AcD3fe3A48f2917E5350236B3932f43b338954"
+            address: "0xdD0AFCd1CCA5497A45E1E263B800C7C013DD6022"
         }
     },
     equipments: {
         nftContract: {
-            address: "0x78BEEA0955b41BaDFa9c4449845aF7209d1E65c4",
+            address: "0xa9eDc34a75Fe022966604F6efBA20eb1784d0863",
             abi: ''
         },
         minter: {
-            address: "0xC817D5530D62711E48ab2CEc3Eeef276ba5640e1",
+            address: "0x40C8B6fb9e734A27cecC538B71624409Ec93fb93",
             abi: ''
         },
         vrf: {
-            address: "0x733B05B57E8C20aBc453319928bc1B6Af862f6BD",
+            address: "0x44696adeb718A87cb00f2B15feC8BCF47C8007F0",
             abi: ''
         },
         manager: {
-            address: "0xa391C145F45E2E408F0cE69E8e0E4A7CD3eE4055",
+            address: "0x5Bb2350684a8c44E33791bb5192144AeFe2D1027",
             abi: ''
         }
     },
     dungeons: {
         dungeon: {
-            address: "0xDCFB925889779E04C71829B6Ba5ea8Fc41D345a6",
+            address: "0x6cC06037F4F94dDF68D4BD59Ce66aBC3fD9ac4D1",
         },
         vrf: {
-            address: "0x82835bef6a04535da22C3792Bb1C0B8a1d6Cf73F"
+            address: "0x92BBde5921ae027d283f262dF2bFc9804b6DbC19"
         },
         keeper: {
-            address: "0xaE80465B390825b38C1c805874a3143a570d1bC0"
+            address: "0x17f4641460901609E3f13DaC5ff715CBFD165c4d"
             ///Register new upkeep in https://automation.chain.link
         }
     }

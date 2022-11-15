@@ -91,9 +91,9 @@ contract Dungeons is Ownable{
     address dungeonKeeper;
 
     event BattleRequested(address indexed user, battle_request request);
-    event BattleStarted(battle_request indexed request, character_properties char_pros, battle_stats character, enemy_properties enemy_props, battle_stats enemy);
-    event Clashed(uint256 indexed battle_id, clash_event clash);
-    event BattleEnded(uint256 indexed battle_id, uint256 battle_result);
+    event BattleStarted(battle_request request, character_properties char_props, battle_stats char_stats, enemy_properties enemy_props, battle_stats enemy_stats);
+    event Clashed(uint256 battle_id, clash_event clash);
+    event BattleEnded(uint256 battle_id, uint256 battle_result);
     event DungeonsReplenished(uint256 dungeon1, uint256 dungeon2, uint256 dungeon3);
 
     constructor(
@@ -353,14 +353,14 @@ contract Dungeons is Ownable{
             }else{
                 defender.def = BattleMath.safeMinusUint256(defender.def, damage);
             }
-
-            atk_ev = attack_event({
-                evaded : evaded,
-                penetrated: penetrated,
-                critical_hit: critical_hit,
-                damage: damage
-            });
         }
+
+        atk_ev = attack_event({
+            evaded : evaded,
+            penetrated: penetrated,
+            critical_hit: critical_hit,
+            damage: damage
+        });
     }
 
     ///@notice Determine if the attack would be evaded

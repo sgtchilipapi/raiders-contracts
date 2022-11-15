@@ -9,7 +9,8 @@ module.exports = [
         deployments.contracts.tokens.thump.address,
         deployments.contracts.tokens.clink.address,
         deployments.contracts.tokens.snap.address
-    ]
+    ],
+    deployments.contracts.tokens.enerlink.address
 ];
 
 ///npx hardhat verify --network <network> --constructor-args arguments.js DEPLOYED_CONTRACT_ADDRESS

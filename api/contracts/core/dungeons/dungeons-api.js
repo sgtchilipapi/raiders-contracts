@@ -1,6 +1,7 @@
 const deployments = require("../../../../app-config/deployments")
 const abis = require("../../../../app-config/contract-abis")
 import * as connection from "../../utils/connection"
+import { parseData } from "./battle-events"
 
 ///contract config
 const address = deployments.contracts.dungeons.dungeon.address
@@ -41,7 +42,9 @@ export async function findBattle(character_id, dungeon, tier){
 export async function startBattle(){
     const contract = await getSignedContract()
     const start_battle_tx = await contract.startBattle()
-    const receipt = start_battle_tx.wait()
+    const receipt = await start_battle_tx.wait()
+    console.log(receipt)
+    console.log(parseData(receipt))
     return receipt
 }
 

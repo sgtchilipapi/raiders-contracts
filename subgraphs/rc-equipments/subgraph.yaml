@@ -6,9 +6,9 @@ dataSources:
     name: Equipments
     network: mumbai
     source:
-      address: "0x78BEEA0955b41BaDFa9c4449845aF7209d1E65c4"
+      address: "0xa9eDc34a75Fe022966604F6efBA20eb1784d0863"
       abi: Equipments
-      startBlock: 29155693
+      startBlock: 29172527
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
