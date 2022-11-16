@@ -325,7 +325,7 @@ contract Dungeons is Ownable{
                     emit Clashed(battle_id, clashed, balances);
                 }else{
                     ///In case the number of clash instances reached 20 times and both still have remaining hp left, the battle comes to a draw.
-                    if(char_stats.hp > 0 && enem_stats.hp > 0 && clashCount > 20){battle_result = 2;}
+                    if(char_stats.hp > 0 && enem_stats.hp > 0 && clashCount == 20){battle_result = 2;}
 
                     ///In case the battlers get both hp to 0 within the same clash instance, the battle also comes to a draw.
                     if(char_stats.hp ==0 && enem_stats.hp == 0){battle_result = 2;}
