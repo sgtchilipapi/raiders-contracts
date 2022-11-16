@@ -44,8 +44,9 @@ export async function startBattle(){
     const start_battle_tx = await contract.startBattle()
     const receipt = await start_battle_tx.wait()
     console.log(receipt)
-    console.log(parseData(receipt))
-    return receipt
+    const parsed_receipt = parseData(receipt)
+    console.log(parsed_receipt)
+    return parsed_receipt
 }
 
 export async function consumeEnerLink(character_id){

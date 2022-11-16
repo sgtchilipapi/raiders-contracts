@@ -165,7 +165,7 @@ contract EquipmentMinter is Ownable, Pausable{
         require(!character_minted_free[character_id][_equipment_type], "eMNTR: character already minted.");
 
         ///Allow only characters with exp greater than 200
-        require(characters.character(character_id).exp > 200, "eMNTR: insuf char exp.");
+        require(characters.character(character_id).exp > 99, "eMNTR: insuf char exp.");
 
         ///Check ownership
         require(characters.isOwner(msg.sender, character_id), "eMNTR: character not owned.");

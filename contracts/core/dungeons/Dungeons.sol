@@ -90,9 +90,11 @@ contract Dungeons is Ownable{
     ///The keepers compatible contract that replenishes the dungeon loot supply
     address dungeonKeeper;
 
-    event BattleRequested(address indexed user, battle_request request);
+    event BattleRequested(address user, battle_request request);
     event BattleStarted(battle_request request, character_properties char_props, battle_stats char_stats, enemy_properties enemy_props, battle_stats enemy_stats);
-    event Clashed(uint256 battle_id, clash_event clash);
+    event Clashed(uint256 battle_id, clash_event clash, battlers_balances balances);
+    event LootGained(address user, loot_gained loot);
+    event ExpAndStatGained(uint256 character_id, character_gained char_gain);
     event BattleEnded(uint256 battle_id, uint256 battle_result);
     event DungeonsReplenished(uint256 dungeon1, uint256 dungeon2, uint256 dungeon3);
 
@@ -188,7 +190,7 @@ contract Dungeons is Ownable{
         (enemy_properties memory enem_props, battle_stats memory enem_stats) = EnemyStatsCalculator.getEnemy(request.dungeon_type, request.tier, random_set1[0], random_set1[1]);
 
         ///Set the enemy's handicap to only 25% for players/characters that are just starting out (exp with less than 220)
-        if(char_props.exp < 220 && request.tier == 0){enem_stats.hp = (enem_stats.hp * 25) / 100;}
+        if(char_props.exp < 100 && request.tier == 0){enem_stats.hp = (enem_stats.hp * 25) / 100;}
 
         emit BattleStarted(request, char_props, char_stats, enem_props, enem_stats);
 
@@ -300,7 +302,16 @@ contract Dungeons is Ownable{
                     clashed.attack1 = attack(char_props.character_class, char_stats, enem_stats, [rnums[c], rnums[c+1], rnums[c+2], rnums[c+3]]);
                     ///Apply enemy's damage to character's defense & hp effectively consuming 4 uint16 random numbers.
                     clashed.attack2 = attack(enem_props._type, enem_stats, char_stats, [rnums[c+4], rnums[c+5], rnums[c+6], rnums[c+7]]);
-                    emit Clashed(battle_id, clashed);
+                    
+                    ///Get the hp and def balances of the battlers
+                    battlers_balances memory balances = battlers_balances({
+                        char_hp: char_stats.hp,
+                        char_def: char_stats.def,
+                        enem_hp: enem_stats.hp,
+                        enem_def: enem_stats.def
+                    });
+                    
+                    emit Clashed(battle_id, clashed, balances);
                 }else{
                     ///In case the number of clash instances reached 20 times and both still have remaining hp left, the battle comes to a draw.
                     if(char_stats.hp > 0 && enem_stats.hp > 0 && clashCount > 20){battle_result = 2;}
@@ -439,6 +450,14 @@ contract Dungeons is Ownable{
             ///EXTCALL: update the character in the Characters NFT contract.
             characters.updateCharacter(request.character_id, char_props);
         }
+
+        character_gained memory char_gain = character_gained({
+            exp_amount: experience_gained,
+            stat_affected: specific_stat,
+            stat_amount: stat_amount_gained
+        });
+
+        emit ExpAndStatGained(request.character_id, char_gain);
     }
 
     ///@notice Determine the loot amount and transfer it to the character's owner
@@ -463,13 +482,21 @@ contract Dungeons is Ownable{
 
         ///Determine whether there will be a snaplink loot drop
         bool snap_loot = rollSnapLink(random_num_snap);
-
+        uint256 snap_amount;
         ///If there is, calculate the loot amount using the same min and max
         if(snap_loot){
-            uint256 snap_amount = getActualLootAmount(random_num_snap_amount, min_amount, max_amount);
+            snap_amount = getActualLootAmount(random_num_snap_amount, min_amount, max_amount);
             _MaterialToken snap_link = _MaterialToken(materials_addresses[3]);
             snap_link.mint(sender, snap_amount * 1 ether);
         }
+
+        loot_gained memory loot = loot_gained({
+            material: material,
+            amount: actual_amount,
+            snap_amount: snap_amount
+        });
+
+        emit LootGained(sender, loot);
     }
 
     ///@notice Determine the actual loot amount

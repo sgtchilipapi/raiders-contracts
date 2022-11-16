@@ -23,7 +23,26 @@ struct attack_event {
     uint256 damage;
 }
 
+struct battlers_balances {
+    uint256 char_hp;
+    uint256 char_def;
+    uint256 enem_hp;
+    uint256 enem_def;
+}
+
 struct clash_event {
     attack_event attack1;
     attack_event attack2;
+}
+
+struct loot_gained {
+    uint256 material;
+    uint256 amount;
+    uint256 snap_amount;
+}
+
+struct character_gained {
+    uint256 exp_amount;
+    uint256 stat_affected;
+    uint256 stat_amount;
 }

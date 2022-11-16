@@ -1,3 +1,5 @@
+import { Battery0Bar } from "@mui/icons-material"
+
 let battle_info = {}
 let character = {}
 let enemy = {}
@@ -12,7 +14,7 @@ export const parseData = (tx_receipt) => {
             setEnemyInfo(event.args.enemy_props, event.args.enemy_stats)
         }
         if(event.event == "Clashed"){
-            clashes.push(getClashInfo(event.args.clash))
+            clashes.push(getClashInfo(event.args.clash, event.args.balances))
         }
         if(event.event == "BattleEnded"){
             battle_info.result = parseInt(event.args.battle_result)
@@ -21,8 +23,8 @@ export const parseData = (tx_receipt) => {
 
     const battleData = {
         battle_info: battle_info,
-        character_info: character,
-        enemy_info: enemy,
+        char: character,
+        enem: enemy,
         clashes: clashes
     }
 
@@ -60,21 +62,27 @@ const setEnemyInfo = (props, stats) => {
     enemy.res = parseInt(stats.energy_restoration)
 }
 
-const getClashInfo = (clash) => {
+const getClashInfo = (clash, balances) => {
     const characterAttack = clash.attack1
     const enemyAttack = clash.attack2
     const clashInfo = {
-        character_attack: {
+        char: {
             evaded: characterAttack.evaded,
             penetrated: characterAttack.penetrated,
             critical_hit: characterAttack.critical_hit,
             damage: parseInt(characterAttack.damage)
         },
-        enemy_attack: {
+        enem: {
             evaded: enemyAttack.evaded,
             penetrated: enemyAttack.penetrated,
             critical_hit: enemyAttack.critical_hit,
             damage: parseInt(enemyAttack.damage)
+        },
+        balances: {
+            char_hp: parseInt(balances.char_hp),
+            char_def: parseInt(balances.char_def),
+            enem_hp: parseInt(balances.enem_hp),
+            enem_def: parseInt(balances.enem_def)
         }
     }
     return JSON.parse(JSON.stringify(clashInfo))
