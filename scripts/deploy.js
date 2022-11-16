@@ -6,8 +6,8 @@ const deployments  = require("../app-config/deployments")
 const testnet_config = {
     tokens: deployments.contracts.tokens,
     vrf:{
-        subscription: 2229,
-        coordinator: "0x7a1BaC17Ccc5b313516C5E16fb24f7659aA5ebed",
+        subscription: 2604,
+        coordinator: "0x7a1bac17ccc5b313516c5e16fb24f7659aa5ebed",
         keyHash: "0x4b09e658ed251bcafeebbc69400383d49f344ace09b9576fe248bb02c003fe9f"
     },
     keeper:{

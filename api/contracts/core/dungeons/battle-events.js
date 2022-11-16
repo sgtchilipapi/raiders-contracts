@@ -1,23 +1,29 @@
-import { Battery0Bar } from "@mui/icons-material"
-
-let battle_info = {}
-let character = {}
-let enemy = {}
-let clashes = []
-
 export const parseData = (tx_receipt) => {
-
+    let battle_info = {}
+    let character = {}
+    let enemy = {}
+    let clashes = []
     for (const event of tx_receipt.events) {
         if (event.event == "BattleStarted") {
-            setBattleInfo(event.args.request)
-            setCharacterInfo(event.args.char_props, event.args.char_stats)
-            setEnemyInfo(event.args.enemy_props, event.args.enemy_stats)
+            setBattleInfo(event.args.request, battle_info)
+            setCharacterInfo(event.args.char_props, event.args.char_stats, character)
+            setEnemyInfo(event.args.enemy_props, event.args.enemy_stats, enemy)
         }
         if(event.event == "Clashed"){
             clashes.push(getClashInfo(event.args.clash, event.args.balances))
         }
         if(event.event == "BattleEnded"){
             battle_info.result = parseInt(event.args.battle_result)
+        }
+        if(event.event == "ExpAndStatGained"){
+            battle_info.exp_gained = parseInt(event.args.char_gain.exp_amount)
+            battle_info.stat_affected = parseInt(event.args.char_gain.stat_affected)
+            battle_info.stat_amount = parseInt(event.args.char_gain.stat_amount)
+        }
+        if(event.event == "LootGained"){
+            battle_info.material = parseInt(event.args.loot.material)
+            battle_info.amount = parseInt(event.args.loot.amount)
+            battle_info.snap_amount = parseInt(event.args.loot.snap_amount)
         }
     }
 
@@ -31,14 +37,14 @@ export const parseData = (tx_receipt) => {
     return battleData
 }
 
-const setBattleInfo = (info) => {
+const setBattleInfo = (info, battle_info) => {
     battle_info.id = info.request_id
     battle_info.dungeon_type = parseInt(info.dungeon_type)
     battle_info.tier = parseInt(info.tier)
     battle_info.character_id = parseInt(info.character_id)
 }
 
-const setCharacterInfo = (props, stats) => {
+const setCharacterInfo = (props, stats, character) => {
     character.character_class = parseInt(props.character_class)
     character.atk = parseInt(stats.atk)
     character.def = parseInt(stats.def)
@@ -50,7 +56,7 @@ const setCharacterInfo = (props, stats) => {
     character.res = parseInt(stats.energy_restoration)
 }
 
-const setEnemyInfo = (props, stats) => {
+const setEnemyInfo = (props, stats, enemy) => {
     enemy.enemy_class = parseInt(props._type)
     enemy.atk = parseInt(stats.atk)
     enemy.def = parseInt(stats.def)
@@ -62,7 +68,7 @@ const setEnemyInfo = (props, stats) => {
     enemy.res = parseInt(stats.energy_restoration)
 }
 
-const getClashInfo = (clash, balances) => {
+const getClashInfo = (clash, bals) => {
     const characterAttack = clash.attack1
     const enemyAttack = clash.attack2
     const clashInfo = {
@@ -79,11 +85,12 @@ const getClashInfo = (clash, balances) => {
             damage: parseInt(enemyAttack.damage)
         },
         balances: {
-            char_hp: parseInt(balances.char_hp),
-            char_def: parseInt(balances.char_def),
-            enem_hp: parseInt(balances.enem_hp),
-            enem_def: parseInt(balances.enem_def)
+            char_hp: parseInt(bals.char_hp),
+            char_def: parseInt(bals.char_def),
+            enem_hp: parseInt(bals.enem_hp),
+            enem_def: parseInt(bals.enem_def)
         }
+        
     }
     return JSON.parse(JSON.stringify(clashInfo))
 }

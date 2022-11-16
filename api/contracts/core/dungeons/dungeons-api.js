@@ -34,7 +34,9 @@ export async function getCharacterEnergy(character_id){
 ///transaction functions
 export async function findBattle(character_id, dungeon, tier){
     const contract = await getSignedContract()
-    const find_battle_tx = await contract.findBattle(character_id, dungeon, tier)
+    const gas = await contract.estimateGas.findBattle(character_id, dungeon, tier)
+    const boosted_gas  = (parseInt(gas) * 1.2)
+    const find_battle_tx = await contract.findBattle(character_id, dungeon, tier, {gasLimit: parseInt(boosted_gas)})
     const receipt = find_battle_tx.wait()
     return receipt
 }

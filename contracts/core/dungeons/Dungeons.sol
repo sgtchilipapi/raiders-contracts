@@ -189,7 +189,7 @@ contract Dungeons is Ownable{
         ///Calculate the enemy's stats within the requests parameters and 2 random uint16s
         (enemy_properties memory enem_props, battle_stats memory enem_stats) = EnemyStatsCalculator.getEnemy(request.dungeon_type, request.tier, random_set1[0], random_set1[1]);
 
-        ///Set the enemy's handicap to only 25% for players/characters that are just starting out (exp with less than 220)
+        ///Set the enemy's handicap to only 25% for players/characters that are just starting out (exp with less than 100)
         if(char_props.exp < 100 && request.tier == 0){enem_stats.hp = (enem_stats.hp * 25) / 100;}
 
         emit BattleStarted(request, char_props, char_stats, enem_props, enem_stats);
@@ -209,11 +209,22 @@ contract Dungeons is Ownable{
         if(battle_result == 1 || battle_result == 2){
             ///@dev EXTCALL: Write to Character NFT contract the character's gain in experience and attributes from the battle if any.
             applyCharacterEffects(request, char_props);
+            if(battle_result == 2){
+                loot_gained memory loot;
+                emit LootGained(msg.sender, loot);
+            }
         }
 
         ///The loot drops only if the character wins (1)
         if(battle_result == 1){
             getAndTransferLoot(request, random_set1[2], random_set1[3], random_set1[4], msg.sender);
+        }
+
+        if(battle_result == 0){
+            loot_gained memory loot;
+            character_gained memory char_gain;
+            emit ExpAndStatGained(request.character_id, char_gain);
+            emit LootGained(msg.sender, loot);
         }
 
         restoreEnergy(request.character_id, char_stats.energy_restoration);
@@ -323,7 +334,9 @@ contract Dungeons is Ownable{
                     if(char_stats.hp > 0 && enem_stats.hp == 0){battle_result = 1;}
 
                     ///Case were the character loses.
-                    if(char_stats.hp == 0 && enem_stats.hp > 0){battle_result = 0;}
+                    if(char_stats.hp == 0 && enem_stats.hp > 0){
+                        battle_result = 0;
+                    }
                 }
             }
         }
