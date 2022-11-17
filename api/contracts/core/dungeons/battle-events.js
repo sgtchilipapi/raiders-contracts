@@ -54,6 +54,7 @@ const setCharacterInfo = (props, stats, character) => {
     character.crit = parseInt(stats.crit)
     character.luk = parseInt(stats.luck)
     character.res = parseInt(stats.energy_restoration)
+    character.exp = parseInt(props.exp)
 }
 
 const setEnemyInfo = (props, stats, enemy) => {

@@ -4,11 +4,11 @@ schema:
 dataSources:
   - kind: ethereum
     name: Characters
-    network: mumbai
+    network: matic
     source:
-      address: "0xc90e96E86F03bAD93a0d21B259d5fFc0eF7bf8D3"
+      address: "0x1d2E7272769240bE5553A6361CC4E7C76Ed46927"
       abi: Characters
-      startBlock: 29181173
+      startBlock: 35719914
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6

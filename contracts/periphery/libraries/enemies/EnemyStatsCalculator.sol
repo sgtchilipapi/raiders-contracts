@@ -72,7 +72,7 @@ library EnemyStatsCalculator {
     }
 
     function getAttackPower(enemy_attributes memory enemy_attr, enemy_properties memory enemy_props) internal pure returns (uint256 attack_power){
-        attack_power = ((((enemy_attr.str * 6) + (enemy_attr.dex * 4)) / 10) / 2) + 100;
+        attack_power = (((enemy_attr.str * 6) + (enemy_attr.dex * 4)) / 10);
         uint256 attack_bonus;
         if(enemy_props._type == 0){attack_bonus = 5;}
         attack_power += ((attack_power * attack_bonus) / 100);

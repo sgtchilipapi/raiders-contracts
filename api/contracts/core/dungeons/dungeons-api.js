@@ -43,7 +43,9 @@ export async function findBattle(character_id, dungeon, tier){
 
 export async function startBattle(){
     const contract = await getSignedContract()
-    const start_battle_tx = await contract.startBattle()
+    const gas = await contract.estimateGas.startBattle()
+    const boosted_gas  = (parseInt(gas) * 1.2)
+    const start_battle_tx = await contract.startBattle({gasLimit: parseInt(boosted_gas)})
     const receipt = await start_battle_tx.wait()
     console.log(receipt)
     const parsed_receipt = parseData(receipt)

@@ -1,68 +1,68 @@
-const mainnet_deploments = {
+const mainnet_deployments = {
     tokens: {
         wmatic: {
-            address: "0x9c3C9283D3e44854697Cd22D3Faa240Cfb032889"
+            address: "0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270"
         },
         clank: {
-            address: "0x27f26ca1bCa51A232226013e59eBE51daADd267e",
+            address: "0x28A07470DBcd3327958c871a5fb7bd3cF96A0f5A",
             abi: ""
         },
         boom: {
-            address: "0xbfd0E811189f609532A7eb8888B226c7d22365a2",
+            address: "0xD5089B7a4AeB644D1e9658911914770F96a1079a",
             abi: ""
         },
         thump: {
-            address: "0xC3997c1DC8Ee58Be0Adf62259D0f891E642c43bf",
+            address: "0x41A076A4a3E174CceD20d52B4768c43ac2AAd0f0",
             abi: ""
         },
         clink: {
-            address: "0x5f3887d4Faf942AfbD9EAAAD369E4c923E7ee30b",
+            address: "0xf5597Ae54A0EB5A59EAc20409f758FA0545A00E9",
             abi: ""
         },
         snap: {
-            address: "0x914fC2727BC0260D0B744981920eBf7cc240be41",
+            address: "0xFAf5EB6F3D011e76D444D51d84DBC7D332815429",
             abi: ""
         },
         yellowspark: {
-            address: "0x23Dc2720104066f7996521ef45DACD707205382a",
+            address: "0x525Bf251b55F31711e26d5d4136E084c4EB5Cf8F",
             abi: ""
         },
         whitespark: {
-            address: "0xefFCF0D89F7C527aB72e852401382Be940215A89",
+            address: "0x02A144dC2b27E910e58525279bBa5dCdFdCA2A71",
             abi: ""
         },
         redspark: {
-            address: "0x26d5Bd493DE05c366491c2D5c3a2eD2C4F311cDa",
+            address: "0xF1e929F1613147C45Bbd07E8F5E15DE68187685a",
             abi: ""
         },
         bluespark: {
-            address: "0xf3C3a29A02745DdF49e9dbF0797c8a81bbFD9C2d",
+            address: "0xa5A963dd84bBaE0A95C3A4EB6aCaD8E8Dc6f08A1",
             abi: ""
         },
         enerlink: {
-            address: "0x36CDf641a165bBa044946C5759B235bd88544B09",
+            address: "0x855c895bb5fA0e2C2c64CC5618c4CAa788F9923A",
             abi: ""
         },
         clankmatic: {
-            address: "0xA7A941341295E900D57A1ea36D271F18b11cfeA6"
+            address: "0x0Fb4246E3b7B9c846d25f01571Bc96B477f71a72"
         },
         clankboom: {
-            address: "0x633b433DC825BaEBe3Db8483648208AA96A240f5"
+            address: "0xA41FEeF520d336C0308c25D0A51673776c1084Fb"
         },
         clankthump: {
-            address: "0xFDF6F1b765e8c26c9cf5979bE1FA7E2Aee79709D"
+            address: "0xCa3fe6229C1939D05Fbf0420c40E8Ef4d0d02054"
         },
         clankclink: {
-            address: "0xC40c3fc7125902dAb302044319428dED83736616"
+            address: "0x3Ef680840A7885de6430BFE840F21213647B714B"
         },
         clanksnap: {
-            address: "0x175498C283cCA7ef0bca525a9B5aa831B67c1c68"
+            address: "0x7dCdA7664f8d9F7f953Dc4E20293DE91De1804E8"
         }
         
     },
     defi: {
         minichefv2: {
-            address: "0x22ce9F8fd8694A097B9A712448f0773Fd67A8d19",
+            address: "0x0a09C8c8C1164CA77382006B4cc27e27B6bA065b",
             abi: ""
         },
         factory: {
@@ -72,48 +72,48 @@ const mainnet_deploments = {
     },
     characters: {
         nftContract: {
-            address: "0xB1db12d8DF8750a09F9E21128C956E99E1285b05",
+            address: "0x1d2E7272769240bE5553A6361CC4E7C76Ed46927",
             abi: ''
         },
         minter: {
-            address: "0xD17c06E50b6f264002676A68C04b0e00fCA7044b",
+            address: "0xe473Ee9D430C2c1971Cc49125B96260F8985Df48",
             abi: ''
         },
         vrf: {
-            address: "0x3641551d21415D10acf6DF89a26d5795671C92Ee",
+            address: "0xc29C1e0c910a19d890fB0dbDb538935DB3D2166C",
             abi: ''
         },
         uriConstructor: {
-            address: "0xB6AcD3fe3A48f2917E5350236B3932f43b338954"
+            address: "0x98a0473a14Adb4CF0444bDF741245fb8B569f834"
         }
     },
     equipments: {
         nftContract: {
-            address: "0x35495d014A5DC2F8C9233C9FCD3FB19C08b6a69c",
+            address: "0x04B17697efA695423fE0067aE3FA386cbB0e428C",
             abi: ''
         },
         minter: {
-            address: "0xAB3db4066A3aB2419CB301C82D7d87c4c9504f38",
+            address: "0x04e2a91694eCA061498Aa2dCD32956632c800faF",
             abi: ''
         },
         vrf: {
-            address: "0x8774a098552A4E17C438Afa732619B457BA14739",
+            address: "0xB384EA9E79D11eFCb348ABA0D50E1Ed8E1ac0E06",
             abi: ''
         },
         manager: {
-            address: "0x630C11Dc4a5B82D6fF49345Fd5B0D8e45d179D7c",
+            address: "0xb0954D9Bb7e8Ad00e7631BED11D1d43eb137DB31",
             abi: ''
         }
     },
     dungeons: {
         dungeon: {
-            address: "0x97162DA111a2BC19E92BF60B74D4E21CCB5928e1",
+            address: "0x71Ec376aaf10d29D549B41c1B47A61F45db6b7B7",
         },
         vrf: {
-            address: "0x6f9953821CC489ff217DA9f875e0Da5aac3426F5"
+            address: "0x4e73b59386786F75fA808385054944b69f7b034B"
         },
         keeper: {
-            address: "0xC71739872CB6651684A4aD6CB9A5fA315B67bF4E"
+            address: "0x5Cc1D98622a72c98Bb4FCE58c2c752aC488B5150"
             ///Register new upkeep in https://automation.chain.link
         }
     }
@@ -193,48 +193,48 @@ const testnet_deployments = {
     },
     characters: {
         nftContract: {
-            address: "0xc90e96E86F03bAD93a0d21B259d5fFc0eF7bf8D3",
+            address: "0xF86B63d0F3dA33385dE1944DbBa3eA445Fd47E09",
             abi: ''
         },
         minter: {
-            address: "0xcAa1F30bACEE3f0DF183ac5a859dc5FBA998b186",
+            address: "0x3699A6dAD495350e72F589c47Ce8D258D1b6ea09",
             abi: ''
         },
         vrf: {
-            address: "0x68A6A73bbA525CF96D4c049c0E22f3be9CA0F41e",
+            address: "0x0517c405F8196ed2BB19fa9d90Ee34709Bbe8a09",
             abi: ''
         },
         uriConstructor: {
-            address: "0x010BEe95A37f580dc42a56480d43BB52E52A2aDc"
+            address: "0x0Df9234C6B6f0F086d8514dd767592F233ae9B8d"
         }
     },
     equipments: {
         nftContract: {
-            address: "0xCb5DB82Bb98f1f382015a48734145bf653B69f1A",
+            address: "0x1F5CD9838a596B5C3aB5Aa913ae8Ac49312894F7",
             abi: ''
         },
         minter: {
-            address: "0x251c8008C3e3C6aAae1c99466Bfb9896E92B5D18",
+            address: "0xD4Cb3CcB1714eb88593abF8fa76892d2aA964612",
             abi: ''
         },
         vrf: {
-            address: "0xfB7208a01C6AF3C68a0EB0EaaE14437f1F99F686",
+            address: "0x99d791A7F1867C305570233213C02Df677A498d6",
             abi: ''
         },
         manager: {
-            address: "0xC515c209340A9cBB3216eb1DcAF24e9D4BD1C41d",
+            address: "0x6f01d2e361602afa6694368A80B4b3aFb0f8E85D",
             abi: ''
         }
     },
     dungeons: {
         dungeon: {
-            address: "0x63435d438A134298ca11b75c8Afd8e0Cc0050bEd",
+            address: "0x8F0A642C98C572D9a4E3b6b4f1a31D257A6FB5EF",
         },
         vrf: {
-            address: "0x018B5ED7462f4856B6244A51E960cF54E9B5ee41"
+            address: "0x71414B16AE0AFC955CC44Cc53ed96FC135940c70"
         },
         keeper: {
-            address: "0xe665dc3A1A22031473a5bA550f09035B48C0423e"
+            address: "0x3823Fc4bB3a6B2Aa0A48b21A4bedd71f20e5b623"
             ///Register new upkeep in https://automation.chain.link
         }
     }
@@ -250,6 +250,6 @@ const subgraph_deployments = {
 }
 
 module.exports = {
-    contracts: testnet_deployments,
+    contracts: mainnet_deployments,
     subgraphs: subgraph_deployments
 }

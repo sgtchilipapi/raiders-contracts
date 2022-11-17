@@ -1,5 +1,6 @@
 const mainnet = {
-    http:"https://wild-still-sky.matic.quiknode.pro/b1af5cd242b1dff46e044a1aaad6ab103262f6db/",
+    // http:"https://wild-still-sky.matic.quiknode.pro/b1af5cd242b1dff46e044a1aaad6ab103262f6db/",
+    http:"https://rpc.ankr.com/polygon",
     wss:"wss://wild-still-sky.matic.quiknode.pro/b1af5cd242b1dff46e044a1aaad6ab103262f6db/"
 }
 
@@ -10,9 +11,10 @@ const testnet = {
 
 module.exports = {
     endpoint: {
-        http: testnet.http,
-        wss: testnet.wss
+        http: mainnet.http,
+        wss: mainnet.wss
     },
 }
 
 // https://rpc.ankr.com/polygon_mumbai
+//https://rpc.ankr.com/polygon

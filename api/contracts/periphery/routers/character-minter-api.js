@@ -34,7 +34,7 @@ export async function getRequest(address){
 export async function requestCharacter(character_class, character_name, value){
     const msgvalue = ethers.utils.parseEther(value)
     const contract = await getSignedContract()
-    const gas = parseInt(await contract.estimateGas.requestCharacter(character_class, character_name, {value: msgvalue}) * 1.15) ///Add 15% to heighten tx confirm chance
+    const gas = parseInt(await contract.estimateGas.requestCharacter(character_class, character_name, {value: msgvalue}) * 1.20) ///Add 20% to heighten tx confirm chance
     const parsedGas = ethers.utils.parseUnits(gas.toString(), "wei")
     const requestTx = await contract.requestCharacter(character_class, character_name, {value: msgvalue, gasLimit: parsedGas})
     const receipt = await requestTx.wait()
@@ -44,7 +44,7 @@ export async function requestCharacter(character_class, character_name, value){
 export async function requestCharacterExperimental(character_class, character_name, value){
     const msgvalue = ethers.utils.parseEther(value)
     const contract = await getSignedContract()
-    const gas = parseInt(await contract.estimateGas.requestCharacterExperimental(character_class, character_name, {value: msgvalue}) * 1.15) ///Add 15% to heighten tx confirm chance
+    const gas = parseInt(await contract.estimateGas.requestCharacterExperimental(character_class, character_name, {value: msgvalue}) * 1.20) ///Add 20% to heighten tx confirm chance
     const parsedGas = ethers.utils.parseUnits(gas.toString(), "wei")
     const requestTx = await contract.requestCharacterExperimental(character_class, character_name, {value: msgvalue, gasLimit: parsedGas})
     const receipt = await requestTx.wait()
