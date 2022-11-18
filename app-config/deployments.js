@@ -113,6 +113,7 @@ const mainnet_deployments = {
             address: "0x4e73b59386786F75fA808385054944b69f7b034B"
         },
         keeper: {
+            registry: "0x02777053d6764996e594c3E88AF1D58D5363a2e6",
             address: "0x5Cc1D98622a72c98Bb4FCE58c2c752aC488B5150"
             ///Register new upkeep in https://automation.chain.link
         }
