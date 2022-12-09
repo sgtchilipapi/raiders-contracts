@@ -623,27 +623,34 @@ abstract contract ERC20Burnable is Context, ERC20 {
 
 pragma solidity ^0.8.4;
 
-interface LP_Token {
-    function transferFrom(address from, address to, uint256 amount) external returns (bool);
-}
+import "../../periphery/libraries/structs/CharacterStructs.sol";
 
-contract RedSparkstone is ERC20, ERC20Burnable, Ownable {
+contract StarToken is ERC20, ERC20Burnable, Ownable {
 
-    ///The LP token of $CLANK-$CLINK that will be burned to mint $rSPARK.
-    LP_Token lp_token;
-    constructor() ERC20("Catalyst Red Sparkstone", " rSPARK") {
-        _mint(msg.sender, 100 * 10 ** decimals());
+    uint256 constant MAX_CONVERTIBLE_TOKENS = 76_988_743 ether;
+    uint256 public oldTokensMigrated;
+
+    ERC20Burnable oldToken;
+
+    constructor(address oldTokenAddress) ERC20("Star Token", " ST4R") {
+        oldToken = ERC20Burnable(oldTokenAddress);
     }
 
-    ///Set the LP token pair address to be used in exchange of minting this specific sparkstone.
-    function setLpToken(address lp_address) public onlyOwner {
-        lp_token = LP_Token(lp_address);
-    }
-
-    function mint(address to, uint256 amount) public {
-        uint256 lp_token_amount = amount * 10;
-        bool success = lp_token.transferFrom(msg.sender, address(0), lp_token_amount);
-        require(success, "SparkStone: Failed to tranfer LP tokens.");
+    ///@notice Can only be called by the owner, which is set to be the MasterChefV2 contract.
+    function mint(address to, uint256 amount) public onlyOwner {
         _mint(to, amount);
     }
+
+    ///@notice Swaps the old tokens (R4ID) with the new (ST4R) by burning the old tokens of the owner.
+    /// The total amount of tokens upgraded cannot exceed the maximum amount set which is the sum of the current
+    /// circulating supply of the old tokens at the time of this contract's deployment. So any old tokens in 
+    /// excess of the maximum amount cannot be converted into the new token anymore.
+    function migrateOldTokens(uint256 amount) public {
+        require((oldTokensMigrated + amount) <= MAX_CONVERTIBLE_TOKENS, "Cannot exceed maximum amount.");
+        oldToken.burn(amount);
+        oldTokensMigrated += amount;
+        _mint(msg.sender, amount);
+    }
+
+    
 }
